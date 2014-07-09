@@ -32,6 +32,9 @@ a:visited {
     color: rgb(255,255,128);
 }
 
+ img{
+  border: none;
+}
 
 .halaman{
   background-size: cover;
@@ -147,13 +150,16 @@ a:visited {
 }
 
 #social{
+  display: table;
   margin: 0 auto;
   margin-top: 15px;
-  width: 600px;
+  border: none;
+  border-image: none;   padding: 0;
 }
 
 #social a{
   margin: 0 5px;
+  padding: 0;
 }
 
 #tulisan{
