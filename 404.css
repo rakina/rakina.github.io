@@ -1,0 +1,53 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans);
+
+body{
+	background-color: #fcd04b;
+	padding: 20px; display: table;
+	margin: 0 auto;
+	font-family: 'Open Sans', sans-serif;
+}
+img{
+	max-width: 40%;
+	max-height: auto;
+	margin: 0;
+}
+a{
+	text-decoration: none;
+}
+h4{
+	font-size: 24pt;
+	margin-bottom: 15px;
+	margin-top: 10px;
+}
+
+p {
+	margin: 5px 0;
+	font-size: 18pt;
+}
+
+div{
+	padding: 0;
+	margin: 0 auto; 
+	font-size: 40pt;
+	font-weight: bold;
+}
+
+div img{
+	padding: 10px 25px;
+}
+
+h1{
+	display: inline-block;
+	margin: 0; 	padding: 0;
+
+}
+
+::-moz-selection { 
+background-color: #1abc9c; 
+color: #ffffff;
+}
+
+::selection {
+background-color: #1abc9c;
+color: #ffffff;
+}
