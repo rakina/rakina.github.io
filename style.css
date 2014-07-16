@@ -1,7 +1,7 @@
 @import url(http://fonts.googleapis.com/css?family=Pacifico);
 @import url(http://fonts.googleapis.com/css?family=Glegoo);
 html { 
-    background: url("img/1.jpg") no-repeat center center fixed; 
+    background: url("img/1.jpg"); 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
