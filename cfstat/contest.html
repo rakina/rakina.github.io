@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CF stats!</title>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href = "css/bootstrap.min.css">
+		<link rel="stylesheet" href = "css/style.css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.bootpag.min.js"></script>
+		<script src="js/contest.js"></script>
+	</head>
+	<body>
+		<select id = "country" name="countryName" style="font-size:10px !important;padding:1px;">
+<option value="" selected>any country</option>
+<option value="Afghanistan">
+Afghanistan, 1
+</option>
+<option value="Albania">
+Albania, 2
+</option>
+<option value="Algeria">
+Algeria, 2
+</option>
+<option value="Andorra">
+Andorra, 1
+</option>
+<option value="AngelBeats">
+AngelBeats, 2
+</option>
+<option value="Antarctica">
+Antarctica, 13
+</option>
+<option value="Argentina">
+Argentina, 65
+</option>
+<option value="Armenia">
+Armenia, 84
+</option>
+<option value="Australia">
+Australia, 30
+</option>
+<option value="Austria">
+Austria, 15
+</option>
+<option value="Azerbaijan">
+Azerbaijan, 43
+</option>
+<option value="Bahamas">
+Bahamas, 1
+</option>
+<option value="Bangladesh">
+Bangladesh, 868
+</option>
+<option value="Belarus">
+Belarus, 545
+</option>
+<option value="Belgium">
+Belgium, 28
+</option>
+<option value="Benin">
+Benin, 2
+</option>
+<option value="Bermuda">
+Bermuda, 1
+</option>
+<option value="Bolivia">
+Bolivia, 64
+</option>
+<option value="Borland">
+Borland, 1
+</option>
+<option value="Bosnia and Herzegovina">
+Bosnia and Herzegovina, 14
+</option>
+<option value="Brazil">
+Brazil, 290
+</option>
+<option value="Bulgaria">
+Bulgaria, 117
+</option>
+<option value="Burundi">
+Burundi, 2
+</option>
+<option value="CQ">
+CQ, 1
+</option>
+<option value="Canada">
+Canada, 80
+</option>
+<option value="Cape Verde">
+Cape Verde, 1
+</option>
+<option value="Catalonia">
+Catalonia, 13
+</option>
+<option value="Cayman Islands">
+Cayman Islands, 1
+</option>
+<option value="Chechnya">
+Chechnya, 1
+</option>
+<option value="Chile">
+Chile, 6
+</option>
+<option value="China">
+China, 3949
+</option>
+<option value="Colombia">
+Colombia, 107
+</option>
+<option value="Costa Rica">
+Costa Rica, 1
+</option>
+<option value="Croatia">
+Croatia, 94
+</option>
+<option value="Cuba">
+Cuba, 103
+</option>
+<option value="Cuban">
+Cuban, 1
+</option>
+<option value="Cyprus">
+Cyprus, 10
+</option>
+<option value="Czech Republic">
+Czech Republic, 45
+</option>
+<option value="Denmark">
+Denmark, 9
+</option>
+<option value="Dominican Republic">
+Dominican Republic, 39
+</option>
+<option value="EN">
+EN, 1
+</option>
+<option value="Egypt">
+Egypt, 570
+</option>
+<option value="Equestria">
+Equestria, 1
+</option>
+<option value="Estonia">
+Estonia, 14
+</option>
+<option value="Fakeland">
+Fakeland, 1
+</option>
+<option value="Finland">
+Finland, 29
+</option>
+<option value="France">
+France, 51
+</option>
+<option value="GAVATISTAN">
+GAVATISTAN, 1
+</option>
+<option value="GDL">
+GDL, 2
+</option>
+<option value="Gabon">
+Gabon, 1
+</option>
+<option value="Gensokyo">
+Gensokyo, 3
+</option>
+<option value="Georgia">
+Georgia, 179
+</option>
+<option value="Germany">
+Germany, 67
+</option>
+<option value="Ghana">
+Ghana, 3
+</option>
+<option value="Greece">
+Greece, 26
+</option>
+<option value="Haiti">
+Haiti, 2
+</option>
+<option value="Honduras">
+Honduras, 1
+</option>
+<option value="Hong Kong">
+Hong Kong, 87
+</option>
+<option value="Hubei">
+Hubei, 3
+</option>
+<option value="Hungary">
+Hungary, 14
+</option>
+<option value="Iceland">
+Iceland, 5
+</option>
+<option value="India">
+India, 2847
+</option>
+<option value="Indonesia">
+Indonesia, 339
+</option>
+<option value="Iran">
+Iran, 789
+</option>
+<option value="Iraq">
+Iraq, 2
+</option>
+<option value="Ireland">
+Ireland, 14
+</option>
+<option value="Israel">
+Israel, 8
+</option>
+<option value="Italy">
+Italy, 64
+</option>
+<option value="Japan">
+Japan, 576
+</option>
+<option value="Jordan">
+Jordan, 46
+</option>
+<option value="Kazakhstan">
+Kazakhstan, 512
+</option>
+<option value="Kenya">
+Kenya, 1
+</option>
+<option value="Korea, Republic of">
+Korea, Republic of, 181
+</option>
+<option value="Korea,DPR">
+Korea,DPR, 32
+</option>
+<option value="Kyrgyzstan">
+Kyrgyzstan, 70
+</option>
+<option value="Kyrgyzstans">
+Kyrgyzstans, 2
+</option>
+<option value="Latvia">
+Latvia, 49
+</option>
+<option value="Lebanon">
+Lebanon, 16
+</option>
+<option value="Lithuania">
+Lithuania, 44
+</option>
+<option value="Luxembourg">
+Luxembourg, 1
+</option>
+<option value="Macau">
+Macau, 1
+</option>
+<option value="Macedonia">
+Macedonia, 33
+</option>
+<option value="Madagascar">
+Madagascar, 3
+</option>
+<option value="Malaysia">
+Malaysia, 31
+</option>
+<option value="Mauritius">
+Mauritius, 4
+</option>
+<option value="Mete">
+Mete, 9
+</option>
+<option value="Mexico">
+Mexico, 96
+</option>
+<option value="Moldova">
+Moldova, 37
+</option>
+<option value="Monaco">
+Monaco, 1
+</option>
+<option value="Mongolia">
+Mongolia, 72
+</option>
+<option value="Montenegro">
+Montenegro, 8
+</option>
+<option value="Morocco">
+Morocco, 29
+</option>
+<option value="Mouood,Tehran,Iran">
+Mouood,Tehran,Iran, 1
+</option>
+<option value="Mozambique">
+Mozambique, 2
+</option>
+<option value="Nada">
+Nada, 2
+</option>
+<option value="Nepal">
+Nepal, 4
+</option>
+<option value="New Zealand">
+New Zealand, 4
+</option>
+<option value="Nicaragua">
+Nicaragua, 1
+</option>
+<option value="NIGERIA">
+Nigeria, 1
+</option>
+<option value="Norway">
+Norway, 21
+</option>
+<option value="Oman">
+Oman, 4
+</option>
+<option value="PRC">
+PRC, 3
+</option>
+<option value="Pakistan">
+Pakistan, 3
+</option>
+<option value="Palestine">
+Palestine, 2
+</option>
+<option value="Paraguay">
+Paraguay, 1
+</option>
+<option value="Peru">
+Peru, 128
+</option>
+<option value="Philippines">
+Philippines, 24
+</option>
+<option value="Poland">
+Poland, 238
+</option>
+<option value="Portugal">
+Portugal, 16
+</option>
+<option value="Qatar">
+Qatar, 1
+</option>
+<option value="Romania">
+Romania, 313
+</option>
+<option value="Russia">
+Russia, 3454
+</option>
+<option value="Rwanda">
+Rwanda, 1
+</option>
+<option value="Saudi Arabia">
+Saudi Arabia, 2
+</option>
+<option value="Sdyu">
+Sdyu, 1
+</option>
+<option value="Sea">
+Sea, 1
+</option>
+<option value="Serbia">
+Serbia, 82
+</option>
+<option value="Singapore">
+Singapore, 26
+</option>
+<option value="Slovakia">
+Slovakia, 52
+</option>
+<option value="Slovenia">
+Slovenia, 12
+</option>
+<option value="South Africa">
+South Africa, 8
+</option>
+<option value="Spain">
+Spain, 49
+</option>
+<option value="Sri Lanka">
+Sri Lanka, 21
+</option>
+<option value="Sweden">
+Sweden, 29
+</option>
+<option value="Switzerland">
+Switzerland, 26
+</option>
+<option value="Syria">
+Syria, 42
+</option>
+<option value="Taiwan">
+Taiwan, 221
+</option>
+<option value="Tajikistan">
+Tajikistan, 64
+</option>
+<option value="Tanzania">
+Tanzania, 1
+</option>
+<option value="Tehran">
+Tehran, 1
+</option>
+<option value="Terran Dominion">
+Terran Dominion, 1
+</option>
+<option value="Thailand">
+Thailand, 113
+</option>
+<option value="The Netherlands">
+The Netherlands, 11
+</option>
+<option value="The Pacific Ocean">
+The Pacific Ocean, 1
+</option>
+<option value="Tunisia">
+Tunisia, 36
+</option>
+<option value="Turkiye">
+Turkiye, 173
+</option>
+<option value="Turkmenistan">
+Turkmenistan, 41
+</option>
+<option value="Two_friends_say_that_I_have_no_life. Yeah_it_true.I_am_useless.">
+Two_friends_say_that_I_have_no_life. Yeah_it_true.I_am_useless., 2
+</option>
+<option value="UAE">
+UAE, 1
+</option>
+<option value="Ukraine">
+Ukraine, 875
+</option>
+<option value="United Kingdom">
+United Kingdom, 45
+</option>
+<option value="United States (USA)">
+United States (USA), 441
+</option>
+<option value="United States of Charze khoon (USC)">
+United States of Charze khoon (USC), 1
+</option>
+<option value="Uruguay">
+Uruguay, 2
+</option>
+<option value="Uzbekistan">
+Uzbekistan, 122
+</option>
+<option value="Valencian Country">
+Valencian Country, 2
+</option>
+<option value="Venezuela">
+Venezuela, 31
+</option>
+<option value="Vietnam">
+Vietnam, 642
+</option>
+<option value="Yemen">
+Yemen, 1
+</option>
+<option value="Zambia">
+Zambia, 2
+</option>
+<option value="Zimbabwe">
+Zimbabwe, 3
+</option>
+</select>
+
+		<table class = 'standingsTable'></table>
+
+		<div id="pagination-demo"></div>
+	</body>
+</html>
