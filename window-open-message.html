@@ -20,7 +20,7 @@ Received messages:
     windowsOpened.push(window.open(openURL.value));
   }
   function callPostMessage() {
-    windowsOpened[windows.length - 1].postMessage(postMessageData.value, "*");
+    windowsOpened[windowsOpened.length - 1].postMessage(postMessageData.value, "*");
   }
 </script>
 </body>
