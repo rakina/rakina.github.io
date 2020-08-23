@@ -3,5 +3,28 @@
 <body>This page has no title.</body>
 <form action="title1.html">
 <input type="text" value="foo"/>
+<input type="text" id='openURL'>
+<button onclick="openWindow()">Open window</button><br>
+<input type="text" id='postMessageData'>
+<button onclick="callPostMessage">postMessage on newest window</button><br>
+<div id='messageLog'>
+Received messages:
+</div>
+<script>
+  var windowsOpened = [];
+  window.addEventListener('message', (event) => {
+    console.log('Received message: ${event.data}');
+    newMessage = document.createElement('div');
+    newMessage.innerText = 'Message: ' + event.data;
+    messageLog.appendChild(newMessage);
+  });
+  openURL.value = location.href;
+  function openWindow() {
+    windowsOpened.push(window.open(openURL.value));
+  }
+  function callPostMessage() {
+    windowsOpened[windows.length - 1].postMessage(postMessageData.value, "*");
+  }
+</script>
 </form>
 </html>
