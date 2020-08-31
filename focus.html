@@ -6,6 +6,9 @@
 </form>
 <div>'focus' count: <span id='focusCountSpan'>0</span></div>
 <div>'blur' count: <span id='blurCountSpan'>0</span></div>
+  
+<div>At pagehide: <span id='pagehideSpan'></span></div>
+<div>At pageshow: <span id='pageshowSpan'></span></div>
 <script>
 var textInput = document.getElementById('textInput');
 
@@ -19,6 +22,14 @@ var blurCount = 0;
 textInput.onblur = () => {
   blurCount++;
   document.getElementById('blurCountSpan').innerText = blurCount;
+}
+
+window.onpagehide = () => {
+  document.getElementById('pagehideSpan').innerText = 'focusCount = ' + focusCount + ', blurCount = ' + blurCount;
+}
+
+window.onpageshow = () => {
+  document.getElementById('pageshowSpan').innerText = 'focusCount = ' + focusCount + ', blurCount = ' + blurCount;
 }
 </script>
 </html>
