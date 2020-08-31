@@ -1,0 +1,24 @@
+<html>
+<head></head>
+<body>When the form is submitted, the page will navigate to title1.html</body>
+<form action="title1.html">
+<input id='textInput' type="text" value="foo"/>
+</form>
+<div>'focus' count: <span id='focusCountSpan'>0</span></div>
+<div>'blur' count: <span id='blurCountSpan'>0</span></div>
+<script>
+var textInput = document.getElementById('textInput');
+
+var focusCount = 0;
+textInput.onfocus = () => {
+  focusCount++;
+  document.getElementById('focusCountSpan').innerText = focusCount;
+}
+
+var blurCount = 0;
+textInput.onblur = () => {
+  blurCount++;
+  document.getElementById('blurCountSpan').innerText = blurCount;
+}
+</script>
+</html>
