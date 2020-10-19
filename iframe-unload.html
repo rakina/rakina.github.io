@@ -2,12 +2,12 @@
 <title>iframe unload test</title>
 <body>
 <script>
-  void createSubframe() {
+  function createSubframe() {
     let subframe = document.createElement("iframe");
     subframe.className = "subframe";
     document.body.appendChild(subframe);
   }
-  void deleteSubframe() {
+  function deleteSubframe() {
     getElementsByClassName("subframe")[0].remove();
   }
   window.onmessage = (event) => {
