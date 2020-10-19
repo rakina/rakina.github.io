@@ -9,11 +9,11 @@
     document.body.appendChild(subframe);
   }
   function deleteSubframe() {
-    getElementsByClassName("subframe")[0].remove();
+    document.getElementsByClassName("subframe")[0].remove();
   }
   window.onmessage = (event) => {
     let newLog = document.createElement("div");
-    div.innerHTML = event.data;
+    newLog.innerHTML = event.data;
     document.getElementById("logs").appendChild(newLog);
   }
 </script>
