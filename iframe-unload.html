@@ -5,6 +5,7 @@
   function createSubframe() {
     let subframe = document.createElement("iframe");
     subframe.className = "subframe";
+    subframe.src = "postMessage-on-unload.html"
     document.body.appendChild(subframe);
   }
   function deleteSubframe() {
