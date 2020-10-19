@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<body>
+<script>
+window.onload = function() {
+  window.addEventListener("pagehide", () => {
+    window.parent.postMessage("pagehide", "*");
+  });
+  window.addEventListener("unload", () => {
+    window.parent.postMessage("unload", "*");
+  });
+  window.parent.postMessage("loaded", "*");
+}
+</script>
+</body>
+</html>
