@@ -2,10 +2,13 @@
 <title>iframe unload test</title>
 <body>
 <script>
+  let subframe_id = 0;
   function createSubframe() {
     let subframe = document.createElement("iframe");
     subframe.className = "subframe";
     subframe.src = "postMessage-on-unload.html"
+    subframe_id++;
+    subframe.contentDocument.title = "child-" + subframe_id;
     document.body.appendChild(subframe);
   }
   function deleteSubframe() {
