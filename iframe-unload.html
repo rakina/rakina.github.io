@@ -8,8 +8,8 @@
     subframe.className = "subframe";
     subframe.src = "postMessage-on-unload.html"
     subframe_id++;
-    subframe.contentDocument.title = "child-" + subframe_id;
     document.body.appendChild(subframe);
+    subframe.contentDocument.title = "child-" + subframe_id;
   }
   function deleteSubframe() {
     document.getElementsByClassName("subframe")[0].remove();
