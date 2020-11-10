@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+<body>
+Grandchild created!
+<script>
+window.onload = function() {
+  window.addEventListener("pagehide", () => {
+    window.parent.postMessage("pagehide " + document.title, "*");
+  });
+  window.addEventListener("unload", () => {
+    window.parent.postMessage("unload " + document.title, "*");
+  });
+  window.parent.postMessage("loaded " + document.title, "*");
+}
+</script>
+</body>
+</html>
