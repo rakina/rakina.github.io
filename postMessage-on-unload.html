@@ -5,13 +5,32 @@ Subframe created!
 <script>
 window.onload = function() {
   window.addEventListener("pagehide", () => {
-    window.parent.postMessage("pagehide", "*");
+    window.parent.postMessage("pagehide " + document.title, "*");
   });
   window.addEventListener("unload", () => {
-    window.parent.postMessage("unload", "*");
+    window.parent.postMessage("unload " + document.title, "*");
   });
-  window.parent.postMessage("loaded", "*");
+  window.parent.postMessage("loaded " + document.title, "*");
+}
+
+window.onmessage = (event) => {
+  window.parent.postMessage(event.data);
+}
+
+let subframe_id = 0;
+function createSubframe() {
+    let subframe = document.createElement("iframe");
+    subframe.className = "subframe";
+    subframe.src = "grandchild.html"
+    subframe_id++;
+    subframe.contentDocument.title = document.title + "-grandchild-" + subframe_id;
+    document.body.appendChild(subframe);
+}
+function deleteSubframe() {
+  document.getElementsByClassName("subframe")[0].remove();
 }
 </script>
+<button onclick="createSubframe()">Create subframe</button>
+<button onclick="deleteSubframe()">Delete subframe</button>
 </body>
 </html>
