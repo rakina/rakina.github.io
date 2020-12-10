@@ -1,0 +1,24 @@
+<!doctype HTML>
+<title>pushState test</title>
+<body>
+  <script>
+    function addPushState() {
+      let pushStateURL = document.getElementById("pushStateURL").value;
+      console.log("Doing pushState to " + pushStateURL);
+      window.history.pushState({}, '', pushStateURL);
+    }
+    
+    function navigate() {
+      let goToURL = document.getElementById("goToURL").value;
+      console.log("Going to " + goToURL);
+      window.location = goToURL;
+    }
+  </script>
+pushState test page<br>
+<input id="pushStateURL" type="text" value="title1.html">
+<button onclick="addPushState()"> <-- pushState this URL</button>
+  <br>
+<input id="goToURL" type="text" value="title2.html"><button onclick="navigate()"> <-- go to this URL</button>
+<br>
+<button onclick="history.back()">go back</button>
+</body>
