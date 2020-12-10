@@ -21,4 +21,13 @@ pushState test page<br>
 <input id="goToURL" type="text" value="title2.html"><button onclick="navigate()"> <-- go to this URL</button>
 <br>
 <button onclick="history.back()">go back</button>
+  <p>
+    Interesting scenario:
+    <ol>
+      <li>click pushState button, to pushState title1.html</li>  
+      <li>click "go to this URL" button, to go to title2.html</li>  
+      <li>Clik "back" in title2.html, to navigate to title1.html</li>  
+      <li>Clik "back" in title1.html, to navigate to pushState.html.. but it stays in the title1.html</li>  
+    </ol>
+  </p>
 </body>
