@@ -9,7 +9,8 @@
 			document.getElementById("iframeSrc").innerText = "??? can't access contentDocument, probably cross-origin";
 			return;
 		}
-		document.getElementById("iframeSrc").innerText = iframe.contentDocument.location.href;
+		document.getElementById("iframeSrc").innerText = iframe.contentDocument.location.href
+			+ " (same-origin as the main frame)";
 	}
 
 	function navigateIframe(url) {
@@ -35,7 +36,15 @@
 
 <div>
 	This page has an iframe that has its src attribute initiallly set to about:blank<br>
-	Try to navigate its relation to session history.
+	Try to figure out its relation to session history. <br>
+
+	Fun cases:
+	<ul>
+
+		<li>Start (about:blank) => example.com => go back (you can't go back in Chrome!) </li>
+		<li>Start (about:blank) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
+
+	</ul>
 </div>
 
 
