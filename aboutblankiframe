@@ -1,0 +1,61 @@
+<!doctype html>
+<body>
+<script>
+	function updateStats() {
+		document.getElementById("historyLength").innerText = history.length;
+
+		var iframe = document.getElementById("iframe");
+		if (!iframe.contentDocument) {
+			document.getElementById("iframeSrc").innerText = "??? can't access contentDocument, probably cross-origin";
+			return;
+		}
+		document.getElementById("iframeSrc").innerText = iframe.contentDocument.location.href;
+	}
+
+	function navigateIframe(url) {
+		document.getElementById("iframe").src = url;
+        updateStats();
+	}
+
+	window.onload = () => {
+		var iframe = document.getElementById("iframe");
+		if (!iframe.contentDocument)
+			return;
+		iframe.contentDocument.body.innerHTML = "about:blank iframe";
+		iframe.onload = () => {
+			if (iframe.contentDocument) {
+				iframe.contentDocument.body.innerHTML = "about:blank iframe";
+			}
+			updateStats();
+		}
+	}
+
+	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
+</script>
+
+<div>
+	This page has an iframe that has its src attribute initiallly set to about:blank<br>
+	Try to navigate its relation to session history.
+</div>
+
+
+<div>
+	<div>
+		Current history length is <span id="historyLength">???</span>
+	</div>
+	
+	<div>
+		Current src of the iframe is <span id="iframeSrc">about:blank</span>
+	</div>
+	
+<br>
+	Navigate the iframe with these buttons <br>
+	<button onclick="navigateIframe('about:blank')">navigate to about:blank</button>
+	<button onclick="navigateIframe('about:blank#foo')">navigate to about:blank#foo</button>
+	<button onclick="navigateIframe('https://example.com')">navigate to example.com</button>
+	<button onclick="history.back();">go back</button>
+	<button onclick="history.forward();">go forward</button>
+</div>
+<iframe id="iframe" src="about:blank"></iframe>
+
+</body>
