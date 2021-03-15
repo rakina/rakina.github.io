@@ -44,14 +44,13 @@
 	<ul>
 		<li>Start (about:blank) (Chrome & Firefox's history.length returns 0, Safari returns 1) </li>
 		<li>Start (about:blank) => about:blank#foo (All history.length returns 1 and replaces the previous about:blank entry) </li>
-		<li>Start (about:blank) => about:blank#foo => about:blank (All history.length returns 2, but you can't go back in Chrome using the browser UI, and when you go back with history.back() the about:blank#foo page is in a different origin from the opener page) </li>
+		<li>Start (about:blank) => about:blank#foo => about:blank (All history.length returns 2, when you go back with history.back() the about:blank#foo page is in a different origin from the opener page in Firefox & Safari) </li>
 		<li>Start (about:blank) => example.com (All browsers replaced the previous entry, Chrome & Firefox's history.length returns 0, Safari returns 1)</li>
 
 		<li>Start (about:blank) => example.com => about:blank (Chrome & Firefox's history.length returns 2, Safari returns 3)</li>
 
 		<li>Start (about:blank) => example.com => about:blank => go back (You can't go back in Chrome using the browser UI, but you can go back with history.back()/the "go back" button below)</li>
 
-		<li>Start (about:blank) => example.com => about:blank => go back => go forward with the UI (In Chrome the last about:blank page will have a different origin than the opener, while in Firefox and Safari it's still the same origin - you can test this by trying to click the "go back" button below)</li>
 	</ul>
 </div>
 
