@@ -19,7 +19,9 @@
 		openedWindow.location.href = url;
 		openedWindow.onload = () => {
 			if (openedWindow.document) {
-				openedWindow.document.body.innerHTML = "about:blank popup";
+				var docUrl = openedWindow.document.location.href;
+				if (docUrl == "about:blank" || docUrl == "about:blank#foo" || docUrl == "about:blank#bar")
+					openedWindow.document.body.innerHTML = "about:blank popup";
 			}
 			updateStats();
 		}
