@@ -1,0 +1,70 @@
+<!doctype html>
+<body>
+<script>
+	function updateStats() {
+		document.getElementById("historyLength").innerText = history.length;
+
+		var iframe = document.getElementById("iframe");
+		if (!iframe.contentDocument) {
+			document.getElementById("iframeSrc").innerText = "??? can't access contentDocument, probably cross-origin";
+			return;
+		}
+		document.getElementById("iframeSrc").innerText = iframe.contentDocument.location.href
+			+ " (same-origin as the main frame)";
+	}
+
+	function navigateIframe(url) {
+		document.getElementById("iframe").src = url;
+        updateStats();
+	}
+
+	window.onload = () => {
+		var iframe = document.getElementById("iframe");
+		if (!iframe.contentDocument)
+			return;
+		iframe.contentDocument.body.innerHTML = "about:blank iframe";
+		iframe.onload = () => {
+			if (iframe.contentDocument) {
+				iframe.contentDocument.body.innerHTML = "about:blank iframe, current URL is " + iframe.contentDocument.location.href;
+			}
+			updateStats();
+		}
+	}
+
+	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
+</script>
+
+<div>
+	This page has an iframe with an unset src attribute.<br>
+	Try to figure out its relation to session history. <br>
+
+	Fun cases:
+	<ul>
+		<li>Start (empty src) => about:blank#foo (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
+		<li>Start (empty src) => example.com (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
+		<li>Start (empty src) => example.com => go back (you can't go back in Chrome and Safari!) </li>
+		<li>Start (empty src) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
+	</ul>
+</div>
+
+
+<div>
+	<div>
+		Current history length is <span id="historyLength">???</span>
+	</div>
+	
+	<div>
+		Current src of the iframe is <span id="iframeSrc">empty</span>
+	</div>
+	
+<br>
+	Navigate the iframe with these buttons <br>
+	<button onclick="navigateIframe('about:blank')">navigate to about:blank</button>
+	<button onclick="navigateIframe('about:blank#foo')">navigate to about:blank#foo</button>
+	<button onclick="navigateIframe('https://example.com')">navigate to example.com</button>
+	<button onclick="history.back();">go back</button>
+	<button onclick="history.forward();">go forward</button>
+</div>
+<iframe id="iframe"></iframe>
+
+</body>
