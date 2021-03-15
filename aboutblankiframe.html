@@ -5,7 +5,7 @@
 		document.getElementById("historyLength").innerText = history.length;
 		
 		var iframe = document.getElementById("iframe");
-		document.getElementById("iframeSec").innerText = iframe.src;
+		document.getElementById("iframeSrc").innerText = iframe.src;
 
 		if (!iframe.contentDocument) {
 			document.getElementById("iframeURL").innerText = "??? can't access contentDocument, probably cross-origin";
