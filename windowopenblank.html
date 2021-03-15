@@ -2,101 +2,72 @@
 <body>
 <script>
 
-	var lastDocumentObject = null;
-	var lastWindowObject = null;
-	var lastIframeSrc = "";
-
-	function updateDocumentAndWindow() {
-		var iframe = document.getElementById("iframe");
-		document.getElementById("lastWindow").innerText = (iframe.contentDocument && lastWindowObject === iframe.contentDocument.window);
-		document.getElementById("lastDocument").innerText = (lastDocumentObject === iframe.contentDocument);
-		lastWindowObject = iframe.contentDocument.window;
-		lastDocumentObject = iframe.contentDocument;
-	}
+	var openedWindow;
 
 	function updateStats() {
-		document.getElementById("historyLength").innerText = history.length;
 
-		var iframe = document.getElementById("iframe");
-
-		if (!iframe.contentDocument) {
-			document.getElementById("iframeSrc").innerText = "??? can't access contentDocument, probably cross-origin";
-
-			if (lastIframeSrc != "???") {
-				lastIframeSrc = "???";
-				updateDocumentAndWindow();
-			}
+		if (!openedWindow || !openedWindow.document) {
+			document.getElementById("historyLength").innerText = "??? can't access document, probably cross-origin";
 
 			return;
 		}
 
-		if (lastIframeSrc != iframe.contentDocument.location.href) {
-			lastIframeSrc = iframe.contentDocument.location.href;
-			updateDocumentAndWindow();
-		}
-
-		document.getElementById("iframeSrc").innerText = lastIframeSrc + " (same-origin as the main frame)";
+		document.getElementById("historyLength").innerText = openedWindow.history.length;
 	}
 
-	function navigateIframe(url) {
-		document.getElementById("iframe").src = url;
-        updateStats();
-	}
-
-	window.onload = () => {
-		var iframe = document.getElementById("iframe");
-		if (!iframe.contentDocument)
-			return;
-		iframe.contentDocument.body.innerHTML = "about:blank iframe";
-		iframe.onload = () => {
-			if (iframe.contentDocument) {
-				iframe.contentDocument.body.innerHTML = "about:blank iframe";
+	function navigatePopup(url) {
+		openedWindow.location.href = url;
+		openedWindow.onload = () => {
+			if (openedWindow.document) {
+				openedWindow.document.body.innerHTML = "about:blank popup";
 			}
 			updateStats();
 		}
+        updateStats();
+	}
+
+	function openPopup() {
+		openedWindow = window.open();
+		openedWindow.document.body.innerHTML = "about:blank popup";
+
 	}
 
 	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
 </script>
 
 <div>
-	This page has an iframe that has its src attribute initiallly set to about:blank<br>
+	This page can open a popup window if you click this button =>
+		<button onclick="openPopup()">open about:blank popup</button><br>
 	Try to figure out its relation to session history. <br>
 
 	Fun cases:
 	<ul>
-		<li>Start (about:blank) => about:blank#foo (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
-		<li>Start (about:blank) => example.com (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
-		<li>Start (about:blank) => example.com => go back (you can't go back in Chrome!) </li>
-		<li>Start (about:blank) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
+		<li>Start (about:blank) (Chrome & Firefox's history.length returns 0, Safari returns 1) </li>
+		<li>Start (about:blank) => about:blank#foo (All history.length returns 1 and replaces the previous about:blank entry) </li>
+		<li>Start (about:blank) => about:blank#foo => about:blank (All history.length returns 2, but you can't go back in Chrome using the browser UI, and when you go back with history.back() the about:blank#foo page is in a different origin from the opener page) </li>
+		<li>Start (about:blank) => example.com (All browsers replaced the previous entry, Chrome & Firefox's history.length returns 0, Safari returns 1)</li>
+
+		<li>Start (about:blank) => example.com => about:blank (Chrome & Firefox's history.length returns 2, Safari returns 3)</li>
+
+		<li>Start (about:blank) => example.com => about:blank => go back (You can't go back in Chrome using the browser UI, but you can go back with history.back()/the "go back" button below)</li>
+
+		<li>Start (about:blank) => example.com => about:blank => go back => go forward with the UI (In Chrome the last about:blank page will have a different origin than the opener, while in Firefox and Safari it's still the same origin - you can test this by trying to click the "go back" button below)</li>
 	</ul>
 </div>
 
 
 <div>
 	<div>
-		Current history length is <span id="historyLength">???</span>
-	</div>
-	
-	<div>
-		Current src of the iframe is <span id="iframeSrc">about:blank</span>
-	</div>
-
-	<div>
-		Last navigation's window object is same as the current window? <span id="lastWindow">N/A</span>
-	</div>
-	<div>
-		Last navigation's document object is same as the current window? <span id="lastDocument">N/A</span>
+		Current history length of the opened window is <span id="historyLength">???</span>
 	</div>
 	
 <br>
-	Navigate the iframe with these buttons <br>
-	<button onclick="navigateIframe('about:blank')">navigate to about:blank</button>
-	<button onclick="navigateIframe('about:blank#foo')">navigate to about:blank#foo</button>
-	<button onclick="navigateIframe('https://example.com')">navigate to example.com</button>
-	<button onclick="history.back();">go back</button>
-	<button onclick="history.forward();">go forward</button>
+	Navigate the window with these buttons  <br>
+	<button onclick="navigatePopup('about:blank')">navigate to about:blank</button>
+	<button onclick="navigatePopup('about:blank#foo')">navigate to about:blank#foo</button>
+	<button onclick="navigatePopup('https://example.com')">navigate to example.com</button>
+	<button onclick="openedWindow.history.back();">go back (won't work if popup is cross-origin) </button>
+	<button onclick="openedWindow.history.forward();">go forward (won't work if popup is cross-origin)</button>
 </div>
-<iframe id="iframe" src="about:blank"></iframe>
 
 </body>
