@@ -41,10 +41,11 @@
 
 	Fun cases:
 	<ul>
-		<li>Start (empty src) => about:blank#foo (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
-		<li>Start (empty src) => example.com (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
-		<li>Start (empty src) => example.com => go back (you can't go back in Chrome and Safari!) </li>
-		<li>Start (empty src) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
+		<li>Start (about:blank) => about:blank#foo (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
+		<li>Start (about:blank) => about:blank#foo => go back (you can't go back in Chrome!) </li>
+		<li>Start (about:blank) => example.com (Chrome's & Safari's history.length stays the same, Firefox adds 1) </li>
+		<li>Start (about:blank) => example.com => go back (you can't go back in Chrome and Safari!) </li>
+		<li>Start (about:blank) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
 	</ul>
 </div>
 
