@@ -1,0 +1,87 @@
+<!doctype html>
+<body>
+<script>
+	function updateStats() {
+		document.getElementById("historyLength").innerText = history.length;
+
+		var iframe = document.getElementById("iframe");
+		if (!iframe.contentDocument) {
+			document.getElementById("iframeURL").innerText = "??? can't access contentDocument, probably cross-origin";
+			return;
+		}
+		document.getElementById("iframeURL").innerText = iframe.contentDocument.location.href
+			+ " (same-origin as the main frame)";
+
+		document.getElementById("iframeSrc").innerText = iframe.src;
+		document.getElementById("iframeSrcDoc").innerText = iframe.srcdoc;
+	}
+
+	function navigateIframe(url) {
+		var iframe = document.getElementById("iframe");
+		if (iframe.contentDocument) {
+			iframe.contentDocument.location.href = url;
+		} else {
+			iframe.src = url;
+		}
+        updateStats();
+	}
+
+	window.onload = () => {
+		var iframe = document.getElementById("iframe");
+		if (!iframe.contentDocument)
+			return;
+
+		iframe.onload = () => {
+			if (!iframe.srcDoc && iframe.contentDocument && (iframe.contentDocument.location.href == "about:blank" ||
+						       iframe.contentDocument.location.href == "about:blank#foo")) {
+				iframe.contentDocument.body.innerHTML = "about:blank iframe";
+			}
+			updateStats();
+		}
+	}
+
+	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
+</script>
+
+<div>
+	This page has an iframe that has its srcdoc attribute set to "foo" and its src attribute initiallly set to empty<br>
+	Try to figure out its relation to session history. <br>
+
+	Fun cases:
+	<ul>
+
+		<li>Start (about:srcdoc) => about:blank => go back (Chrome ends up with an about:srcdoc that has a different origin than the main frame) </li>
+		<li>Start (about:srcdoc) => about:blank => go back => go forward (Chrome ends up with an about:blank that has a different origin than the main frame) </li>
+		<li>Start (about:srcdoc) => example.com => go back (Chrome ends up with an about:srcdoc iframe that has a different origin than the main frame) </li>
+	</ul>
+</div>
+
+
+<div>
+	<div>
+		Current history length is <span id="historyLength">???</span>
+	</div>
+	
+	<div>
+		Current src of the iframe is <span id="iframeSrc"></span>
+	</div>
+
+	<div>
+		Current srcdoc of the iframe is <span id="iframeSrcDoc"></span>
+	</div>
+
+	<div>
+		Current URL of the iframe is <span id="iframeURL">about:blank</span>
+	</div>
+	
+<br>
+	Navigate the iframe with these buttons <br>
+	<button onclick="navigateIframe('about:blank')">navigate to about:blank</button>
+	<button onclick="navigateIframe('about:blank#foo')">navigate to about:blank#foo</button>
+	<button onclick="navigateIframe('https://example.com')">navigate to example.com</button>
+	<button onclick="history.back();">go back</button>
+	<button onclick="history.forward();">go forward</button>
+</div>
+<iframe id="iframe" srcdoc="srcdoc is set"></iframe>
+
+</body>
