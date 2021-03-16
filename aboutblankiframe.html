@@ -27,7 +27,8 @@
 		iframe.contentDocument.body.innerHTML = "about:blank iframe";
 		iframe.onload = () => {
 			if (iframe.contentDocument && (iframe.contentDocument.location.href == "about:blank" ||
-						       iframe.contentDocument.location.href == "about:blank#foo")) {
+						       iframe.contentDocument.location.href == "about:blank#foo" ||
+						       iframe.contentDocument.location.href == "about:blank#bar")) {
 				iframe.contentDocument.body.innerHTML = "about:blank iframe";
 			}
 			updateStats();
