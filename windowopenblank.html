@@ -17,21 +17,11 @@
 
 	function navigatePopup(url) {
 		openedWindow.location.href = url;
-		openedWindow.onload = () => {
-			if (openedWindow.document) {
-				var docUrl = openedWindow.document.location.href;
-				if (docUrl == "about:blank" || docUrl == "about:blank#foo" || docUrl == "about:blank#bar")
-					openedWindow.document.body.innerHTML = "about:blank popup";
-			}
-			updateStats();
-		}
-        updateStats();
+                updateStats();
 	}
 
 	function openPopup() {
 		openedWindow = window.open();
-		openedWindow.document.body.innerHTML = "about:blank popup";
-
 	}
 
 	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
