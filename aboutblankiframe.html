@@ -20,21 +20,6 @@
         	updateStats();
 	}
 
-	window.onload = () => {
-		var iframe = document.getElementById("iframe");
-		if (!iframe.contentDocument)
-			return;
-		iframe.contentDocument.body.innerHTML = "about:blank iframe";
-		iframe.onload = () => {
-			if (iframe.contentDocument && (iframe.contentDocument.location.href == "about:blank" ||
-						       iframe.contentDocument.location.href == "about:blank#foo" ||
-						       iframe.contentDocument.location.href == "about:blank#bar")) {
-				iframe.contentDocument.body.innerHTML = "about:blank iframe";
-			}
-			updateStats();
-		}
-	}
-
 	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
 </script>
 
