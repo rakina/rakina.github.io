@@ -3,49 +3,38 @@
 <script>
 	function updateStats() {
 		document.getElementById("historyLength").innerText = history.length;
-
+		
 		var iframe = document.getElementById("iframe");
+		document.getElementById("iframeSrc").innerText = iframe.src;
+
 		if (!iframe.contentDocument) {
-			document.getElementById("iframeSrc").innerText = "??? can't access contentDocument, probably cross-origin";
+			document.getElementById("iframeURL").innerText = "??? can't access contentDocument, probably cross-origin";
 			return;
 		}
-		document.getElementById("iframeSrc").innerText = iframe.contentDocument.location.href
+		document.getElementById("iframeURL").innerText = iframe.contentDocument.location.href
 			+ " (same-origin as the main frame)";
 	}
 
 	function navigateIframe(url) {
 		document.getElementById("iframe").src = url;
-        updateStats();
-	}
-
-	window.onload = () => {
-		var iframe = document.getElementById("iframe");
-		if (!iframe.contentDocument)
-			return;
-		iframe.contentDocument.body.innerHTML = "about:blank iframe";
-		iframe.onload = () => {
-			if (iframe.contentDocument && (iframe.contentDocument.location.href == "about:blank" ||
-						       iframe.contentDocument.location.href == "about:blank#foo") ) {
-				iframe.contentDocument.body.innerHTML = "about:blank iframe";
-			}
-			updateStats();
-		}
+        	updateStats();
 	}
 
 	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
 </script>
 
 <div>
-	This page has an iframe with an unset src attribute.<br>
+	This page has an iframe that has its src attribute initiallly unset<br>
 	Try to figure out its relation to session history. <br>
 
 	Fun cases:
 	<ul>
-		<li>Start (about:blank) => about:blank#foo (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
-		<li>Start (about:blank) => about:blank#foo => go back (you can't go back in Chrome!) </li>
-		<li>Start (about:blank) => example.com (Chrome's & Safari's history.length stays the same, Firefox adds 1) </li>
-		<li>Start (about:blank) => example.com => go back (you can't go back in Chrome and Safari!) </li>
-		<li>Start (about:blank) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
+		<li>Start (unset) => about:blank (Chrome's & Firefox's history.length stays the same, Safari adds 1) </li>
+		<li>Start (unset) => about:blank#foo (Chrome's history.length stays the same, Firefox & Safari adds 1) </li>
+		<li>Start (unset) => about:blank#foo => go back (you can't go back in Chrome!) </li>
+		<li>Start (unset) => example.com (Chrome's & Safari's history.length stays the same, Firefox adds 1) </li>
+		<li>Start (unset) => example.com => go back (you can't go back in Chrome and Safari!) </li>
+		<li>Start (unset) => about:blank#foo => example.com => go back (in Firefox, the about:blank#foo after going back is not in the same origin as the main frame) </li>
 	</ul>
 </div>
 
@@ -56,13 +45,17 @@
 	</div>
 	
 	<div>
-		Current src of the iframe is <span id="iframeSrc">empty</span>
+		Current src of the iframe is <span id="iframeSrc">about:blank</span>
+	</div>
+	<div>
+		Current URL of the iframe is <span id="iframeURL">about:blank</span>
 	</div>
 	
 <br>
 	Navigate the iframe with these buttons <br>
 	<button onclick="navigateIframe('about:blank')">navigate to about:blank</button>
 	<button onclick="navigateIframe('about:blank#foo')">navigate to about:blank#foo</button>
+	<button onclick="navigateIframe('title1.html')">navigate to title1.html</button>
 	<button onclick="navigateIframe('https://example.com')">navigate to example.com</button>
 	<button onclick="history.back();">go back</button>
 	<button onclick="history.forward();">go forward</button>
