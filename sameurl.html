@@ -1,0 +1,122 @@
+<!doctype html>
+<body>
+<script>
+	var buttonClick = 0;
+	function navigate(url) {
+		buttonClick++;
+		location.href = url;
+	}
+
+	function reload() {
+		location.reload();
+	}
+
+	function replaceState(state) {
+		buttonClick++;
+		history.replaceState(state, "");
+	}
+
+	function updateStats() {
+		document.getElementById("length").innerText = history.length;
+		document.getElementById("state").innerText = JSON.stringify(history.state);
+		document.getElementById("buttonClick").innerText = buttonClick;
+	}
+
+	setInterval(updateStats, 100);
+</script>
+
+Page to test what happens after same-URL navigations and reloads. See how history.state and scroll position changes as you reload or navigate to the same URL.
+<div>
+	Current history.length: <div id="length">???</div>
+</div>
+<div>
+	Current history.state: <div id="state">???</div>
+</div>
+<div>
+	You've clicked buttons <span id="buttonClick">0</span> times since the document is loaded!
+</div>
+<br>
+<button onclick="replaceState('foo')">replaceState the stateObj to "foo"</button><br>
+<button onclick="replaceState('bar')">replaceState the stateObj to "bar"</button><br>
+<button onclick="navigate(location.href)">navigate to the current URL</button><br>
+<button onclick="navigate('#bottom')">navigate to the anchor at the bottom of the page</button><br>
+<button onclick="reload()">location.reload()</button><br>
+
+<pre>
+Longcat is loooooooooooong
+    /\___/\
+   /       \
+  |  /\  /\ |
+  \     @   |
+   \   _|_ /
+   /       \______
+  / _______ ___   \
+  |_____   \   \__/
+   |    \__/
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   |       |
+   /        \
+  /   ____   \
+  |  /    \  |
+  | |      | |
+ /  |      |  \
+ \__/      \__/
+</pre>
+
+<div id="bottom">
+You've reached the bottom. Congrats!<br>
+<button onclick="navigate(location.href)">navigate to the current URL</button><br>
+<button onclick="reload()">location.reload()</button><br>
+</div>
+</body>
