@@ -7,6 +7,11 @@
 		location.href = url;
 	}
 
+	function replace(url) {
+		buttonClick++;
+		location.replace(url);
+	}
+
 	function reload() {
 		location.reload();
 	}
@@ -27,20 +32,30 @@
 
 Page to test what happens after same-URL navigations and reloads. See how history.state and scroll position changes as you reload or navigate to the same URL.
 <div>
+	<ul>
+		<li>Reload (no fragment)</li>
+		<li>Reload (with fragment)</li>
+		<li>Same-URL navigation (no fragment)</li>
+		<li>Same-URL navigation (with fragment)</li>
+	</ul>
+</div>
+
+<div>
 	Current history.length: <div id="length">???</div>
 </div>
 <div>
-	Current history.state: <div id="state">???</div>
+	Current history.state: <b><div id="state">???</div></b>
 </div>
 <div>
-	You've clicked buttons <span id="buttonClick">0</span> times since the document is loaded!
+	You've clicked buttons <b><span id="buttonClick">0</span> times</b> since the document is loaded! <br>
+	(if it says 0, your document might be newly loaded)
 </div>
 <br>
 <button onclick="replaceState('foo')">replaceState the stateObj to "foo"</button><br>
-<button onclick="replaceState('bar')">replaceState the stateObj to "bar"</button><br>
-<button onclick="navigate(location.href)">navigate to the current URL</button><br>
-<button onclick="navigate('#bottom')">navigate to the anchor at the bottom of the page</button><br>
+<button onclick="navigate(location.href)">location.href = location.href</button><br>
+<button onclick="replace(location.href)">location.replace(location.href)</button><br>
 <button onclick="reload()">location.reload()</button><br>
+<button onclick="navigate('#bottom')">navigate to the anchor at the bottom of the page</button><br>
 
 <pre>
 Longcat is loooooooooooong
@@ -82,6 +97,9 @@ Longcat is loooooooooooong
    |       |
    |       |
    |       |
+<button onclick="navigate(location.href)">location.href = location.href</button>
+<button onclick="replace(location.href)">location.replace(location.href)</button>
+<button onclick="reload()">location.reload()</button>
    |       |
    |       |
    |       |
@@ -116,7 +134,8 @@ Longcat is loooooooooooong
 
 <div id="bottom">
 You've reached the bottom. Congrats!<br>
-<button onclick="navigate(location.href)">navigate to the current URL</button><br>
+<button onclick="navigate(location.href)">location.href = location.href</button><br>
+<button onclick="replace(location.href)">location.replace(location.href)</button><br>
 <button onclick="reload()">location.reload()</button><br>
 </div>
 </body>
