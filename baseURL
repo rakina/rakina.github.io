@@ -1,0 +1,6 @@
+<!doctype html>
+<head>
+	<base href="chrome-error://chromewebdata">
+</head>
+
+<iframe src="/">
