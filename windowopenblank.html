@@ -17,7 +17,18 @@
 
 	function navigatePopup(url) {
 		openedWindow.location.href = url;
-                updateStats();
+	}
+	
+	function writePopup(url) {
+		openedWindow.document.write("foo");
+	}
+	
+	function pushState() {
+		openedWindow.history.pushState({}, '', "foo.html")
+	}
+
+	function replaceState() {
+		openedWindow.history.replaceState({}, '', "bar.html")
 	}
 
 	function openPopup() {
@@ -27,6 +38,7 @@
 	function openAboutBlankPopup() {
 		openedWindow = window.open("about:blank");
 	}
+	
 
 	setInterval(updateStats, 100); // update history.length & iframe URL info every 100 milliseconds
 </script>
@@ -62,6 +74,9 @@
 	<button onclick="navigatePopup('about:blank')">navigate to about:blank</button>
 	<button onclick="navigatePopup('about:blank#foo')">navigate to about:blank#foo</button>
 	<button onclick="navigatePopup('about:blank#bar')">navigate to about:blank#bar</button>
+	<button onclick="writePopup()">document.write("foo") on the popup</button>
+	<button onclick="pushState()">history.pushState({}, "", "foo.html") on the popup</button>
+	<button onclick="replaceState()">history.replaceState({}, "", "bar.html") on the popup</button>
 	<button onclick="navigatePopup('title1.html')">navigate to title1.html</button>
 	<button onclick="navigatePopup('https://example.com')">navigate to example.com</button>
 	<button onclick="openedWindow.history.back();">go back (won't work if popup is cross-origin) </button>
