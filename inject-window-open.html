@@ -15,7 +15,7 @@
     function injectTextAfterLoad() {
       let w = window.open();
       w.onload = () => {
-        w.document.body.innerHTML = "Text injected after 'load' event";
+        w.document.body.innerHTML = "Text injected after 'load' event on the window";
       };
     }
 
