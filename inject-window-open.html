@@ -2,10 +2,10 @@
 <head></head>
 <body>
   <p>This page injects content into its opened windows</p>
-  <button onclick="injectTextImmediately()">Open window & inject text immediately</button>
-  <button onclick="injectTextAfterLoad()">Open window & inject text after load</button>
-  <button onclick="injectTextAfterTimeout(0)">Open window & inject text after setTimeout(0)</button>
-  <button onclick="injectTextAfterTimeout(1)">Open window & inject text after setTimeout(1)</button>
+  <button onclick="injectTextImmediately()">window.open() & inject text immediately</button>
+  <button onclick="injectTextAfterLoad()">window.open() & inject text after load</button>
+  <button onclick="injectTextAfterTimeout(0)">window.open() & inject text after setTimeout(0)</button>
+  <button onclick="injectTextAfterTimeout(1)">window.open() & inject text after setTimeout(1)</button>
   <script>
     function injectTextImmediately() {
       let w = window.open();
