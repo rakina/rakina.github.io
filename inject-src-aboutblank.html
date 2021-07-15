@@ -1,0 +1,41 @@
+<html>
+<head></head>
+<body>
+  <p>This page injects content into iframes with src="about:blank".
+  <div id="frameContainer">
+  	<iframe id="frame1" src="about:blank"></iframe>
+  </div>
+  <script>
+    let f1 = document.getElementById("frame1");
+    f1.contentDocument.body.innerHTML = "Text injected into pre-existing iframe";
+
+    let frameContainer = document.getElementById("frameContainer");
+
+    let f2 = document.createElement("iframe");
+    f2.src = "about:blank";
+    frameContainer.appendChild(f2);
+    f2.contentDocument.body.innerHTML = "Text injected immediately into dynamically inserted iframe";
+
+    let f3 = document.createElement("iframe");
+    f3.src = "about:blank";
+    frameContainer.appendChild(f3);
+    f3.contentWindow.onload = () => {
+    	f3.contentDocument.body.innerHTML = "Text injected into dynamically inserted iframe after its 'load' event";
+    };
+
+    let f4 = document.createElement("iframe");
+    f4.src = "about:blank";
+    frameContainer.appendChild(f4);
+    setTimeout(() => {
+    	f4.contentDocument.body.innerHTML = "Text injected into dynamically inserted iframe with setTimeout(0)";
+    }, 0);
+
+    let f5 = document.createElement("iframe");
+    f5.src = "about:blank";
+    frameContainer.appendChild(f5);
+    setTimeout(() => {
+    	f5.contentDocument.body.innerHTML = "Text injected into dynamically inserted iframe with setTimeout(1)";
+    }, 1);
+  </script>
+</body>
+</html>
