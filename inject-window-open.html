@@ -1,0 +1,31 @@
+<html>
+<head></head>
+<body>
+  <p>This page injects content into its opened windows</p>
+  <button onclick="injectTextImmediately()">Open window & inject text immediately</button>
+  <button onclick="injectTextAfterLoad()">Open window & inject text after load</button>
+  <button onclick="injectTextAfterTimeout(0)">Open window & inject text after setTimeout(0)</button>
+  <button onclick="injectTextAfterTimeout(1)">Open window & inject text after setTimeout(1)</button>
+  <script>
+    function injectTextImmediately() {
+      let w = window.open();
+      w.document.body.innerHTML = "Text injected immediately";
+    }
+
+    function injectTextAfterLoad() {
+      let w = window.open();
+      w.onload = () => {
+        w.document.body.innerHTML = "Text injected after 'load' event";
+      };
+    }
+
+    function injectTextAfterTimeout(timeout) {
+      let w = window.open();
+      setTimeout(() => {
+        w.document.body.innerHTML = `Text injected after setTimeout(${timeout})`;
+      }, timeout);
+    }
+
+  </script>
+</body>
+</html>
