@@ -1,0 +1,50 @@
+<!doctype HTML>
+<script>
+  function log(s) {
+    console.log(s);
+    let d = document.createElement("div");
+    d.innerText = s;
+    document.getElementById("log").appendChild(d);
+  }
+  function install() {
+    window.addEventListener('unload', function(event) {
+      log('unloaded.');
+      localStorage.setItem("unloadTime", new Date());
+    });
+    log('installed unload handler.');
+  }
+  const events = [
+    "pagehide", "pageshow",
+    "load"
+  ];  
+
+  const eventLogger = event => {
+    switch (event.type) {
+    case "pagehide":
+    case "pageshow":
+      let isPersisted = event.persisted ? "persisted" : "not persisted";
+      log('Event: ' + event.type + ' - ' + isPersisted);
+      if (event.type == "pagehide") {
+        localStorage.setItem("pagehideTime", new Date());
+        localStorage.setItem("pagehidePersisted", event.persisted);
+      }
+      break;
+    default:
+      log('Event: ' + event.type);
+      break;
+    }
+  };
+
+  events.forEach(eventName =>
+    window.addEventListener(eventName, eventLogger)
+  );
+
+</script>
+<div>
+  <h3>This page has a pagehide handler. You can install unload handler by clicking link below.</h3>
+  <a href="javascript:install()">install unload handler</a><br/>
+  <a href="unloadTimePrinter.html">go to page that prints the unload/pagehide times</a>
+<div>
+
+<h4>Log of events</h4>
+<div id="log"></div>
