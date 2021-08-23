@@ -2,7 +2,7 @@
 <script>
   localStorage.setItem("unloadTime", "never installed");
   localStorage.setItem("pagehideTime", "never fired");
-  
+
   function log(s) {
     console.log(s);
     let d = document.createElement("div");
@@ -15,6 +15,7 @@
       localStorage.setItem("unloadTime", new Date());
     });
     log('installed unload handler.');
+    localStorage.setItem("unloadTime", "installed but never fired");
   }
   const events = [
     "pagehide", "pageshow",
