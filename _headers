@@ -1,4 +1,4 @@
 # a path:
-/unloadtester_cachecontrolnostore.html
+/unloadTester_nocache.html.html
   # headers for that path:
   Cache-control: no-store
