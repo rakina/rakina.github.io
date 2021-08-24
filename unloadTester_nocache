@@ -1,0 +1,61 @@
+<!doctype HTML>
+<script>
+  localStorage.setItem("unloadTime", "never installed");
+  localStorage.setItem("beforeunloadTime", "never installed");
+  localStorage.setItem("pagehideTime", "never fired");
+
+  function log(s) {
+    console.log(s);
+    let d = document.createElement("div");
+    d.innerText = s;
+    document.getElementById("log").appendChild(d);
+  }
+  function install(event) {
+    window.addEventListener(event, function(e) {
+      log(event + ' fired.');
+      localStorage.setItem(event + "Time", new Date());
+      e.preventDefault();
+    });
+    log('installed ' + event + ' handler.');
+    localStorage.setItem(event + "Time", "installed but never fired");
+  }
+  const events = [
+    "pagehide", "pageshow",
+    "load"
+  ];  
+
+  const eventLogger = event => {
+    switch (event.type) {
+    case "pagehide":
+    case "pageshow":
+      let isPersisted = event.persisted ? "persisted" : "not persisted";
+      log('Event: ' + event.type + ' - ' + isPersisted);
+      if (event.type == "pagehide") {
+        localStorage.setItem("pagehideTime", new Date());
+        localStorage.setItem("pagehidePersisted", event.persisted);
+      }
+      break;
+    default:
+      log('Event: ' + event.type);
+      break;
+    }
+  };
+
+  events.forEach(eventName =>
+    window.addEventListener(eventName, eventLogger)
+  );
+
+</script>
+<div>
+  <h3>This page has a pagehide handler and is served with Cache-control: no-store so that it won't be bfcached (for now!)</h3>
+  <h3> You can install unload and beforeunload handlers by clicking the links below.</h3>
+  <a href="javascript:install('unload')">install unload handler</a><br/>
+  <a href="javascript:install('beforeunload')">install beforeunload handler</a><br/>
+  <h3> You can test navigations by clicking the links below.</h3>
+  <a href="unloadTimePrinter.html">go to page that prints the unload/pagehide times</a> <br/>
+  <a href="http://ecosimulation.com/cgi-bin/longAccessTime.py?time=10">go to page that takes a long time to load so it's easy to cancel through browser UI</a>
+<div>
+<div>
+
+<h4>Log of events</h4>
+<div id="log"></div>
