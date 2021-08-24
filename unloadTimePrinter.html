@@ -1,12 +1,15 @@
 <!doctype HTML>
 <body>
-	This page prints the time the unload & pagehide handlers of "unloadtester.html" last ran.
+	This page prints the time the unload, beforeunload & pagehide handlers of "unloadtester.html" last ran.
 	<h3>unloadTime from unloadtester.html is:</h3>
 	<div id='unloadTime'> </div>
+	<h3>beforeunloadTime from unloadtester.html is:</h3>
+	<div id='beforeunloadTime'> </div>
 	<h3>pagehideTime from unloadtester.html is:</h3>
 	<div id='pagehideTime'> </div>
 </body>
 <script>
 	unloadTime.innerHTML = localStorage.getItem("unloadTime");
+	beforeunloadTime.innerHTML = localStorage.getItem("beforeunloadTime");
 	pagehideTime.innerHTML = localStorage.getItem("pagehideTime") +  " (last e.persisted is " + localStorage.getItem("pagehidePersisted") + ")";
 </script>
