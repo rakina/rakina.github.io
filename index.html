@@ -1,45 +1,259 @@
 <!doctype html>
 <head>
-    <!-- kyaa :3 -->
     <meta charset="utf-8">
     <title>Rakina's site</title>
     <meta name="description" content="A simple website about Rakina">
     <meta name="author" content="Rakina Zata Amni">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon"href="img/favicon3.ico" />
-    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="js/animatescroll.js"></script>
-  
+	<style>
+		div {
+  			content-visibility: auto;
+		}
+	</style>
 </head>
 
 <body>
-    
+    <h1>Rakina's site</h1>
+    <i>Last updated: Dec 2021</i><br>
+    Quick anchors:
+    <ul>
+    	<li><a href="#intro">Intro</a></li>
+    	<li><a href="#work">Work Stuff</a></li>
+    	<li><a href="#personal">Personal Stuff</a></li>
+    	<li><a href="#contact">Contact</a></li>
+    </ul>
+    <div id="intro" style="contain-intrinsic-size: 500px;">
+    	<h2>Intro</h2>
+        You have reached <a target="_blank" href="https://github.com/rakina">Rakina Zata Amni</a>'s personal website.<br>
+    	This is what I look like in Spring:<br>
+    	<img src="https://media-exp1.licdn.com/dms/image/C5603AQE8KrGZomvp9A/profile-displayphoto-shrink_400_400/0/1617022777882?e=1643846400&v=beta&t=VSKYytf-QQPxKNO2d4WCMYi_Qi5hgYKBIo1jmhfO1O8" width="128px" height="128px"/><br>
+        I was born and raised in Indonesia, and I moved to Tokyo, Japan when I was 20 to start my job at Google.<br>
+        I'm currently a Senior Software Engineer at
+        <span style="color: blue;">G</span><span style="color: red;">o</span><span style="color: khaki;">o</span><span style="color: blue;">g</span><span style="color: green;">l</span><span style="color: red;">e</span>,
+        working on Chrome's Security Architecture team
+        (the team formerly known as <a target="_blank" href="https://www.chromium.org/Home/chromium-security/site-isolation">Site Isolation</a>).<br>
+        Despite having worked on a browser since 2017, I'm still not great at web development, so this site is just plain HTML and some CSS :)<br>
+    </div>
+    <div id="work" style="contain-intrinsic-size: 3000px;">
+    	<h2>Work stuff</h2>
+    	<h3>Browser engineering @ Google Chrome (2017 - now)</h3>
+    	<div>
+    		I joined the Google's Chrome team as a Software Engineer straight out of undergrad in 2017,
+	    	and became a Senior Software Engineer in 2020.<br>
+	    	I love working on Chrome and the web platform, and have contributed to multiple areas, from the rendering pipeline to the navigation architecture to cross-browser web platform standardization.<br>
+		    One of the greatest part about working on an open source browser and the web platform is I can talk about most of it anywhere I want to!<br>
+		   	So, here are some selected highlights: (<b>Note: you can click the TL;DRs to expand/close details</b>, thanks to the magic of HTML):</br>
+	    </div>
+	    <ul>
+    		<li>
+	    		<h3>Navigation & Security Architecture (2020 - now)</h3>
+		    	<details>
+		    		<summary><b>TL;DR: Making Chrome's navigation architecture simpler and more secure!</b></summary>
+		    		<ul>
+		    			<li>
+		    				Navigation is what happens when you instruct Chrome to go to a webpage, through clicking links, updating the adress bar, etc.<br>
+		    				It feels simple, but see this <a target="_blank" href="https://www.youtube.com/watch?v=OFIvyc1y1ws"> great Chrome University video</a> on how many things are involved in navigation!
+		    			</li>
+		    			<li>
+		    				I am <b>one of the owners of the navigation code</b>
+		    				(<a target="_blank" href="https://source.chromium.org/chromium/chromium/src/+/main:content/browser/renderer_host/OWNERS;l=19;drc=eace61a13d7b5c145076e2bd92cfbe8fbff6253b">content/browser/renderer_host</a>)
+		    				in Chromium.<br>
+		    				As a member of the Chrome Security Architecture team, I also often guide engineers and teams needing help with navigation.<br>
+		    				If you are changing code in that area, please feel free to send the CL to me, or ask questions to navigation-dev@chromium.org!
+		    			</li>
+		    			<li>
+		    				I have been working on <b>reducing the dependency of Chrome's browser process on the untrusted renderer process on navigations</b>.<br>
+		    				See also my <b><a target="_blank" href="https://www.youtube.com/watch?v=VrEP7SPfQVM&t=2000s">BlinkOn Lightning Talk</a></b>
+		    				(and the <a target="_blank" href="https://docs.google.com/presentation/d/1D5TsL4DdEaIwdMWSFpaXtX090URFeHNDxbgjoS3YrT4/edit#slide=id.p">slides</a>),
+		    				where I explain this project through Spongebob memes in front of 100+ people (virtually, thanks COVID!)
+		    			</li>
+		    			<li>
+		    				I am also working on RenderDocument, a large refactoring/rearchitecturing project that improves the representation of frames and documents in the browser process.
+		    			</li>
+		    		</ul>
+		    	</details>
+	    	</li>
+	    	<li>
+	    		<h3 id="bfcache"><a target="_blank" href="https://web.dev/bfcache">Back/Forward Cache (BFCache)</a> (2019 - now) </h3>
+		    	<details>
+		    		<summary><b>TL;DR: Caching pages for instant back/forward navigation.</b></summary>
+		    		<ul>
+		    			<li>
+		    				With this feature, Chrome can <b>cache pages that you recently visit to allow instant back/forward navigation to them</b>.<br>
+		    				See this <a target="_blank" href="https://web.dev/bfcache">web.dev article</a>
+		    				and my <a target="_blank" href= https://youtu.be/khFus6YQi8w>Indonesian (with English subs) video</a> on what that means!
+		    			</li>
+		    			<li>
+		    				I was <b>one of the main engineers</b> that helped implement & ship the initial version of Back/Forward Cache,
+		    				and I am one of the owners of BFCache in the codebase.
+		    			</li>
+		    			<li>
+		    				I <b>improved the hit rate (page caching & restore rate) after shipping by more than 2x</b>,<br>
+		    				through investigating what's preventing caching and designing & implementing solutions for them!<br>
+		    				The most notable one is adding <b><a target="_blank" href="https://groups.google.com/a/chromium.org/g/blink-dev/c/XS9VnYQoaQE/m/ZODtCQs5BQAJ">same-site navigation support</a></b>.
+		    			</li>
+		    			<li>
+		    				I'm actively <b>leading the <a target="_blank" href="https://github.com/whatwg/html/issues/5880">standardization of back/forward cache</a></b>.<br>
+		    				Back/Forward Cache exists in Chrome, Firefox, and Safari, and <b>we want BFCache's interaction with web pages to be interoperable.</b> <br>
+		    				Also, most existing web platform features used to not define what happens to them when a webpage using them is cached,<br>
+		    				lowering the hit rate or even causing undefined behavior. We are actively fixing those specifications.<br>
+		    				I've also <b>updated <a target="_blank" href="https://w3ctag.github.io/design-principles/#support-non-fully-active">W3C's Design Principles doc to add BFCache considerations</a></b>,
+		    				so that future web platform APIs are designed with back/forward cache in mind!
+		    			</li>
+		    		</ul>
+		    	</details>
+	    	</li>
+	    	<li>
+	    		<h3><a target="_blank" href="https://web.dev/content-visibility">content-visibility</a> (2018 - 2019) </h3>
+		    	<details>
+		    		<summary><b>TL;DR: Lazy rendering for webpage contents outside of the browser's viewport.</b></summary>
+		    		<ul>
+		    			<li>
+		    				CSS feature to allow browsers <b>not render parts of a webpage that are not visible to the user</b>, saving a lot of rendering cost! (8x in the article below)<br>
+		    				See this <a target="_blank" href="https://web.dev/content-visibility">web.dev article</a> on what that means!<br>
+		    			</li>
+		    			<li>
+		    				I was <b>one of two main engineers</b> that helped implement & ship the feature.<br>
+		    				I designed and implemented the CSS pipeline optimizations that's needed to save rendering cost,<br>
+		    				made it work with various features like find-in-page,
+		    				and helped parts of the standardization.
+		    			</li>
+		    			<li>
+		    				<b>Fun-fact: this page uses content-visibility too :)</b>
+		    			</li>
+		    			<li>
+		    				Another fun fact: The project went through various renames, including: Find-in-page API -> Searchable Invisible DOM -> Display Locking, rendersubtree -> content-visibility. Fun times!
+		    			</li>
+		    		</ul>
+		    	</details>
+	    	</li>
+	    	<li>
+	    		<h3>Web Platform Standards (2017 - now) </h3>
+	    		<details>
+		    		<summary><b>TL;DR: Interoperability on back/forward cache, focus, and weird parts of session history and navigation.</b></summary>
+		    		<ul>
+		    			<li>
+		    				I have represented Google in various web platform standard bodies (W3C, WHATWG, CSSWG), in online (Github, etc) and offline (TPAC, etc) standards discussions.<br>
+		    				I have improved the state of standardization and interoperability for various web platform features, impacting Chrome, Firefox, Safari, and other browsers!
+		    			</li>
+		    			<li>
+		    				I'm actively <b>leading the <a target="_blank" href="https://github.com/whatwg/html/issues/5880">standardization of back/forward cache</a></b>.<br>
+		    				See the <a href="#bfcache">Back/Forward Cache section</a> of this page for more details.
+		    			</li>
+		    			<li>
+		    				I helped improve the specification for focus in the HTML standard, which wasn't in a good state and not ready for additions like WebComponents.<br>
+		    				See my <b><a target="_blank" href="https://blog.whatwg.org/focusing-on-focus">WHATWG Blog post</a></b> about it!
+		    			</li>
+		    			<li>
+		    				I standardized, implemented and shipped
+		    				<a target="_blank" href="https://developers.google.com/web/updates/2019/02/constructable-stylesheets">Constructable Stylesheets</a>,
+		    				which allows for lightweight styling of ShadowDOM with reusable CSS objects.<br>
+		    			</li>
+		    			<li>
+		    				Related to my navigation work, I like to standardize <b>weird corner cases related to session history and navigation</b> that I encounter, like the initial empty document. <br>
+		    				See also my <b><a target="_blank" href="https://youtu.be/-P_WMKaIhfA?t=1682">BlinkOn Lightning Talk</a></b>
+		    				(and the <a target="_blank" href="https://docs.google.com/presentation/d/1WyXLGiOUlM5teP_G-RO21jJ1-CYLsZKm0FZ2WH7xgkA/edit#slide=id.p">slides</a>),
+		    				where I try to explain the horrors of doing so.
+		    			</li>
+		    		</ul>
+		    	</details>
+	    	</li>
+	    </ul>
 
-    <div id = "home" class="halaman"> 
-        <div class = "ch-item"> 
-            <div class="ch-info">
-                <h1>Rakina Zata<br> Amni</h1>
-                <hr style = "width: 120px; ">
-                <p>Yep, that's me. </p>
-            </div>
-        </div>
-        <h2> Welcome! </h2>
-        <div id = "tulisan">
-            <p> You have reached my personal website.</p>
-            <hr style = "width: 200px;">
-            <p>Well, not really.
-                <br>
-                I'm still building the remaining of this site, so stay tuned!
-                <br><br> 
-                In the meantime, you can find me at these online profiles:
-            </p>
-        </div>
-        <div id = "social">
-
-                <a href = "http://facebook.com/rakinazata" target="_blank"><img src = "img/facebook.png"></img></a><a href = "http://twitter.com/rakinazata" target="_blank"><img src = "img/twitter.png"></img></a><a href = "http://plus.google.com/+RakinaZataAmni/" target="_blank"><img src = "img/gplus.png"></img></a><a href = "http://makanbeling.wordpress.com" target="_blank"><img src = "img/wordpress.png"></img></a><a href = "http://github.com/rakina" target="_blank"><img src = "img/github.png"></img></a><a href = "http://id.linkedin.com/pub/rakina-zata-amni/41/6a2/436/" target="_blank"><img src = "img/linkedin.png"></img></a><a href = "http://codeforces.com/profile/makanbeling" target="_blank"><img src = "img/cf.png"></img></a><a href = "http://community.topcoder.com/tc?module=MemberProfile&cr=22909826" target="_blank"><img src = "img/tc.png"></img></a> 
-
-        </div>
-
+    	<h3>Older work stuff</h3>
+	    <div>
+	    	When I was an undergrad in University of Indonesia (2013 - 2017), I tried multiple internships and part-time jobs:
+	    	<ul>
+	    		<li>
+	    			<b>Part-time Software Engineer at <a target="_blank" href="https://traveloka.com">Traveloka</a></b> in Jakarta (Indonesia), Jan-Aug 2017. <br>
+	    			Worked on the Accomodation team on backend services for the Hotel product.
+	    		</li>
+	    		<li>
+	    			<b>Software Engineering Intern at <a target="_blank" href="https://google.com">Google</a></b> in Mountain View (CA, USA), Jun-Aug 2016.<br>
+	    			Worked on a Natural Language Generation data collection system for a Research & Machine Intelligence team.
+	    		</li>
+	    		<li>
+	    			<b>Software Engineering Intern at <a target="_blank" href="https://squareup.com">Square</a></b> in San Francisco (CA, USA), Jul-Sep 2015.<br>
+	    			Worked on a marketing & recommendation system for the Caviar team.
+	    		</li>
+	    		<li>
+	    			<b>Software Engineering Intern at <a target="_blank" href="https://www.linkedin.com/company/gdp-labs/">GDP Labs</a></b> in Jakarta (Indonesia), Jan-Feb 2015.<br>
+	    			Worked on deploying a CI/CD system with an automatic vulnerability scanner.
+	    		</li>
+	    	</ul>
+	    	If you are a CS student interested in doing software engineering internships but don't know how to even start, I felt the same way a couple years ago too!<br>
+	    	So, I wrote a <a target="_blank" href="https://blog.rakina.fyi/2016/12/09/frequently-asked-questions-about-internships/">hopefully-still-relevant guide</a> on how to approach it.<br>
+	    	Feel free to <a href="#contact">shoot me questions</a> after you read them.
+	    </div>
+    </div>
+    <div id="personal" style="contain-intrinsic-size: 1000px;">
+    	<h2>Personal stuff</h2>
+	    I love bullet points, so here's some:
+        <ul>
+        	<li>
+	    		I am an Indonesian and a woman, and I love to give back to <b>Indonesian and women-in-tech communities and efforts</b>.<br>
+	    		For the past couple of years, I've spoken at multiple tech talks & panel sessions to share my work and personal experiences in tech.<br>
+	    		Feel free to <a href="#contact">contact me</a> with any opportunity to do that!<br>
+	    	</li>
+	    	<li>
+	    		I also <b>mentor students/early career engineers through Google's community efforts</b> such as the
+	    		<a target="_blank" href="https://grow.google/intl/id_id/bangkit/">Bangkit program</a> (for those in Indonesia)
+	    		and the <a target="_blank" href="https://careers.google.com/students/engineering-and-technical-internships/?hl=ja_JP">STEP Development Course</a> (for those in Japan).<br>
+	    		Feel free to sign up for them!
+	        </li>
+	        <li>
+	        	In a previous life, I was an annoying teenager that based my whole personality on liking computer science,
+		        especially <a target="_blank" href="https://en.wikipedia.org/wiki/Competitive_programming">competitive programming</a>,
+		        despite not being the greatest at it :)<br>
+		        Some selected highlights from that time period: <br>
+		        <ul>
+		        	<li>
+		        		My team (Awrakin - best name ever!) qualified for and competed in the <a target="_blank" href="https://icpc.global/community/results-2017">ACM ICPC World Finals in 2017</a>.
+		        		We didn't win it, but it was fun!
+		        	</li>
+		        	<li>
+		        		I got the <a target="_blank" href="https://toki.id/hall-of-fame-apio/">highest bronze medal in the Asia Pacific Informatics Olympiad</a> (2013).
+		        		I was literally 1 point away from Silver and still a bit salty years later.
+		        	</li>
+		        	<li>
+		        		I got a gold medal in Indonesia's National Science Olympiad in Informatics (2012).<br>
+		        		I then attended the TOKI training camps for the International Olympiad of Informatics and got to the penultimate stage (top 8 students).<br>
+		        		I loved the experience so much, and voluntereed to be part of the TOKI scientific committee for the 2014-2015 period!
+		        	</li>
+		        	<li>
+		        		I won a bunch of national programming contests in high school and undergrad.<br>
+		        	 	The most important part is that those unknowingly helped me practice for SWE Internship interviews before I know they were a thing :)
+		        	 </li>
+		        </ul>
+	    	</li>
+	        <li>
+	        	My favorite things recently are:
+	        	<ul>
+	        		<li>Studying security stuff, to be better at my job :)</li>
+	        		<li>Snowboarding - I started in Winter 2020 and quickly fell in love with it (after hating it for a bit :) )</li>
+	        		<li>Scuba Diving - I have the SSI Open Water & Advanced Adventurer certification, and eager to learn more!</li>
+	        		<li>
+	        			Traveling - When it was a thing. Pre-2020, I used to do a lot of business travel to conferences and Google offices, and often do personal trips after.<br>
+	        			See <a target="_blank" href="https://twitter.com/rakinazata/status/1086949580187418624"> thread on my travels in 2019!</a>
+	        		</li>
+	        		<li>Learning 日本語 to survive - I passed JLPT N3 (Intermediate) in 2018, and have been working towards JLPT N2 (Advanced) ever since (got lazy :) )</li>
+	        		<li>Trying out new hobbies: Thanks to COVID, I've tried various things to varying degrees of success:
+	        			<ul>
+	        				<li>Stand-up paddleboarding - Great, but I need to live near a large body of water...</li>
+	        				<li>Surfing - SUP was a better experience, but eager to try again :)</li>
+	        				<li>Gardening - harvested lots of tomatoes before my neighbor complained and I stopped :(</li>
+	        				<li>Baking, cooking Indonesian food - Great when I have time :)</li>
+	        			</ul>
+	        		 Happy to try more things!</li>
+	        	</ul>
+	        </li>
+	    </ul>
+    </div>
+    <div id="contact" style="contain-intrinsic-size: 300px;">
+    	<h2>Contact</h2>
+    	To reach me for work-related stuff, you can email me at <b>rakina[at]{google.com, chromium.org}</b>
+    	or mention my github <a target="_blank" href="https://github.com/rakina">@rakina</a>.<br>
+    	You can also reach me on Twitter: <a target="_blank" href="https://twitter.com/rakinazata">@rakinazata</a>.<br>
+    	Also <a target="_blank" href="https://www.linkedin.com/in/rakinazata/">LinkedIn</a>, I guess.
     </div>
     
 </body>
