@@ -14,9 +14,18 @@
   <ul style="font-size: 40pt">
     <li> Latest pageshow persisted value: <b id='persistedValue'>false</b>.</li>
     <li> This document has been loaded <b id='shownValue'>N</b> times before.</li>
+    <li> NotRestoredReasons: <b style="font-size: 30pt"  id='nrrValue'></b> </li>
   </ul>
   <button  style="font-size: 20pt" onclick="history.back();">Go back</button>
   <button  style="font-size: 20pt" onclick="history.forward();">Go forward</button>
   <button   style="font-size: 20pt" onclick="location.href='bfcache.html';">Go to bfcache.html</button>
   <button   style="font-size: 20pt" onclick="location.href='bfcache2.html';">Go to bfcache2.html</button>
+  <script>
+
+	  for (let navEntry of  performance.getEntriesByType('navigation')) {
+	  	let nrr = navEntry.notRestoredReasons;
+	  	document.getElementById('nrrValue').innerHTML += "<p>"+ JSON.stringify(nrr) + "</p>";
+	  }
+
+  </script>
 </body>
