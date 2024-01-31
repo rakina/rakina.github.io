@@ -8,9 +8,23 @@
     shownCounter++;
   });
   let bcs = [];
-  function addBlockingFeature() {
-    document.body.innerHTML += "<div>Added BFCache blocking feature</div>";
+  function addNonStickyBlockingFeature() {
+    document.body.innerHTML += "<div>Added non-sticky BFCache blocking feature (RenderFrameHost will still swap on navigation) </div>";
     bcs.push(new BroadcastChannel("internal_notification" + shownCounter));
+  }
+
+  let resolve, reject;
+  const p = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+  function addStickyBlockingFeature() {
+      document.body.innerHTML += "<div>Added sticky BFCache blocking feature (RenderFrameHost won't swap on same-site nav)</div>"
+      navigator.locks.request(
+    "my_resource",
+    // Lock is acquired.
+    (lock) => p, // Now lock will be held until either resolve() or reject() is called.
+  );
   }
 </script>
 <style>
@@ -51,7 +65,8 @@
   <button  style="font-size: 20pt" onclick="history.forward();">Go forward</button>
   <button   style="font-size: 20pt" onclick="location.href='bfcache.html';">Go to bfcache.html</button>
   <button   style="font-size: 20pt" onclick="location.href='bfcache2.html';">Go to bfcache2.html</button>
-  <button   style="font-size: 20pt" onclick="addBlockingFeature()">Add BFCache blocking feature</button>
+  <button   style="font-size: 20pt" onclick="addNonStickyBlockingFeature()">Add non-sticky BFCache blocking feature (RFH will still swap)</button>
+  <button   style="font-size: 20pt" onclick="addStickyBlockingFeature()">Add sticky BFCache blocking feature (RFH won't swap)</button>
   <script>
 
 	  for (let navEntry of  performance.getEntriesByType('navigation')) {
