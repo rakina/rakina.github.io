@@ -13,8 +13,34 @@
     bcs.push(new BroadcastChannel("internal_notification" + shownCounter));
   }
 </script>
+<style>
+#rotating-div {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  background-color: pink;
+  animation-name: spin;
+  animation-duration: 5000ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+  /* transform: rotate(3deg); */
+   /* transform: rotate(0.3rad);/ */
+   /* transform: rotate(3grad); */ 
+   /* transform: rotate(.03turn);  */
+}
+
+@keyframes spin {
+    from {
+        transform:rotate(0deg);
+    }
+    to {
+        transform:rotate(360deg);
+    }
+}
+</style>
 </head>
 <body>
+  <div id="rotating-div"></div>
   <h1>BFCache test page #2 (aka bfcache2.html) </h1>
   <ul style="font-size: 40pt">
     <li> Latest pageshow persisted value: <b id='persistedValue'>false</b>.</li>
