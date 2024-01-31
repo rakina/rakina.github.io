@@ -12,7 +12,7 @@
   });
   let bcs = [];
   function addBlockingFeature() {
-      
+    document.body.innerHTML += "<div>Added BFCache blocking feature</div>";
     bcs.push(new BroadcastChannel("internal_notification" + shownCounter));
   }
 </script>
