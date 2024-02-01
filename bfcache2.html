@@ -6,6 +6,9 @@
     document.getElementById('persistedValue').innerText = e.persisted;
     document.getElementById('shownValue').innerText = shownCounter;
     shownCounter++;
+    if (e.persisted) {
+      document.body.innerHTML += "<div>line added because of e.persisted</div>"
+    }
   });
   let bcs = [];
   function addNonStickyBlockingFeature() {
@@ -54,7 +57,6 @@
 </style>
 </head>
 <body>
-  <div id="rotating-div"></div>
   <h1>BFCache test page #2 (aka bfcache2.html) </h1>
   <ul style="font-size: 40pt">
     <li> Latest pageshow persisted value: <b id='persistedValue'>false</b>.</li>
