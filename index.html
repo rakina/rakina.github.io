@@ -8,7 +8,6 @@
 
 <body>
     <h1>Rakina's site</h1>
-    <i>Last updated: Dec 2021</i><br>
     Quick anchors:
     <ul>
     	<li><a href="#intro">Intro</a></li>
@@ -19,7 +18,7 @@
     <div id="intro">
     	<h2>Intro</h2>
         You have reached <a target="_blank" href="https://github.com/rakina">Rakina Zata Amni</a>'s personal website.<br>
-        I'm currently a <b>Senior Software Engineer at
+        I'm currently a <b>Staff Software Engineer at
         <span style="color: blue;">G</span><span style="color: red;">o</span><span style="color: khaki;">o</span><span style="color: blue;">g</span><span style="color: green;">l</span><span style="color: red;">e</span>,
         working on Chrome's Security Architecture team</b>
         (the team formerly known as <a target="_blank" href="https://www.chromium.org/Home/chromium-security/site-isolation">Site Isolation</a>).<br>
@@ -46,10 +45,12 @@
 		    				It feels simple, but see this <a target="_blank" href="https://www.youtube.com/watch?v=OFIvyc1y1ws"> great Chrome University video</a> on how many things are involved in navigation!
 		    			</li>
 		    			<li>
-		    				I am <b>one of the owners of the navigation code</b>
-		    				(<a target="_blank" href="https://source.chromium.org/chromium/chromium/src/+/main:content/browser/renderer_host/OWNERS;l=19;drc=eace61a13d7b5c145076e2bd92cfbe8fbff6253b">content/browser/renderer_host</a>)
-		    				in Chromium.<br>
-		    				As a member of the Chrome Security Architecture team, I also often guide engineers and teams needing help with navigation.<br>
+		    				I am <b>one of the owners of the //content layer</b>
+		    				(<a target="_blank" href="https://source.chromium.org/chromium/chromium/src/+/main:content/OWNERS;l=26;drc=8b8d16c25e877a991d791290556b9a476de39d6f">content/OWNERS</a>)
+		    				in Chromium, responsible for the architecture of Chromium's //content layer (the 'core browser' part of Chromium, see also [README](https://chromium.googlesource.com/chromium/src/+/HEAD/content/README.md)),
+						what it exposes to embedders, etc.<br>
+		    				As a member of the Chrome Security Architecture team and owner of navigation & BFCache code,
+						I also often guide engineers and teams needing help with navigation.<br>
 		    				If you are changing code in that area, please feel free to send the CL to me, or ask questions to navigation-dev@chromium.org!
 		    			</li>
 		    			<li>
