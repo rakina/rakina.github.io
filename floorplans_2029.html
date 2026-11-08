@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Floor plans 2029 (before vs ★ 2029 plan)</title>
+<style>
+  body { margin: 0; background: #e9ecef; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1d242b; }
+  #tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 4px; align-items: center; padding: 8px 14px; background: #fff; border-bottom: 1px solid #dee2e6; }
+  #tabs button { font: 600 13px inherit; font-family: inherit; padding: 6px 12px; border: 1px solid #ced4da; border-radius: 16px; background: #f8f9fa; cursor: pointer; }
+  #tabs button.on { background: #1d242b; color: #fff; border-color: #1d242b; }
+  #tabs .hint { margin-left: auto; font-size: 12px; color: #868e96; }
+  #view { padding: 10px 14px; }
+  .pg { margin-bottom: 14px; }
+  svg.sheet { display: block; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.12); max-width: 100%; height: auto; }
+  body.shot #view { padding: 4px 8px; }
+  svg text { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .rn { font-size: 13px; font-weight: 700; fill: #1d242b; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .rn-out { fill: #2b6b3f; }
+  .rs { font-size: 10.5px; fill: #495057; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .rsr { fill: #c2255c; }
+  .fl { font-size: 8.5px; fill: #6c757d; text-anchor: middle; }
+  .fl2 { font-size: 10px; fill: #adb5bd; }
+  .nt, .ntc { font-size: 10px; fill: #495057; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntc { text-anchor: middle; }
+  .nts2 { font-size: 9.5px; fill: #6c757d; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .nto { font-size: 9.5px; fill: #c94a0a; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntr { font-size: 9.5px; fill: #c2255c; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntb { font-size: 9.5px; fill: #8a5a0a; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntb2 { font-size: 9.5px; fill: #1864ab; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntw { font-size: 9.5px; fill: #fff; font-weight: 700; letter-spacing: .5px; }
+  .stl { font-size: 10px; font-weight: 700; fill: #1d242b; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .dt { font-size: 9.5px; text-anchor: middle; fill: #5a6570; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .tagn { font-size: 10px; font-weight: 700; fill: #fff; text-anchor: middle; }
+  .tt { font-size: 21px; font-weight: 700; fill: #1d242b; }
+  .st { font-size: 11.5px; fill: #6c757d; }
+  .ph { font-size: 14px; font-weight: 700; fill: #1d242b; }
+  .nl { font-size: 12.5px; fill: #343a40; }
+  .lg { font-size: 12px; fill: #343a40; }
+  .orient { font-size: 12px; font-weight: 700; fill: #495057; letter-spacing: .3px; }
+  .na { font-size: 13px; font-weight: 800; fill: #1d242b; }
+  .nts { font-size: 9.5px; fill: #868e96; }
+  .sb { font-size: 10px; fill: #495057; }
+  .secm { font-size: 13px; font-weight: 800; fill: #1d242b; }
+  .lv { font-size: 10px; fill: #343a40; font-weight: 600; }
+  @media print { #tabs { display: none; } .pg { page-break-after: always; } svg.sheet { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div id="tabs"></div>
+<div id="view"></div>
+<script>
+// ===== Floor plan generator: helpers =====
+const L = y => 0.30 + 0.0515 * y;          // slanted side lot line (model "leftLotX")
+const C = { wall: '#2f2f2f', neu: '#e8590c', rem: '#d6336c', furn: '#9a9a9a', furnFill: '#f3f3f1', joinFill: '#fff0e3', text: '#1d242b', dim: '#5a6570', glass: '#4dabf7' };
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+class Sheet {
+  constructor(S, ox, oy) { this.S = S; this.ox = ox; this.oy = oy; this.L = { fill: [], hatch: [], furn: [], over: [], wall: [], open: [], ann: [], dim: [], lab: [] }; }
+  X(x) { return +(this.ox + x * this.S).toFixed(1); }
+  Y(y) { return +(this.oy + y * this.S).toFixed(1); }
+  pts(arr) { return arr.map(p => this.X(p[0]) + ',' + this.Y(p[1])).join(' '); }
+  poly(layer, arr, attrs) { this.L[layer].push(`<polygon points="${this.pts(arr)}" ${attrs}/>`); }
+  rect(layer, x0, y0, x1, y1, attrs) { const a = Math.min(x0, x1), b = Math.min(y0, y1); this.L[layer].push(`<rect x="${this.X(a)}" y="${this.Y(b)}" width="${(Math.abs(x1 - x0) * this.S).toFixed(1)}" height="${(Math.abs(y1 - y0) * this.S).toFixed(1)}" ${attrs}/>`); }
+  line(layer, x0, y0, x1, y1, attrs) { this.L[layer].push(`<line x1="${this.X(x0)}" y1="${this.Y(y0)}" x2="${this.X(x1)}" y2="${this.Y(y1)}" ${attrs}/>`); }
+  pline(layer, arr, attrs) { this.L[layer].push(`<polyline points="${this.pts(arr)}" fill="none" ${attrs}/>`); }
+  circle(layer, x, y, r, attrs) { this.L[layer].push(`<circle cx="${this.X(x)}" cy="${this.Y(y)}" r="${(r * this.S).toFixed(1)}" ${attrs}/>`); }
+  text(layer, x, y, s, attrs = '') { this.L[layer].push(`<text x="${this.X(x)}" y="${this.Y(y)}" ${attrs}>${esc(s)}</text>`); }
+  raw(layer, s) { this.L[layer].push(s); }
+  out() { return Object.values(this.L).map(a => a.join('\n')).join('\n'); }
+
+  // ---- walls ----
+  segPoly(x0, y0, x1, y1, t) {
+    const dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1, nx = -dy / l * t / 2, ny = dx / l * t / 2;
+    return [[x0 - nx, y0 - ny], [x1 - nx, y1 - ny], [x1 + nx, y1 + ny], [x0 + nx, y0 + ny]];
+  }
+  wallSeg(x0, y0, x1, y1, t, kind = 'ex') {
+    const p = this.segPoly(x0, y0, x1, y1, t);
+    if (kind === 'rem') this.poly('wall', p, `fill="${C.rem}" fill-opacity="0.08" stroke="${C.rem}" stroke-width="1.4" stroke-dasharray="5 3"`);
+    else if (kind === 'new') this.poly('wall', p, `fill="${C.neu}" stroke="${C.neu}" stroke-width="0.6"`);
+    else if (kind === 'low') this.poly('wall', p, `fill="#fff" stroke="${C.wall}" stroke-width="1.2"`);
+    else this.poly('wall', p, `fill="${C.wall}" stroke="${C.wall}" stroke-width="0.6"`);
+  }
+  // wall with openings: ops = [{a,b,type:'door'|'door2'|'win'|'gap'|'slide'|'fixed', hinge:'a'|'b', side:+1|-1, kind}]
+  wall(x0, y0, x1, y1, t, kind = 'ex', ops = []) {
+    const l = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / l, uy = (y1 - y0) / l, nx = -uy, ny = ux;
+    const P = d => [x0 + ux * d, y0 + uy * d];
+    let cur = 0;
+    for (const o of [...ops].sort((p, q) => p.a - q.a)) {
+      if (o.a > cur + 0.005) this.wallSeg(...P(cur), ...P(o.a), t, kind);
+      const k = o.kind || kind;
+      const col = k === 'new' ? C.neu : k === 'rem' ? C.rem : C.wall;
+      const dash = k === 'rem' ? ' stroke-dasharray="5 3"' : '';
+      const A = P(o.a), B = P(o.b);
+      if (o.type === 'win' || o.type === 'fixed' || o.type === 'slide') {
+        const pp = this.segPoly(...A, ...B, t);
+        this.poly('open', pp, `fill="#fff" stroke="${col}" stroke-width="${k === 'new' ? 1.8 : 1}"${dash}`);
+        if (o.type === 'slide') {
+          const m = (o.a + o.b) / 2, off = t * 0.18;
+          const a1 = P(o.a), m1 = P(m + 0.1), m0 = P(m - 0.1), b1 = P(o.b);
+          this.line('open', a1[0] + nx * off, a1[1] + ny * off, m1[0] + nx * off, m1[1] + ny * off, `stroke="${col}" stroke-width="1.6"${dash}`);
+          this.line('open', m0[0] - nx * off, m0[1] - ny * off, b1[0] - nx * off, b1[1] - ny * off, `stroke="${col}" stroke-width="1.6"${dash}`);
+        } else this.line('open', ...A, ...B, `stroke="${col}" stroke-width="${k === 'new' ? 1.8 : 1.1}"${dash}`);
+        if (o.sill) this.line('open', A[0] + nx * o.sill, A[1] + ny * o.sill, B[0] + nx * o.sill, B[1] + ny * o.sill, `stroke="${col}" stroke-width="0.8"`);
+      } else if (o.type === 'door' || o.type === 'door2') {
+        const leaf = (H, J, w) => {
+          const sd = o.side || 1, T = [H[0] + nx * sd * w, H[1] + ny * sd * w];
+          this.line('open', ...H, ...T, `stroke="${col}" stroke-width="2"${dash}`);
+          const cr = (J[0] - H[0]) * (T[1] - H[1]) - (J[1] - H[1]) * (T[0] - H[0]);
+          this.raw('open', `<path d="M${this.X(J[0])},${this.Y(J[1])} A${(w * this.S).toFixed(1)},${(w * this.S).toFixed(1)} 0 0 ${cr > 0 ? 1 : 0} ${this.X(T[0])},${this.Y(T[1])}" fill="none" stroke="${col}" stroke-width="0.8" stroke-dasharray="3 2"/>`);
+        };
+        if (o.type === 'door') leaf(o.hinge === 'b' ? B : A, o.hinge === 'b' ? A : B, o.b - o.a);
+        else { const M = P((o.a + o.b) / 2); leaf(A, M, (o.b - o.a) / 2); leaf(B, M, (o.b - o.a) / 2); }
+        if (o.frame) { this.line('open', ...A, ...B, `stroke="${col}" stroke-width="0.6"`); }
+      }
+      cur = o.b;
+    }
+    if (cur < l - 0.005) this.wallSeg(...P(cur), x1, y1, t, kind);
+  }
+  // ---- furniture ----
+  furn(x0, y0, x1, y1, opt = {}) {
+    const st = opt.rem ? `stroke="${C.rem}" stroke-dasharray="4 2"` : opt.neu ? `stroke="${C.neu}"` : `stroke="${C.furn}"`;
+    const fill = opt.fill || (opt.neu ? C.joinFill : C.furnFill);
+    this.rect('furn', x0, y0, x1, y1, `fill="${fill}" ${st} stroke-width="${opt.neu ? 1.2 : 0.9}"${opt.rx ? ` rx="${opt.rx * this.S}"` : ''}`);
+    if (opt.label) this.text('furn', (x0 + x1) / 2, (y0 + y1) / 2 + 0.06, opt.label, `class="fl"${opt.vert ? ` transform="rotate(-90 ${this.X((x0 + x1) / 2)} ${this.Y((y0 + y1) / 2)})"` : ''}`);
+  }
+  chair(x, y, w, d, back, opt = {}) {
+    this.furn(x, y, x + w, y + d, opt);
+    const b = 0.07, s = opt.neu ? C.neu : C.furn;
+    if (back === 'N') this.line('furn', x, y + b, x + w, y + b, `stroke="${s}"`);
+    if (back === 'S') this.line('furn', x, y + d - b, x + w, y + d - b, `stroke="${s}"`);
+    if (back === 'E') this.line('furn', x + w - b, y, x + w - b, y + d, `stroke="${s}"`);
+    if (back === 'W') this.line('furn', x + b, y, x + b, y + d, `stroke="${s}"`);
+  }
+  bed(x0, y0, x1, y1, head, opt = {}) {
+    this.furn(x0, y0, x1, y1, opt);
+    const s = C.furn;
+    if (head === 'E') { this.line('furn', x1 - 0.08, y0, x1 - 0.08, y1, `stroke="${s}"`); this.rect('furn', x1 - 0.5, y0 + 0.12, x1 - 0.14, (y0 + y1) / 2 - 0.05, `fill="#fff" stroke="${s}" stroke-width="0.7" rx="3"`); this.rect('furn', x1 - 0.5, (y0 + y1) / 2 + 0.05, x1 - 0.14, y1 - 0.12, `fill="#fff" stroke="${s}" stroke-width="0.7" rx="3"`); this.line('furn', x0 + (x1 - x0) * 0.45, y0, x0 + (x1 - x0) * 0.45, y1, `stroke="${s}" stroke-width="0.6"`); }
+    if (head === 'W') { this.line('furn', x0 + 0.08, y0, x0 + 0.08, y1, `stroke="${s}"`); this.rect('furn', x0 + 0.14, y0 + 0.15, x0 + 0.5, y1 - 0.15, `fill="#fff" stroke="${s}" stroke-width="0.7" rx="3"`); }
+  }
+  sofa(x0, y0, x1, y1, back, opt = {}) {
+    this.furn(x0, y0, x1, y1, Object.assign({ rx: 0.06 }, opt));
+    const s = C.furn, b = 0.2, a = 0.14;
+    if (back === 'E') { this.rect('furn', x1 - b, y0, x1, y1, `fill="#e4e4e0" stroke="${s}"`); this.line('furn', x0, y0 + a, x1 - b, y0 + a, `stroke="${s}"`); this.line('furn', x0, y1 - a, x1 - b, y1 - a, `stroke="${s}"`); }
+    if (back === 'S') { this.rect('furn', x0, y1 - b, x1, y1, `fill="#e4e4e0" stroke="${s}"`); this.line('furn', x0 + a, y0, x0 + a, y1 - b, `stroke="${s}"`); this.line('furn', x1 - a, y0, x1 - a, y1 - b, `stroke="${s}"`); }
+  }
+  // ---- annotation ----
+  room(x, y, name, sub, opt = {}) {
+    const cls = opt.out ? 'rn rn-out' : 'rn';
+    this.text('lab', x, y, name, `class="${cls}"${opt.size ? ` style="font-size:${opt.size}px"` : ''}`);
+    if (sub) String(sub).split('\n').forEach((s, i) => this.text('lab', x, y + (0.27 + i * 0.24) * (60 / this.S) * (this.S / 60), s, `class="rs${opt.subcls ? ' ' + opt.subcls : ''}"`));
+  }
+  note(x, y, s, opt = {}) { this.text('lab', x, y, s, `class="${opt.cls || 'nt'}"${opt.anchor ? ` text-anchor="${opt.anchor}"` : ''}${opt.rot ? ` transform="rotate(${opt.rot} ${this.X(x)} ${this.Y(y)})"` : ''}`); }
+  tag(x, y, n, col = C.neu) {
+    this.circle('lab', x, y, 0.17, `fill="${col}" stroke="#fff" stroke-width="1.2"`);
+    this.text('lab', x, y + 0.06, n, `class="tagn"`);
+  }
+  // dimension line between points, offset perpendicular by off (m)
+  dim(x0, y0, x1, y1, off, label, opt = {}) {
+    const l = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / l, uy = (y1 - y0) / l, nx = -uy * off, ny = ux * off;
+    const a = [x0 + nx, y0 + ny], b = [x1 + nx, y1 + ny];
+    const col = opt.col || C.dim;
+    this.line('dim', x0, y0, a[0] + Math.sign(off) * -uy * 0.08, a[1] + Math.sign(off) * ux * 0.08, `stroke="${col}" stroke-width="0.6"`);
+    this.line('dim', x1, y1, b[0] + Math.sign(off) * -uy * 0.08, b[1] + Math.sign(off) * ux * 0.08, `stroke="${col}" stroke-width="0.6"`);
+    this.line('dim', ...a, ...b, `stroke="${col}" stroke-width="0.9"`);
+    [a, b].forEach(p => this.line('dim', p[0] - 0.07 * (ux + uy) , p[1] - 0.07 * (uy - ux), p[0] + 0.07 * (ux + uy), p[1] + 0.07 * (uy - ux), `stroke="${col}" stroke-width="1.3"`));
+    const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const ang = Math.atan2(uy, ux) * 180 / Math.PI;
+    const rot = (ang > 90 || ang < -90) ? ang + 180 : ang;
+    const tOff = opt.inside ? 0.2 : -0.07;
+    const tx = m[0] + (-uy) * (Math.sign(off) || 1) * (opt.flip ? -0.2 : 0) , ty = m[1] + ux * (Math.sign(off) || 1) * (opt.flip ? -0.2 : 0);
+    this.raw('dim', `<text x="${this.X(tx)}" y="${this.Y(ty)}" class="dt" dy="${opt.below ? 11 : -3}" transform="rotate(${rot.toFixed(1)} ${this.X(tx)} ${this.Y(ty)})" fill="${col}">${esc(label)}</text>`);
+  }
+  // stair treads given list of tread lines (pairs of points) and arrow path
+  arrow(path, label, opt = {}) {
+    const col = opt.col || '#333';
+    this.pline('ann', path, `stroke="${col}" stroke-width="1.3"${opt.dash ? ' stroke-dasharray="5 3"' : ''}`);
+    const n = path.length, p = path[n - 1], q = path[n - 2];
+    const dx = p[0] - q[0], dy = p[1] - q[1], l = Math.hypot(dx, dy), ux = dx / l, uy = dy / l, s = 0.16;
+    this.poly('ann', [p, [p[0] - ux * s - uy * s * 0.55, p[1] - uy * s + ux * s * 0.55], [p[0] - ux * s + uy * s * 0.55, p[1] - uy * s - ux * s * 0.55]], `fill="${col}"`);
+    this.circle('ann', path[0][0], path[0][1], 0.05, `fill="${col}"`);
+    if (label) this.text('ann', opt.lx ?? path[0][0], opt.ly ?? path[0][1], label, `class="stl"`);
+  }
+}
+
+// north arrow + scale bar (in px coordinates)
+function northArrow(cx, cy) {
+  // true north in model: +X rotated 7 deg toward -Y (courtyard faces ~277 deg). Screen: X right, Y down.
+  const ang = Math.atan2(-0.122, 0.993) * 180 / Math.PI; // screen angle of N
+  return `<g transform="translate(${cx},${cy})">
+    <circle r="30" fill="#fff" stroke="#adb5bd"/>
+    <g transform="rotate(${(ang + 90).toFixed(1)})"><polygon points="0,-26 8,8 0,2 -8,8" fill="#1d242b"/><text y="-31" class="na" text-anchor="middle">N</text></g>
+    <text y="46" class="nts" text-anchor="middle">true north</text>
+  </g>`;
+}
+function scaleBar(x, y, S) {
+  let s = `<g transform="translate(${x},${y})">`;
+  for (let i = 0; i < 5; i++) s += `<rect x="${i * S}" y="0" width="${S}" height="7" fill="${i % 2 ? '#fff' : '#1d242b'}" stroke="#1d242b" stroke-width="0.8"/>`;
+  for (let i = 0; i <= 5; i++) s += `<text x="${i * S}" y="20" class="sb" text-anchor="middle">${i}</text>`;
+  s += `<text x="${5 * S + 10}" y="8" class="sb">metres</text></g>`;
+  return s;
+}
+// ===== 1F plan =====
+const RY = -0.90;
+function plan1F(s, after) {
+  // --- site & fills ---
+  s.poly('fill', [[L(-1.2), -1.2], [10.54, -1.2], [10.54, 13.6], [L(13.6), 13.6]], `fill="none" stroke="#868e96" stroke-width="0.8" stroke-dasharray="10 3 2 3"`);
+  s.rect('fill', 6.75, RY, 10.40, 10.25, `fill="#eef0f2"`);                        // garage
+  s.rect('fill', 5.40, 10.39, 10.40, 13.60, `fill="#eef0f2" stroke="#ced4da"`);     // carport
+  s.poly('fill', [[L(10.98), 10.98], [5.40, 10.98], [5.40, 13.6], [L(13.6), 13.6]], `fill="#e9f5e4"`);
+  s.rect('furn', 1.15, 11.20, 5.15, 11.75, `fill="#cfe8c4" stroke="#8fbf80"`);
+  s.poly('fill', [[L(3.45), 3.45], [6.75, 3.45], [6.75, 10.25], [L(10.25), 10.25]], `fill="#fff"`);
+  // courtyard
+  const cy = [[L(RY), RY], [6.75, RY], [6.75, 3.45], [L(3.45), 3.45]];
+  if (after) {
+    s.poly('fill', cy, `fill="url(#deck)"`);
+    s.poly('over', [[L(-0.86) + 0.02, -0.86], [6.74, -0.86], [6.74, 3.45], [L(3.45) + 0.02, 3.45]], `fill="none" stroke="${C.neu}" stroke-width="1.6"`);
+  } else {
+    s.poly('fill', cy, `fill="#f4f1ea"`);
+    // raised pool (+0.90) incl. pump terrace — removed in 2029
+    s.poly('hatch', [[L(-0.88) + 0.02, -0.88], [6.74, -0.88], [6.74, 3.45], [L(3.45) + 0.02, 3.45]], `fill="#e9eef2" stroke="${C.rem}" stroke-width="1.5" stroke-dasharray="6 3"`);
+    s.poly('hatch', [[L(-0.68) + 0.24, -0.68], [6.52, -0.68], [6.52, 2.33], [L(2.33) + 0.24, 2.33]], `fill="url(#water)" stroke="${C.rem}" stroke-width="1" stroke-dasharray="6 3"`);
+    s.line('hatch', L(2.55) + 0.02, 2.55, 6.74, 2.55, `stroke="${C.rem}" stroke-width="1" stroke-dasharray="6 3"`);
+    s.furn(5.70, 2.75, 6.40, 3.25, { rem: true, label: 'pump' });
+  }
+  // --- exterior stair (street → 2F front terrace) ---
+  for (let i = 0; i <= 11; i++) { const x = 5.40 - i * 3.07 / 11; s.line('furn', x, 10.39, x, 10.98, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', 2.33, 10.39, 5.40, 10.39, `stroke="#868e96"`); s.line('furn', L(10.98), 10.98, 5.40, 10.98, `stroke="#343a40" stroke-width="1.4"`);
+  s.poly('furn', [[L(10.39), 10.39], [2.33, 10.39], [2.33, 10.98], [L(10.98), 10.98]], `fill="#f1f3f5" stroke="#868e96"`);
+  s.arrow([[5.25, 10.68], [2.5, 10.68]], '');
+  s.note(3.9, 10.62, 'UP 11 steps to 2F terrace', { cls: 'ntc' });
+  s.note(1.35, 10.75, 'landing', { cls: 'nts2' });
+
+  // --- walls ---
+  s.wallSeg(L(-1.2) - 0.02, -1.05, 6.75, -1.05, 0.30);                  // rear boundary wall (h ≈ 5.25 m)
+  s.wallSeg(6.75, -0.97, 10.54, -0.97, 0.14);
+  s.wallSeg(L(-1.04) - 0.07, -1.04, L(10.39) - 0.07, 10.39, 0.14);     // side lot wall (slanted)
+  s.wallSeg(10.47, -1.04, 10.47, 10.39, 0.14);                           // garage side wall
+  s.wallSeg(L(10.32), 10.32, 6.81, 10.32, 0.14);                         // front wall
+  s.wall(3.00, 3.45, 3.00, 7.10, 0.11, 'ex', [{ a: 1.40, b: 2.18, type: 'door', hinge: 'a', side: 1 }, { a: 2.55, b: 3.27, type: 'door', hinge: 'a', side: 1 }]);
+  s.wallSeg(L(5.80), 5.80, 3.00, 5.80, 0.10);
+  s.wallSeg(L(7.10), 7.10, 3.00, 7.10, 0.10);
+  s.wallSeg(2.45, 7.10, 2.45, 8.35, 0.10);
+  s.wall(3.00, 6.60, 6.75, 6.60, 0.11, 'ex', [{ a: 0.55, b: 1.50, type: 'gap' }]);
+  s.wall(L(9.30), 9.30, 5.40, 9.30, 0.11, 'ex', [{ a: 3.10, b: 3.88, type: 'door', hinge: 'a', side: 1 }]);
+  if (after) { s.wall(6.75, 3.45, 6.75, 10.25, 0.12, 'ex', [{ a: 0.0, b: 3.15, type: 'gap' }]); s.wallSeg(6.75, 3.45, 6.75, 6.60, 0.12, 'rem'); }
+  else s.wall(6.75, 3.45, 6.75, 10.25, 0.12, 'ex', [{ a: 1.23, b: 3.05, type: 'fixed' }]);
+  // rear of the house at 1F (assumed: solid wall to the helper room, sliding glass to the sitting room)
+  s.wallSeg(L(3.45), 3.45, 3.00, 3.45, 0.12);
+  s.wall(3.00, 3.45, 6.75, 3.45, 0.12, 'ex', [{ a: 0.05, b: 3.70, type: 'slide' }]);
+  // garage ↔ courtyard divider
+  if (!after) {
+    s.wall(6.75, RY, 6.75, 3.45, 0.10, 'rem', [{ a: 0.02, b: 4.33, type: 'slide' }]);
+  }
+  // --- 2F overhang lines (dashed, above) ---
+  if (after) {
+    s.poly('over', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], `fill="none" stroke="#495057" stroke-width="1" stroke-dasharray="8 4"`);
+    [1.60, 3.80, 5.55, 6.85].forEach(px => s.rect('over', px, 1.59, px + 0.08, 1.67, `fill="#212529"`));
+  }
+  s.line('over', L(2.55), 2.55, 7.10, 2.55, `stroke="#495057" stroke-width="1" stroke-dasharray="8 4"`);
+
+  // --- furniture ---
+  s.furn(7.65, 0.45, 9.50, 4.85, { rx: 0.25, fill: '#f8f9fa' }); s.note(8.575, 2.75, 'car 1', { cls: 'fl2', anchor: 'middle' });
+  s.furn(7.65, 5.20, 9.50, 9.95, { rx: 0.25, fill: '#f8f9fa' }); s.note(8.575, 7.65, 'car 2', { cls: 'fl2', anchor: 'middle' });
+  s.bed(0.75, 3.70, 2.65, 4.68, 'W');
+  s.furn(2.52, 8.68, 5.20, 9.24, { label: 'counter' });
+  // 1F→2F stair (9 risers, rising toward the rear)
+  for (let k = 0; k <= 9; k++) { const y = 9.10 - k * 0.222; s.line('furn', L(y) + 0.06, y, 2.40, y, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', 2.40, 7.10, 2.40, 9.10, `stroke="#868e96"`);
+  s.arrow([[1.55, 9.0], [1.55, 7.25]], '');
+  s.note(1.85, 8.2, 'UP', { cls: 'stl' });
+  // WC fixtures (indicative)
+  s.furn(0.75, 6.55, 1.15, 7.0, { rx: 0.12 });
+  if (after) {
+    s.furn(3.05, 3.55, 3.70, 4.20, { neu: true, label: 'W+D' }); s.note(3.4, 4.42, 'washer + dryer', { cls: 'nto', anchor: 'middle' });
+    s.rect('furn', 4.50, 5.05, 6.50, 6.52, `fill="#495057" fill-opacity="0.12" stroke="#495057"`); s.note(5.5, 5.75, 'barbell pad ≈ 2 × 1.5 m', { cls: 'nts2', anchor: 'middle' });
+    s.rect('furn', 4.80, 6.40, 6.20, 6.53, `fill="${C.neu}"`); s.note(5.5, 6.32, 'folding wall squat rack', { cls: 'nto', anchor: 'middle' });
+    s.furn(3.06, 6.18, 3.50, 6.53, { neu: true }); s.note(3.28, 6.08, 'dumbbells', { cls: 'nto', anchor: 'middle' });
+    s.arrow([[4.2, 4.62], [7.4, 4.62]], '', { col: '#1864ab', dash: true }); s.note(5.9, 4.5, 'open to garage · ≥ 1.2 m clear path', { cls: 'ntb2', anchor: 'middle' });
+    s.rect('over', 3.06, 4.85, 4.06, 5.63, `fill="#e7f5ff" fill-opacity="0.5" stroke="#74c0fc" stroke-dasharray="3 2"`); s.note(3.56, 5.3, '1.0 m clear', { cls: 'nts2', anchor: 'middle' });
+
+
+    [[1.0, 2.2], [2.3, 3.5], [3.6, 4.8]].forEach(([a, b]) => { s.rect('over', a, 1.7, b, 2.4, `fill="none" stroke="${C.neu}" stroke-dasharray="4 3"`); for (let k = 1; k < 5; k++) s.line('over', a, 1.7 + k * 0.14, b, 1.7 + k * 0.14, `stroke="${C.neu}" stroke-width="0.5" stroke-dasharray="2 2"`); });
+    // tree planter + canopy
+    s.rect('furn', 2.55, 0.32, 3.95, 1.28, `fill="#d8f0d4" stroke="${C.neu}" stroke-width="1.3"`);
+    s.circle('over', 3.27, 0.82, 0.9, `fill="#69b56b" fill-opacity="0.18" stroke="#3d8b4f" stroke-dasharray="3 3"`);
+    s.circle('furn', 3.25, 0.80, 0.08, `fill="#6e4e35"`);
+    // planter + bollards at the garage edge
+    s.rect('furn', 6.80, -0.75, 7.15, 1.10, `fill="#d8f0d4" stroke="${C.neu}" stroke-width="1.2"`);
+    [2.10, 3.00].forEach(by => s.circle('furn', 6.96, by + 0.06, 0.07, `fill="${C.neu}"`));
+    // future L-ramp footprint (not built)
+    const fp = `fill="#b67b2f" fill-opacity="0.06" stroke="#b67b2f" stroke-width="1.3" stroke-dasharray="7 4"`;
+    s.poly('over', [[1.32, -0.85], [6.70, -0.85], [6.70, 0.10], [1.32, 0.10]], fp);
+    s.poly('over', [[L(-0.85) + 0.04, -0.85], [1.32, -0.85], [1.32, 1.55], [L(1.55) + 0.04, 1.55]], fp);
+    [[2.40, 0.10], [3.90, 0.10], [5.40, 0.10], [1.32, -0.75], [1.32, 0.85], [L(0.10) + 0.14, 0.85]].forEach(([fx, fy]) => s.rect('over', fx - 0.08, fy - 0.08, fx + 0.08, fy + 0.08, `fill="#495057"`));
+  }
+  // --- labels ---
+  s.room(8.58, -0.42, 'Garage (Garasi)', '2-car tandem · 3.65 m wide');
+  s.room(after ? 5.2 : 4.85, after ? 3.75 : 4.35, after ? 'Gym + laundry' : 'Sitting room', after ? '(R. Duduk)' : '(R. Duduk) · 2.10 m clear');
+  s.room(4.6, 7.55, 'Service kitchen', '(Dapur)');
+  s.room(1.78, 5.1, 'Helper room', '(K. ART)');
+  s.room(1.95, 6.62, 'WC', '');
+  s.room(3.4, 9.92, 'Store', '(Gudang)');
+  s.room(7.9, 12.1, 'Carport', '−0.20 m', { out: true });
+  s.room(3.0, 12.65, 'Front garden', '', { out: true });
+  s.room(3.6, 13.45, 'STREET', '', { out: true, size: 12 });
+  if (after) {
+    s.room(4.7, 2.92, 'Courtyard deck', '+0.20 m WPC · tree stays', { out: true });
+    s.note(2.55, -0.30, 'future L-ramp strip (dashed) · footings cast now', { cls: 'ntb', anchor: 'middle' });
+    s.note(5.2, 1.0, 'open deck / play', { cls: 'nts2', anchor: 'middle' });
+    s.note(3.25, 1.62, 'tree in planter', { cls: 'nts2', anchor: 'middle' });
+    s.note(2.9, 2.55, 'overhead pulley drying racks (under 2F balcony, dashed)', { cls: 'nto', anchor: 'middle' });
+    s.note(7.32, 0.2, 'planter', { cls: 'nts2', rot: -90 });
+    s.note(7.32, 3.25, 'bollards', { cls: 'nts2', rot: -90 });
+  } else {
+    s.room(3.4, 0.75, 'Raised pool +0.90', '6 × 3 m water (removed 2029)', { out: true, subcls: 'rsr' });
+    s.note(3.6, 3.08, 'pump / laundry terrace +0.90 (under 2F)', { cls: 'nts2', anchor: 'middle' });
+    s.note(6.6, 0.4, 'sliding glass divider (removed)', { cls: 'ntr', rot: -90, anchor: 'middle' });
+  }
+  s.note(3.4, -1.0, 'REAR BOUNDARY WALL  h ≈ 5.25 m  (neighbour behind)', { cls: 'ntw', anchor: 'middle' });
+  if (!after) s.note(6.9, 5.6, 'glass', { cls: 'nts2', rot: -90, anchor: 'middle' });
+  // --- dims ---
+  s.dim(L(RY), RY, 6.75, RY, -0.62, 'courtyard ≈ 6.45 m wall to wall (verify)');
+  s.dim(0.05, RY, 0.05, 3.45, 0.45, 'courtyard ≈ 4.35 m');
+  s.dim(6.75, 10.25, 10.40, 10.25, 0.0001, 'garage opening 3.65 m', { below: true });
+  s.dim(10.54, -1.2, 10.54, 10.39, -0.45, 'overall ≈ 11.6 m (rear boundary wall → front wall)');
+}
+// ===== 2F plan =====
+function plan2F(s, after) {
+  const nb = `fill="none" stroke="#495057" stroke-width="1" stroke-dasharray="8 4"`;
+  // slab / room fills
+  s.poly('fill', [[L(2.55), 2.55], [3.90, 2.55], [3.90, 3.45], [10.40, 3.45], [10.40, 10.25], [3.40, 10.25], [3.40, 7.95], [L(7.95), 7.95]], `fill="#fff"`);
+  s.rect('fill', 7.10, RY, 10.40, 3.45, `fill="#fff"`);
+  s.poly('fill', [[L(7.95), 7.95], [3.40, 7.95], [3.40, 10.25], [L(10.25), 10.25]], `fill="#f1f3f5"`);               // front terrace
+  s.poly('fill', [[L(10.32), 10.32], [2.33, 10.32], [2.33, 10.98], [L(10.98), 10.98]], `fill="#f1f3f5" stroke="#adb5bd"`); // stair landing (below terrace level)
+  for (let i = 0; i <= 4; i++) { const x = 2.33 + i * 0.279; s.line('furn', x, 10.39, x, 10.98, `stroke="#adb5bd" stroke-width="0.7"`); }
+  // 1F footprint below (courtyard outline)
+  s.poly('fill', [[L(RY), RY], [6.75, RY], [6.75, after ? 1.55 : 2.55], [L(after ? 1.55 : 2.55), after ? 1.55 : 2.55]], `fill="#f8f6f1"`);
+  s.note(3.4, 0.35, 'open to sky · courtyard below', { cls: 'nts2', anchor: 'middle' });
+  s.wallSeg(L(-1.2) - 0.02, -1.05, 6.75, -1.05, 0.30, 'low');
+  if (after) {
+    s.rect('fill', 3.90, 2.55, 5.44, 3.45, `fill="#fff7ef"`);
+    // long balcony 1.0 m
+    s.poly('fill', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], `fill="url(#steel)" stroke="${C.neu}" stroke-width="1.4"`);
+    s.line('wall', L(1.55) + 0.04, 1.55, 6.97, 1.55, `stroke="${C.neu}" stroke-width="3"`);           // railing
+    s.line('wall', 6.97, 1.55, 6.97, 2.55, `stroke="${C.neu}" stroke-width="3"`);
+    // ACs on a frame (AC end), café bar + stools, swing-out laundry rack, plant trough, canopy
+    s.furn(L(2.2) + 0.05, 2.19, L(2.2) + 0.95, 2.53, { neu: true, label: '3 ACs' });
+    s.rect('furn', 1.66, 2.185, 3.26, 2.485, `fill="${C.joinFill}" stroke="${C.neu}" stroke-dasharray="4 2"`); s.note(2.46, 2.39, 'fold-down sill bar', { cls: 'fl', anchor: 'middle' });
+    [2.12, 2.80].forEach(x => s.rect('furn', x - 0.16, 1.76, x + 0.16, 2.08, `fill="none" stroke="${C.neu}" stroke-dasharray="3 2"`));
+    s.rect('furn', 0.50, 1.66, 1.40, 2.12, `fill="none" stroke="${C.neu}" stroke-dasharray="3 2"`); for (let k = 1; k < 4; k++) s.line('furn', 0.50, 1.66 + k * 0.115, 1.40, 1.66 + k * 0.115, `stroke="${C.neu}" stroke-width="0.5"`); s.note(0.95, 1.6, 'fold-out laundry rack', { cls: 'nts2', anchor: 'middle' });
+    s.furn(4.00, 1.60, 5.30, 1.85, { neu: true, fill: '#dff2d8', label: 'plants' });
+    s.rect('over', L(1.55) + 0.04, 1.50, 3.90, 2.55, `fill="none" stroke="#748ffc" stroke-width="0.9" stroke-dasharray="12 3 2 3"`);
+  } else {
+    s.rect('fill', 3.90, 2.55, 7.03, 3.45, `fill="url(#steel)"`);
+    s.line('wall', 3.90, 2.55, 7.03, 2.55, `stroke="${C.rem}" stroke-width="2.4" stroke-dasharray="6 3"`);   // railing → becomes glazing
+    s.furn(3.97, 2.62, 4.29, 3.42, { rem: true });
+    s.note(4.13, 3.02, '3 ACs', { cls: 'ntr', rot: -90, anchor: 'middle' });
+    s.note(5.6, 2.85, 'recessed balcony 0.90 m', { cls: 'nts2', anchor: 'middle' });
+    s.note(5.6, 3.12, 'laundry hung here', { cls: 'nts2', anchor: 'middle' });
+  }
+  // --- walls ---
+  s.wallSeg(L(2.55) - 0.07, 2.55, L(7.95) - 0.07, 7.95, 0.14);
+  s.wallSeg(10.47, -1.04, 10.47, 10.39, 0.14);
+  s.wallSeg(7.10, -0.97, 10.54, -0.97, 0.14);
+  // kitchen block rear wall
+  if (after) s.wall(L(2.55), 2.55, 3.96, 2.55, 0.13, 'ex', [{ a: 1.66 - L(2.55), b: 3.26 - L(2.55), type: 'win', kind: 'new' }]);
+  else s.wall(L(2.55), 2.55, 3.96, 2.55, 0.13, 'ex', [{ a: 1.60 - L(2.55), b: 2.40 - L(2.55), type: 'win' }]);
+  if (!after) {
+    s.wallSeg(3.90, 2.55, 3.90, 3.45, 0.12, 'rem');
+    s.wall(3.90, 3.45, 7.10, 3.45, 0.13, 'rem', [{ a: 0.40, b: 2.25, type: 'win' }, { a: 2.35, b: 3.10, type: 'door', hinge: 'a', side: 1 }]);
+  } else {
+    // flush dining bay: glazing + 92 cm door + solid pier by the master wall
+    s.rect('fill', 5.44, 2.55, 7.04, 3.45, `fill="url(#steel)"`);
+    s.wall(3.90, 2.55, 5.44, 2.55, 0.12, 'new', [{ a: 0.0, b: 1.54, type: 'win', kind: 'new' }]);
+    s.wallSeg(5.44, 2.49, 5.44, 3.51, 0.12, 'new');
+    s.wall(5.44, 3.45, 7.10, 3.45, 0.13, 'ex', [{ a: 0.0, b: 0.81, type: 'fixed', kind: 'new' }, { a: 0.81, b: 1.56, type: 'door', hinge: 'a', side: 1 }]);
+    s.line('over', 3.90, 3.45, 5.44, 3.45, `stroke="#adb5bd" stroke-width="0.8" stroke-dasharray="2 3"`);   // old wall line
+  }
+  // master block
+  const mw1 = 2.90;
+  s.wall(7.10, RY, 7.10, 5.85, 0.12, 'ex', [{ a: 0.35 - RY, b: 0.85 - RY, type: 'win' }, { a: 1.95 - RY, b: mw1 - RY, type: 'win' }]);
+
+  s.wall(7.10, 1.20, 10.40, 1.20, 0.11, 'ex', [{ a: 0.55, b: 1.30, type: 'door', hinge: 'a', side: -1 }]);
+  s.wall(7.10, 5.85, 10.40, 5.85, 0.11, 'ex', [{ a: 0.25, b: 1.07, type: 'door', hinge: 'b', side: -1 }]);
+  s.wall(8.65, 5.85, 8.65, 7.35, 0.10, 'ex', [{ a: 0.38, b: 1.13, type: 'door', hinge: 'a', side: -1 }]);
+  s.wallSeg(8.65, 7.35, 10.40, 7.35, 0.11);
+  // front
+  s.wall(3.40, 10.32, 6.81, 10.32, 0.14, 'ex', [{ a: 1.65, b: 3.05, type: 'win' }]);
+  s.wall(3.40, 7.95, 3.40, 10.25, 0.12, 'ex', [{ a: 0.40, b: 1.70, type: 'door2', side: -1 }]);
+  s.wallSeg(2.55, 5.95, 2.55, 7.35, 0.12);   // TV wall
+  // musholla
+  if (!after) {
+    s.wallSeg(7.15, 7.35, 7.15, 10.25, 0.11, 'rem');
+    s.wallSeg(6.80, 10.32, 7.05, 10.32, 0.14);
+    s.wall(7.05, 10.32, 10.12, 10.32, 0.14, 'rem', [{ a: 1.0, b: 2.55, type: 'win' }]);
+    s.wallSeg(10.12, 10.32, 10.54, 10.32, 0.14);
+  } else {
+    s.wallSeg(6.80, 10.32, 7.05, 10.32, 0.14); s.wallSeg(10.12, 10.32, 10.54, 10.32, 0.14);
+    s.poly('fill', [[7.05, 10.25], [10.12, 10.25], [10.12, 11.25], [7.05, 11.25]], `fill="#fff7ef"`);
+    s.wallSeg(6.92, 10.25, 6.92, 11.32, 0.24, 'new'); s.wallSeg(10.24, 10.25, 10.24, 11.32, 0.24, 'new');
+    s.wall(7.04, 11.26, 10.12, 11.26, 0.12, 'new', [{ a: 0.02, b: 3.06, type: 'win', kind: 'new' }]);
+    s.rect('fill', 6.85, 7.35, 10.38, 10.25, `fill="url(#plank)"`);
+    s.rect('over', 6.85, 7.35, 10.38, 11.25, `fill="none" stroke="${C.neu}" stroke-width="1.3"`);
+    // shoji screens (open = slid into wall pockets)
+    s.line('over', 6.85, 7.35, 6.85, 10.25, `stroke="#8c6239" stroke-width="1.3" stroke-dasharray="2 3"`);
+    s.line('over', 7.15, 7.35, 8.65, 7.35, `stroke="#8c6239" stroke-width="1.3" stroke-dasharray="2 3"`);
+    s.rect('wall', 6.82, 10.08, 6.92, 10.25, `fill="#8c6239"`); s.rect('wall', 8.50, 7.30, 8.65, 7.40, `fill="#8c6239"`);
+    s.furn(6.40, 8.45, 6.85, 9.25, { neu: true, label: 'step', vert: true });
+    [[7.40, 8.10], [8.40, 8.10], [7.40, 9.10], [8.40, 9.10]].forEach(([hx, hy]) => s.rect('furn', hx, hy, hx + 0.85, hy + 0.85, `fill="none" stroke="#c9a27a" stroke-width="0.8" stroke-dasharray="3 2"`));
+    s.furn(10.12, 7.38, 10.38, 10.22, { neu: true });
+    const ang = 18 * Math.PI / 180;
+    [[9.20, 7.90], [8.65, 8.65], [9.25, 8.85], [8.15, 9.45], [8.75, 9.65]].forEach(([mx, my]) => {
+      const c = Math.cos(ang), sn = Math.sin(ang);
+      s.poly('furn', [[-0.29, -0.46], [0.29, -0.46], [0.29, 0.46], [-0.29, 0.46]].map(([dx, dy]) => [mx + dx * c - dy * sn, my + dx * sn + dy * c]), `fill="#d7eadf" stroke="#2f7d58" stroke-width="0.7"`);
+    });
+    s.furn(7.52, 10.30, 9.52, 11.18, { neu: true, label: 'bay seat / daybed' });
+    for (let k = 0; k < 6; k++) s.line('furn', 6.86, 7.55 + k * 0.45, 6.86, 7.97 + k * 0.45, `stroke="${C.neu}" stroke-width="2"`);
+  }
+  // terrace railings
+  s.line('wall', L(7.95) - 0.02, 7.95, L(10.25) - 0.02, 10.25, `stroke="#343a40" stroke-width="2.2"`);
+  s.line('wall', 2.33, 10.25, 3.40, 10.25, `stroke="#343a40" stroke-width="2.2"`);
+  // --- stairs 2F → 3F ---
+  for (let i = 0; i <= 4; i++) { const x = 2.60 - i * 0.42; s.line('furn', x, 7.35, x, 7.95, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', 0.92, 7.95, 2.60, 7.95, `stroke="#868e96"`);
+  for (let k = 0; k <= 10; k++) { const y = 7.35 - k * 0.205; s.line('furn', L(y) + 0.50, y, 2.43, y, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', 2.43, 5.30, 2.43, 7.35, `stroke="#868e96"`);
+  s.raw('furn', `<line x1="${s.X(0.85)}" y1="${s.Y(6.45)}" x2="${s.X(2.45)}" y2="${s.Y(6.05)}" stroke="#495057" stroke-width="1.2"/>`);   // cut line
+  s.arrow([[2.50, 7.65], [1.72, 7.65], [1.72, 5.45]], '');
+  s.note(1.95, 6.95, 'UP', { cls: 'stl' });
+  s.furn(L(5.95) + 0.04, 5.95, L(5.95) + 0.48, 7.35, { label: 'ledge', vert: true });
+  // --- furniture ---
+  if (!after) {
+    s.furn(0.54, 2.58, 2.80, 3.18, {}); s.poly('furn', [[L(3.18) + 0.04, 3.18], [L(3.18) + 0.64, 3.18], [L(5.0) + 0.64, 5.0], [L(5.0) + 0.04, 5.0]], `fill="${C.furnFill}" stroke="${C.furn}"`);
+    s.furn(L(5.5) + 0.04, 5.02, L(5.5) + 0.74, 5.92, { label: 'fridge', vert: true });
+    s.furn(2.80, 3.48, 3.40, 3.98, { rem: true }); s.furn(2.80, 3.98, 3.30, 5.16, { rem: true }); s.furn(3.30, 3.48, 3.55, 5.16, { rem: true });
+    [4.14, 4.79].forEach(y => s.circle('furn', 3.82, y, 0.18, `fill="#fff" stroke="${C.rem}" stroke-dasharray="3 2"`));
+    s.furn(5.55, 3.55, 6.90, 3.95, { label: 'piano' });
+    s.furn(3.75, 5.90, 5.75, 7.90, { rx: 0.08 }); s.furn(4.55, 6.35, 4.95, 7.45, {});
+    s.furn(7.21, 7.90, 7.66, 10.00, { rem: true, label: 'cabinet', vert: true });
+    s.furn(6.98, 7.36, 7.32, 7.68, { rem: true });
+  } else {
+    s.furn(0.54, 2.58, 3.16, 3.18, { neu: true }); s.rect('furn', 1.46, 2.65, 2.24, 3.08, `fill="#fff" stroke="${C.neu}" rx="4"`); s.note(1.85, 2.92, 'sink', { cls: 'fl', anchor: 'middle' });
+    s.poly('furn', [[L(3.18) + 0.04, 3.18], [L(3.18) + 0.64, 3.18], [L(5.0) + 0.64, 5.0], [L(5.0) + 0.04, 5.0]], `fill="${C.joinFill}" stroke="${C.neu}"`);
+    [[0.79, 4.42], [1.01, 4.42], [0.79, 4.78], [1.01, 4.78]].forEach(([x, y]) => s.circle('furn', x, y, 0.08, `fill="none" stroke="${C.neu}"`));
+    s.furn(L(5.5) + 0.04, 5.02, L(5.5) + 0.74, 5.92, { label: 'fridge', vert: true });
+    s.furn(2.56, 3.18, 3.16, 4.70, { neu: true, label: 'peninsula · DW', vert: true });
+    // long window bench + oval table + 3 chairs
+    s.furn(3.22, 2.62, 5.36, 3.08, { neu: true }); s.note(4.29, 2.78, 'window bench ≈ 2.1 m · drawers', { cls: 'fl', anchor: 'middle' });
+    for (let dx = 3.26; dx < 5.06; dx += 0.66) s.line('furn', dx + 0.05, 3.06, dx + 0.57, 3.06, `stroke="${C.neu}" stroke-width="0.6"`);
+    s.rect('furn', 3.45, 2.98, 5.10, 3.88, `fill="#fff" stroke="#6c757d" stroke-width="1.1" rx="${0.42 * s.S}"`);
+    s.note(4.275, 3.5, 'oval table 1.65 × 0.90', { cls: 'fl', anchor: 'middle' });
+    [3.62, 4.17, 4.72].forEach(cx => s.chair(cx, 3.94, 0.42, 0.42, 'S'));
+    s.sofa(4.82, 5.75, 5.70, 7.75, 'E'); s.furn(4.10, 5.80, 4.80, 6.40, { rx: 0.08 }); s.furn(3.88, 6.62, 4.38, 7.54, {});
+    s.rect('fill', 3.42, 8.20, 4.95, 10.23, `fill="url(#slate)"`); s.furn(3.48, 9.82, 4.92, 10.22, { label: 'shoe bench' });
+    s.furn(6.66, 4.30, 7.04, 5.66, { label: 'piano', neu: true, vert: true }); s.furn(6.12, 4.70, 6.47, 5.26, {});
+  }
+  s.furn(2.61, 5.98, 2.92, 7.32, { label: 'TV', vert: true });
+  s.bed(8.34, 1.75, 10.34, 3.55, 'E');
+  s.furn(7.16, 3.62, 7.76, 5.17, { label: 'wardrobe', vert: true }); s.furn(7.16, 1.95, 7.60, 3.30, {}); s.furn(7.16, 1.28, 7.76, 1.88, {});
+  // --- labels ---
+  s.room(1.75, 3.85, 'Kitchen', after ? '(Dapur)\nU-shape · no stools' : '(Dapur)\ndark wood + bar');
+  s.room(after ? 4.0 : 4.75, after ? 5.2 : 5.45, 'Living', '(R. Keluarga)');
+  s.room(8.85, 4.6, 'Master bedroom', '');
+  s.room(8.75, 0.35, 'Ensuite', '');
+  s.room(9.52, 6.55, 'WC', '');
+  s.room(1.85, 9.05, 'Front terrace', '(Teras) · entry', { out: true });
+  s.room(after ? 7.55 : 8.6, after ? 7.85 : 8.8, 'Prayer room', after ? '(Musholla)\n+0.35 platform' : '(Musholla)');
+  s.note(1.35, 11.15, 'stair landing (from street)', { cls: 'nts2', anchor: 'middle' });
+  if (after) {
+    s.room(4.3, 4.65, 'Dining bay', '', { size: 12 });
+    s.note(7.55, 8.62, 'yoga / stretching here', { cls: 'nto', anchor: 'middle' }); s.note(7.55, 8.84, '(mats in drawers)', { cls: 'nts2', anchor: 'middle' });
+    s.room(4.18, 8.95, 'Genkan', '', { size: 11.5 });
+    s.note(1.12, 0.95, '', {});
+    s.note(2.3, 1.35, 'long balcony 1.0 m · canopy (dash-dot)', { cls: 'nto', anchor: 'middle' });
+    s.note(4.65, 1.95, '', {});
+    s.note(5.3, 0.7, 'open porch 1.6 × 0.9 — fixed glass + existing balcony door', { cls: 'nto', anchor: 'middle' });
+    s.note(6.25, 3.05, 'porch', { cls: 'nts2', anchor: 'middle' });
+    s.note(8.45, 11.5, 'front bay window (new)', { cls: 'nto', anchor: 'middle' });
+  } else {
+    s.note(5.45, 1.95, 'old rear wall + window + door: removed in 2029', { cls: 'ntr', anchor: 'middle' });
+    s.note(6.98, 8.8, 'solid divider (removed)', { cls: 'ntr', rot: -90, anchor: 'middle' });
+    s.note(8.58, 10.62, 'flat front wall → bay', { cls: 'ntr', anchor: 'middle' });
+  }
+  // --- dims ---
+  if (after) {
+    s.dim(7.10, 1.55, 7.10, 2.55, -0.25, '1.00');
+    s.dim(7.10, 2.55, 7.10, 3.45, -0.25, '0.90');
+    s.dim(L(1.55) + 0.04, 1.55, 6.97, 1.55, -0.45, 'balcony ≈ 6.5 m');
+  } else {
+    s.dim(3.90, 2.55, 7.03, 2.55, -0.3, '≈ 3.1 m');
+  }
+}
+// ===== 3F plan =====
+function plan3F(s, after) {
+  s.poly('fill', [[L(3.45), 3.45], [2.95, 3.45], [2.95, 2.70], [6.90, 2.70], [6.90, RY], [10.40, RY], [10.40, 10.25], [L(10.25), 10.25]], `fill="#fff"`);
+  // below: 2F facade / balcony lines, courtyard
+  s.poly('fill', [[L(RY), RY], [6.90, RY], [6.90, 2.55], [L(2.55), 2.55]], `fill="#f8f6f1"`);
+  s.wallSeg(L(-1.2) - 0.02, -1.05, 6.75, -1.05, 0.30, 'low');
+  s.line('over', L(2.55), 2.55, 7.10, 2.55, `stroke="#495057" stroke-dasharray="8 4"`);
+  if (after) s.poly('over', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], `fill="none" stroke="#495057" stroke-dasharray="8 4"`);
+  s.note(3.4, 0.4, 'open to sky · courtyard below', { cls: 'nts2', anchor: 'middle' });
+  s.poly('fill', [[L(2.75), 2.75], [2.95, 2.75], [2.95, 3.38], [L(3.38), 3.38]], `fill="#e9ecef"`);
+  s.note(1.6, 3.12, 'outdoor ledge', { cls: 'nts2', anchor: 'middle' });
+  // stairwell
+  s.poly('fill', [[L(5.30) + 0.48, 5.30], [2.45, 5.30], [2.45, 7.75], [L(7.75) + 0.48, 7.75]], `fill="#f8f9fa"`);
+  for (let k = 0; k <= 10; k++) { const y = 5.30 + k * 0.205; s.line('furn', L(y) + 0.50, y, 2.43, y, `stroke="#868e96" stroke-width="0.8"`); }
+  s.arrow([[1.78, 5.42], [1.78, 7.45]], '');
+  s.note(2.0, 6.0, 'DN', { cls: 'stl' });
+  s.poly('furn', [[L(5.30) + 0.04, 5.30], [L(5.30) + 0.48, 5.30], [L(7.75) + 0.48, 7.75], [L(7.75) + 0.04, 7.75]], `fill="${after ? C.furnFill : '#e9ecef'}" stroke="${C.furn}"`);
+  s.poly('furn', [[L(3.50) + 0.0, 3.50], [L(3.50) + 0.06, 3.50], [L(7.75) + 0.06, 7.75], [L(7.75), 7.75]], `fill="#b5654f"`);
+  // --- walls ---
+  s.wallSeg(L(3.38) - 0.07, 3.38, L(10.39) - 0.07, 10.39, 0.14);
+  s.wall(L(3.38), 3.38, 2.95, 3.38, 0.14, 'ex', [{ a: 1.55 - L(3.38), b: 1.95 - L(3.38), type: 'win' }]);
+  s.wallSeg(2.95, 2.64, 2.95, 3.45, 0.12);
+  s.wall(2.95, 2.70, 6.90, 2.70, 0.12, 'ex', [{ a: 0.40, b: 2.50, type: 'win' }]);
+  s.wall(6.90, RY, 6.90, 5.60, 0.12, 'ex', [{ a: 0.60 - RY, b: 1.15 - RY, type: 'win' }, { a: 1.80 - RY, b: 2.70 - RY, type: 'win' }]);
+  s.wallSeg(6.90, -0.97, 10.54, -0.97, 0.14);
+  s.wallSeg(10.47, -1.04, 10.47, 10.39, 0.14);
+  s.wallSeg(L(10.32), 10.32, 10.54, 10.32, 0.14);
+  s.wall(6.90, 1.60, 10.40, 1.60, 0.10, 'ex', [{ a: 0.65, b: 1.40, type: 'door', hinge: 'a', side: -1 }]);
+  s.wall(6.90, 5.60, 10.40, 5.60, 0.11, 'ex', [{ a: 0.35, b: 1.17, type: 'door', hinge: 'b', side: -1 }]);
+  s.wall(8.50, 5.60, 8.50, 7.85, 0.10, 'ex', [{ a: 0.72, b: 1.47, type: 'door', hinge: 'a', side: -1 }]);
+  const xFL = L(7.85);
+  s.wall(xFL, 7.85, 10.40, 7.85, 0.11, 'ex', [{ a: 2.37 - xFL, b: 3.07 - xFL, type: 'door', hinge: 'a', side: 1 }, { a: 5.98 - xFL, b: 6.80 - xFL, type: 'door', hinge: 'b', side: 1 }, { a: 7.06 - xFL, b: 7.88 - xFL, type: 'door', hinge: 'a', side: 1 }]);
+  s.wallSeg(3.15, 7.85, 3.15, 10.25, 0.10);
+  s.wallSeg(6.90, 7.85, 6.90, 10.25, 0.11);
+  s.wallSeg(2.51, 5.30, 2.51, 7.75, 0.12, 'low');   // solid parapet (≈1.0 m high)
+  // --- alcove / void ---
+  if (after) {
+    s.rect('fill', 3.92, 2.75, 5.42, 3.45, `fill="url(#void)" stroke="${C.neu}" stroke-width="1.2"`);
+    s.rect('fill', 3.92, 2.55, 5.42, 2.70, `fill="#d0ebff"`);
+    s.wall(3.90, 3.45, 5.42, 3.45, 0.08, 'new', [{ a: 0.02, b: 1.50, type: 'slide', kind: 'new' }]);
+    s.wall(5.42, 2.76, 5.42, 3.45, 0.06, 'new', [{ a: 0.0, b: 0.69, type: 'fixed', kind: 'new' }]);
+    s.furn(5.50, 2.78, 6.82, 3.06, { neu: true, label: 'bookshelf' }); s.furn(5.95, 3.12, 6.55, 3.62, { rx: 0.1 });
+    s.note(6.25, 3.85, 'reading nook', { cls: 'nto', anchor: 'middle' }); s.note(6.25, 4.07, '(over the porch)', { cls: 'nts2', anchor: 'middle' });
+    s.line('furn', L(5.05) + 0.12, 5.05, L(5.05) + 1.1, 5.05, `stroke="${C.neu}" stroke-width="3"`); s.circle('furn', L(4.7) + 0.3, 4.7, 0.07, `fill="${C.neu}"`);
+    s.note(1.65, 5.24, 'pull-up bar + suspension anchor', { cls: 'nto', anchor: 'middle' });
+    s.wall(3.90, 2.76, 3.90, 3.45, 0.06, 'new', [{ a: 0.0, b: 0.69, type: 'fixed', kind: 'new' }]);
+    s.room(4.68, 3.06, 'VOID', 'open to dining bay below', { size: 11.5 });
+    s.note(4.67, 2.45, 'closable glass doors (orange)', { cls: 'nto', anchor: 'middle' });
+    s.note(3.42, 3.15, 'nook', { cls: 'nts2', anchor: 'middle' });
+    s.dim(3.92, 2.70, 5.42, 2.70, -0.62, 'void ≈ 1.5 × 0.70');
+  } else {
+    s.rect('fill', 3.92, 2.75, 6.86, 3.45, `fill="none" stroke="${C.rem}" stroke-width="1.2" stroke-dasharray="6 3"`);
+    s.furn(3.02, 2.78, 5.72, 3.38, { label: 'built-in desk (alcove)' });
+    s.note(5.4, 3.78, 'alcove floor cut for the void in 2029', { cls: 'ntr', anchor: 'middle' });
+    s.furn(3.55, 7.40, 5.55, 7.76, { label: 'TV console' });
+  }
+  // --- furniture ---
+  s.bed(8.34, 2.15, 10.34, 3.95, 'E'); s.furn(6.98, 2.85, 7.58, 3.55, {});
+  s.bed(4.35, 8.98, 6.35, 10.18, 'E'); s.furn(3.22, 7.94, 3.82, 8.88, { label: 'wardrobe', vert: true }); s.furn(3.25, 9.64, 4.25, 10.18, { label: 'desk' });
+  s.bed(8.34, 8.98, 10.34, 10.18, 'E'); s.furn(8.05, 7.94, 9.25, 8.54, { label: 'wardrobe' }); s.furn(7.02, 9.64, 8.15, 10.18, { label: 'desk' });
+  s.poly('furn', [[L(8.05) + 0.04, 8.05], [L(8.05) + 0.64, 8.05], [L(9.45) + 0.64, 9.45], [L(9.45) + 0.04, 9.45]], `fill="${C.furnFill}" stroke="${C.furn}"`);
+  if (after) {
+    s.furn(3.95, 3.55, 5.40, 4.05, { label: 'WFH desk' });
+    s.chair(4.15, 4.12, 0.46, 0.44, 'S'); s.chair(4.85, 4.12, 0.46, 0.44, 'S');
+    s.sofa(3.75, 7.00, 5.75, 7.74, 'S'); s.furn(4.30, 6.25, 5.20, 6.70, {});
+  }
+  // --- labels ---
+  s.room(4.8, after ? 5.45 : 5.2, 'Lounge / WFH', '');
+  s.room(1.75, 3.9, 'Stair landing', 'small rear window\nbrick feature side wall');
+  s.room(8.9, 4.5, 'Master bedroom 3F', '');
+  s.room(8.7, 0.4, 'Ensuite', '');
+  s.room(9.48, 6.6, 'WC', '');
+  s.room(2.2, 9.3, 'Front-left', 'bedroom');
+  s.room(5.05, 8.45, 'Kid #1 bedroom', '3.75 × 2.40');
+  s.room(7.65, 9.0, 'Kid #2', '3.50 × 2.40');
+  s.note(2.62, 6.55, 'solid parapet', { cls: 'nts2', rot: 90 });
+}
+
+// ===== Long section A–A (through X ≈ 5.2 m; rear courtyard on the left → street on the right) =====
+function section(after, gx, oy) {
+  const S = 42, ox = gx + 3.7 * S;
+  const X = y => +(ox + y * S).toFixed(1), Z = z => +(oy - z * S).toFixed(1);
+  const o = [];
+  const R = (y0, y1, z0, z1, a) => o.push(`<rect x="${X(Math.min(y0, y1))}" y="${Z(Math.max(z0, z1))}" width="${(Math.abs(y1 - y0) * S).toFixed(1)}" height="${(Math.abs(z1 - z0) * S).toFixed(1)}" ${a}/>`);
+  const Ln = (y0, z0, y1, z1, a) => o.push(`<line x1="${X(y0)}" y1="${Z(z0)}" x2="${X(y1)}" y2="${Z(z1)}" ${a}/>`);
+  const T = (y, z, s, a = '') => o.push(`<text x="${X(y)}" y="${Z(z)}" ${a}>${esc(s)}</text>`);
+  const cut = `fill="#2f2f2f"`, newc = `fill="${C.neu}"`, rem = `fill="none" stroke="${C.rem}" stroke-width="1.4" stroke-dasharray="5 3"`, beyond = `fill="#f1f3f5" stroke="#adb5bd" stroke-width="0.8"`;
+  // ground
+  R(-3.6, 13.8, -0.6, -0.28, `fill="url(#earth)"`);
+  // neighbour house (beyond the boundary wall)
+  R(-3.6, -1.6, 0, 6.9, `fill="#f1f3f5" stroke="#ced4da"`); o.push(`<polygon points="${X(-3.6)},${Z(8.3)} ${X(-1.5)},${Z(6.9)} ${X(-3.6)},${Z(6.9)}" fill="#ead9d0" stroke="#ced4da"/>`);
+  T(-2.6, 3.4, 'neighbour', 'class="nts2" text-anchor="middle"');
+  // boundary wall
+  R(-1.20, -0.90, 0, 5.25, cut);
+  // courtyard
+  if (after) { R(-0.86, 3.45, 0, 0.20, `fill="#c9935b"`); R(0.32, 1.28, 0.20, 0.58, beyond); Ln(0.8, 0.58, 0.8, 1.9, `stroke="#b8a089" stroke-width="3"`); o.push(`<ellipse cx="${X(0.82)}" cy="${Z(2.2)}" rx="${0.72 * S}" ry="${0.45 * S}" fill="#69b56b" fill-opacity="0.25" stroke="#8fbf80"/>`); T(0.82, 2.8, 'tree (beyond)', 'class="nts2" text-anchor="middle"'); }
+  else { R(-0.88, 2.55, 0, 0.90, rem); R(-0.68, 2.33, 0.30, 0.80, `fill="#a5d8ff" fill-opacity="0.6"`); R(2.55, 3.45, 0, 0.90, rem); }
+  R(-0.90, 13.8, -0.28, 0, `fill="#ced4da"`);
+  // 1F: walls cut at Y 3.45 (glass), 6.60, 9.30, 10.32
+  R(3.42, 3.48, 0, 2.10, `fill="#a5d8ff" stroke="#1971c2" stroke-width="0.8"`);
+  R(6.55, 6.65, 0, 2.10, cut); R(9.25, 9.35, 0, 2.10, cut); R(10.25, 10.39, 0, 2.20, cut);
+  // 2F slab
+  R(2.55, 10.39, 2.10, 2.20, cut);
+  if (after) R(1.55, 2.55, 2.08, 2.20, newc);
+  // 2F rear: before = railing at 2.55 + wall with window at 3.45; after = bay glass at 2.55
+  if (after) {
+    R(2.49, 2.61, 2.20, 3.10, newc); R(2.52, 2.58, 3.10, 4.45, `fill="#a5d8ff" stroke="${C.neu}" stroke-width="1.2"`); R(2.49, 2.61, 4.45, 5.25, newc);
+    Ln(1.55, 2.20, 1.55, 3.30, `stroke="${C.neu}" stroke-width="2.5"`); R(1.60, 1.85, 2.20, 2.55, `fill="#dff2d8" stroke="${C.neu}"`);
+    R(2.62, 3.08, 2.20, 2.64, `fill="${C.joinFill}" stroke="${C.neu}"`); R(2.62, 2.74, 2.64, 3.04, `fill="${C.joinFill}" stroke="${C.neu}"`);
+  } else {
+    Ln(2.55, 2.20, 2.55, 3.12, `stroke="${C.rem}" stroke-width="2" stroke-dasharray="4 2"`);
+    o.push(`<rect x="${X(3.39)}" y="${Z(5.25)}" width="${0.12 * S}" height="${3.05 * S}" ${rem}/>`);
+    R(3.41, 3.49, 2.65, 4.60, `fill="#a5d8ff" fill-opacity="0.5"`);
+  }
+  // 2F ceiling + 3F slab
+  if (after) R(3.45, 10.39, 5.32, 5.45, cut); else R(2.70, 10.39, 5.32, 5.45, cut);
+  if (after) { R(2.55, 2.70, 5.36, 5.42, `fill="#a5d8ff" stroke="${C.neu}"`); R(2.70, 3.45, 5.32, 5.45, `fill="url(#void)" stroke="${C.neu}" stroke-width="1"`); }
+  else R(2.55, 2.70, 5.25, 5.45, cut);
+  // 2F front wall with window, piano
+  R(10.25, 10.39, 2.20, 2.95, cut); R(10.28, 10.36, 2.95, 4.45, `fill="#a5d8ff"`); R(10.25, 10.39, 4.45, 5.32, cut);
+  if (after) R(9.84, 10.22, 2.20, 2.95, beyond); 
+  // 3F rear alcove wall with window, soffit
+  R(2.64, 2.76, 5.45, 6.30, cut); R(2.67, 2.73, 6.30, 7.65, `fill="#a5d8ff"`); R(2.64, 2.76, 7.65, 8.30, cut);
+  R(2.70, 3.45, 7.95, 8.30, `fill="#e9ecef" stroke="#adb5bd"`);
+  if (after) R(3.42, 3.48, 5.45, 7.95, `fill="#a5d8ff" stroke="${C.neu}" stroke-width="1.4"`);
+  // 3F partitions + front
+  R(7.80, 7.90, 5.45, 8.30, cut); R(10.25, 10.39, 5.45, 8.35, cut); R(10.32, 10.92, 5.35, 5.45, cut);
+  // roof
+  o.push(`<polygon points="${X(2.55)},${Z(8.30)} ${X(3.2)},${Z(8.35)} ${X(6.85)},${Z(9.65)} ${X(10.6)},${Z(8.30)} ${X(10.6)},${Z(8.15)} ${X(6.85)},${Z(9.5)} ${X(3.2)},${Z(8.20)} ${X(2.55)},${Z(8.15)}" fill="#b56e4f"/>`);
+  Ln(2.70, 8.30, 10.32, 8.30, `stroke="#2f2f2f" stroke-width="1.5"`);
+  // beyond furniture (light)
+  if (after) { R(3.66, 4.24, 5.45, 6.19, beyond); R(7.0, 7.74, 5.45, 5.90, beyond); R(5.75, 7.75, 2.20, 2.63, beyond); }
+  R(8.98, 10.18, 5.45, 5.97, beyond);
+  // room names
+  const rn = (y, z, s, sub) => { T(y, z, s, 'class="rn" text-anchor="middle"'); if (sub) T(y, z - 0.28, sub, 'class="rs" text-anchor="middle"'); };
+  rn(1.3, 1.25, after ? 'Courtyard deck' : 'Raised pool', after ? '+0.20' : '+0.90 (removed)');
+  rn(4.9, 1.1, after ? 'Home gym' : 'Sitting room', '(R. Duduk)');
+  rn(8.0, 1.1, 'Service kitchen', '(Dapur)');
+  rn(9.78, 0.55, 'Store', '');
+  if (after) { T(2.75, 3.85, 'Dining bay', 'class="rn" style="text-anchor:start"'); T(2.75, 3.6, 'bench in the bay', 'class="rs" style="text-anchor:start"'); T(1.45, 3.4, 'Balcony 1.0 m →', 'class="rs" style="text-anchor:end"'); T(3.55, 5.75, '← void + closable glass doors', 'class="nto"'); }
+  else T(2.45, 3.4, 'Recessed balcony 0.90 m →', 'class="rs" style="text-anchor:end"');
+  rn(6.6, 4.0, 'Living', '2F ceiling 3.05 m');
+  rn(5.6, 6.95, after ? 'Lounge / WFH' : 'Lounge', '');
+  rn(9.1, 6.95, 'Kid #1', '');
+  T(-1.05, 5.5, 'boundary wall +5.25', 'class="nts2" text-anchor="middle"');
+  // level marks
+  [[0, '±0.00 1F'], [2.20, '+2.20 2F'], [5.45, '+5.45 3F'], [8.30, '+8.30 ceiling'], [9.65, '+9.65 ridge']].forEach(([z, t]) => {
+    Ln(11.0, z, 13.4, z, `stroke="#868e96" stroke-width="0.7" stroke-dasharray="4 3"`);
+    o.push(`<polygon points="${X(11.15)},${Z(z)} ${X(11.0)},${Z(z) - 9} ${X(11.3)},${Z(z) - 9}" fill="#1d242b"/>`);
+    T(11.4, z + 0.08, t, 'class="lv"');
+  });
+  // dims
+  const vd = (y, z0, z1, t) => { Ln(y, z0, y, z1, `stroke="${C.dim}" stroke-width="0.8"`); [z0, z1].forEach(z => Ln(y - 0.08, z - 0.08, y + 0.08, z + 0.08, `stroke="${C.dim}" stroke-width="1.3"`)); o.push(`<text x="${X(y) - 4}" y="${(Z(z0) + Z(z1)) / 2}" class="dt" text-anchor="middle" transform="rotate(-90 ${X(y) - 4} ${(Z(z0) + Z(z1)) / 2})">${esc(t)}</text>`); };
+  const hd = (y0, y1, z, t) => { Ln(y0, z, y1, z, `stroke="${C.dim}" stroke-width="0.8"`); [y0, y1].forEach(y => Ln(y - 0.08, z - 0.08, y + 0.08, z + 0.08, `stroke="${C.dim}" stroke-width="1.3"`)); T((y0 + y1) / 2, z + 0.1, t, 'class="dt" text-anchor="middle"'); };
+  vd(6.35, 0, 2.10, '2.10 clear'); vd(5.3, 2.20, 5.25, '3.05'); vd(7.3, 5.45, 8.30, '2.85');
+  hd(-0.90, 3.45, -0.95, 'courtyard ≈ 4.35 m'); hd(3.45, 10.32, -0.95, '≈ 6.9 m');
+  if (after) { hd(1.55, 2.55, 1.85, '1.00'); hd(2.55, 3.45, 1.85, '0.90'); }
+  // 2F→… header
+  return o.join('\n');
+}
+// ===== Future access options (mini plans of the courtyard + 2F balcony) =====
+function accessMini(kind, gx, gy) {
+  const s = new Sheet(54, gx + 0.6 * 54, gy + 1.6 * 54);
+  s.poly('fill', [[L(RY), RY], [6.75, RY], [6.75, 3.45], [L(3.45), 3.45]], `fill="url(#deck)"`);
+  s.rect('fill', 6.75, RY, 7.9, 3.6, `fill="#eef0f2"`);
+  s.wallSeg(L(-1.2) - 0.02, -1.05, 6.75, -1.05, 0.30);
+  s.wallSeg(L(-1.04) - 0.07, -1.04, L(3.6) - 0.07, 3.6, 0.14);
+  s.wallSeg(L(3.45), 3.45, 3.00, 3.45, 0.12);
+  s.wall(3.00, 3.45, 6.75, 3.45, 0.12, 'ex', [{ a: 0.05, b: 3.70, type: 'slide' }]);
+  s.wallSeg(6.75, 3.45, 6.75, 3.6, 0.12);
+  // 2F balcony + bay (dashed = upper level)
+  const ub = `fill="none" stroke="#495057" stroke-width="1" stroke-dasharray="8 4"`;
+  s.poly('over', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], ub);
+  s.line('over', 3.90, 2.55, 7.10, 2.55, `stroke="${C.neu}" stroke-width="2"`);
+  s.rect('over', 5.44, 2.50, 6.46, 2.60, `fill="#fff" stroke="${C.neu}"`);
+  s.note(5.95, 2.95, 'bay door (2F)', { cls: 'nto', anchor: 'middle' });
+  s.note(L(2.0) + 0.1, 2.12, '2F balcony (dashed)', { cls: 'nts2' });
+  if (kind !== 'ramp') { s.rect('furn', 2.55, 0.32, 3.95, 1.28, `fill="#d8f0d4" stroke="#3d8b4f"`); s.note(3.25, 0.86, 'tree', { cls: 'nts2', anchor: 'middle' }); }
+  const ac = '#b0561b', fa = `fill="#f6d7b8" stroke="${ac}" stroke-width="1.3"`;
+  if (kind === 'ramp') {
+    s.poly('furn', [[1.32, -0.85], [6.70, -0.85], [6.70, 0.10], [1.32, 0.10]], fa);
+    s.poly('furn', [[L(-0.85) + 0.04, -0.85], [1.32, -0.85], [1.32, 1.55], [L(1.55) + 0.04, 1.55]], fa);
+    s.poly('furn', [[L(1.55) + 0.04, 1.55], [5.40, 1.55], [5.40, 2.55], [L(2.55), 2.55]], fa);
+    s.rect('furn', 5.40, 1.05, 6.97, 2.55, `fill="#ffe8cc" stroke="${ac}" stroke-width="1.3"`);
+    s.arrow([[7.2, -0.38], [0.85, -0.38], [0.85, 2.05], [5.2, 2.05]], '', { col: ac });
+    s.note(4.0, -0.52, 'leg C · 5.4 m', { cls: 'nto', anchor: 'middle' });
+    s.note(1.06, 0.6, 'leg D 1.45', { cls: 'nto', rot: 90 });
+    s.note(3.2, 2.35, 'leg A = whole balcony (re-pitched)', { cls: 'nto', anchor: 'middle' });
+    s.note(6.2, 1.35, 'landing', { cls: 'nto', anchor: 'middle' });
+    s.note(7.3, 0.3, 'start at garage floor', { cls: 'nts2', rot: -90, anchor: 'middle' });
+    s.rect('furn', 2.55, 0.32, 3.95, 1.28, `fill="#d8f0d4" stroke="#3d8b4f"`); s.note(3.25, 0.86, 'tree', { cls: 'nts2', anchor: 'middle' });
+  } else if (kind === 'stair') {
+    for (let k = 0; k <= 6; k++) s.line('furn', 5.88, 1.55 - k * 0.267, 6.72, 1.55 - k * 0.267, `stroke="${ac}"`);
+    s.rect('furn', 5.88, -0.05, 6.72, 1.55, `fill="none" stroke="${ac}" stroke-width="1.3"`);
+    s.rect('furn', 5.88, -0.90, 6.72, -0.05, `fill="#ffe8cc" stroke="${ac}" stroke-width="1.3"`);
+    for (let k = 0; k <= 6; k++) s.line('furn', 5.88 - k * 0.267, -0.90, 5.88 - k * 0.267, -0.05, `stroke="${ac}"`);
+    s.rect('furn', 4.278, -0.90, 5.88, -0.05, `fill="none" stroke="${ac}" stroke-width="1.3"`);
+    s.arrow([[6.3, 1.45], [6.3, -0.48], [4.4, -0.48]], '', { col: ac });
+    s.note(5.0, 0.25, 'DN 12 risers', { cls: 'nto', anchor: 'middle' });
+    s.note(6.2, 1.8, 'child gate', { cls: 'nts2', anchor: 'middle' });
+  } else {
+    s.rect('furn', 5.70, 0.05, 6.72, 1.53, `fill="#d0ebff" stroke="#1864ab" stroke-width="1.4"`);
+    s.line('furn', 5.70, 0.05, 6.72, 1.53, `stroke="#1864ab" stroke-width="0.8"`); s.line('furn', 6.72, 0.05, 5.70, 1.53, `stroke="#1864ab" stroke-width="0.8"`);
+    s.note(6.21, -0.12, 'platform ≈ 1.0 × 1.45', { cls: 'ntb2', anchor: 'middle' });
+    s.note(6.21, 1.85, 'opens onto balcony', { cls: 'nts2', anchor: 'middle' });
+  }
+  return s.out();
+}
+
+const ACCESS = [
+  { k: 'ramp', t: 'A. L-ramp (rear wall → side strip → whole balcony)', lines: ['≈ 10.9 m of ramp for a 2.0 m climb → ≈ 18 % (steep;', 'assisted wheelchair only). 0.95 m clear.', 'Balcony becomes the top leg; ACs move.', '≈ Rp 60–65 M · footings cast in 2029 (dashed on 1F).', 'U-ramp variant ≈ 15 % (bigger footprint).'] },
+  { k: 'stair', t: 'B. Quarter-turn steel stair at the bay-door end', lines: ['12 risers × 16.7 cm, treads 26.7 cm, ≈ 32°,', '0.84 m wide, corner landing at the rear wall.', 'Child gate at the top. Removable if a ramp', 'is ever built.  ≈ Rp 30–35 M.', ''] },
+  { k: 'lift', t: 'C. Outdoor platform lift in the garage-side corner', lines: ['≈ 2.0 m rise, glass tower with small roof,', 'stops at the balcony beside the bay door.', 'Car → lift → door → 2F, truly step-free.', '≈ Rp 240–410 M.  Alternative: stair-lift on the', 'indoor 1F→2F stair if it is straight (≈ Rp 40–80 M).'] },
+];
+// ===== Sheet assembly =====
+const W = 1560, H = 1030;
+const DEFS = `<defs>
+ <pattern id="deck" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#f3e3cf"/><line x1="0" y1="0" x2="10" y2="0" stroke="#d9b48a" stroke-width="1"/></pattern>
+ <pattern id="water" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#d0ebff"/><path d="M0 4 q2 -2 4 0 t4 0" fill="none" stroke="#74c0fc" stroke-width="0.8"/></pattern>
+ <pattern id="steel" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="6" x2="6" y2="0" stroke="#ced4da" stroke-width="0.7"/></pattern>
+ <pattern id="plank" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#fbf1e2"/><line x1="0" y1="0" x2="12" y2="0" stroke="#ecd5b4" stroke-width="1"/></pattern>
+ <pattern id="slate" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#eceff1"/><rect width="9" height="9" fill="none" stroke="#cfd4d8" stroke-width="0.6"/></pattern>
+ <pattern id="void" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fff4e6"/><path d="M0 0 L10 10 M10 0 L0 10" stroke="#f08c00" stroke-width="0.6"/></pattern>
+ <pattern id="earth" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#efe7da"/><circle cx="2" cy="2" r="0.8" fill="#c9b79c"/><circle cx="6" cy="6" r="0.8" fill="#c9b79c"/></pattern>
+</defs>`;
+
+const NOTES = [
+  'Courtyard wall-to-wall size (model ≈ 6.45 × 4.35 m; owner estimate 6.5–6.7 × 4.3–4.5 m).',
+  'Boundary-wall pier at the back corner (size/position not in model).',
+  '2F master window: exact position vs the old railing line / new bay corner.',
+  'Indoor 1F→2F stair: straight run? where it lands on 2F (model overlaps).',
+  'Slab / beam over the removed balcony wall (2F rear wall at old line).',
+  'Roof / 3F soffit over the new flush bay (glass strip 2.55–2.70).',
+  'Front setback + permit (PBG) for the 1.0 m musholla bay.',
+  '1F rear wall & openings (helper room / sitting room) assumed, not modelled.',
+  '3F front windows and Front-left bedroom door position not surveyed.',
+];
+const LEGEND = [
+  ['wall', 'Existing wall (cut)'], ['new', 'New in 2029 (wall / glazing / built-in)'], ['rem', 'Removed in 2029 (on BEFORE sheets)'],
+  ['win', 'Window / glazing'], ['door', 'Door with swing'], ['furn', 'Furniture (indicative)'], ['dash', 'Above / below / future (dashed)'], ['arrow', 'Stair – arrow points UP / DN'],
+];
+function legendSvg(x, y) {
+  let o = `<g transform="translate(${x},${y})"><text class="ph">Legend</text>`;
+  LEGEND.forEach(([k, t], i) => {
+    const yy = 18 + i * 21, sw = `<g transform="translate(0,${yy})">`;
+    let g = '';
+    if (k === 'wall') g = `<rect width="34" height="7" y="-1" fill="${C.wall}"/>`;
+    if (k === 'new') g = `<rect width="34" height="7" y="-1" fill="${C.neu}"/>`;
+    if (k === 'rem') g = `<rect width="34" height="7" y="-1" fill="none" stroke="${C.rem}" stroke-width="1.4" stroke-dasharray="5 3"/>`;
+    if (k === 'win') g = `<rect width="34" height="7" y="-1" fill="#fff" stroke="${C.wall}"/><line x1="0" x2="34" y1="2.5" y2="2.5" stroke="${C.wall}"/>`;
+    if (k === 'door') g = `<line x1="2" y1="6" x2="2" y2="-12" stroke="${C.wall}" stroke-width="2"/><path d="M20 6 A18 18 0 0 0 2 -12" fill="none" stroke="${C.wall}" stroke-dasharray="3 2"/>`;
+    if (k === 'furn') g = `<rect width="34" height="11" y="-3" fill="${C.furnFill}" stroke="${C.furn}"/>`;
+    if (k === 'dash') g = `<line x1="0" x2="34" y1="2.5" y2="2.5" stroke="#495057" stroke-dasharray="8 4"/>`;
+    if (k === 'arrow') g = `<line x1="0" x2="28" y1="2.5" y2="2.5" stroke="#333" stroke-width="1.3"/><polygon points="34,2.5 26,-1.5 26,6.5" fill="#333"/>`;
+    o += `${sw}${g}<text x="46" y="7" class="lg">${esc(t)}</text></g>`;
+  });
+  return o + '</g>';
+}
+function notesSvg(x, y, w) {
+  let o = `<g transform="translate(${x},${y})"><rect x="-10" y="-20" width="${w}" height="${30 + NOTES.length * 19}" fill="#fff9db" stroke="#f0c36d" rx="6"/><text class="ph">Notes · to verify on site (survey)</text>`;
+  NOTES.forEach((n, i) => o += `<text y="${22 + i * 19}" class="nl">${i + 1}. ${esc(n)}</text>`);
+  return o + '</g>';
+}
+function listSvg(x, y, title, items, col) {
+  let o = `<g transform="translate(${x},${y})"><text class="ph" fill="${col}">${esc(title)}</text>`;
+  items.forEach((t, i) => o += t.startsWith('   ') ? `<text x="11" y="${22 + i * 19}" class="nl">${esc(t.trim())}</text>` : `<text y="${22 + i * 19}" class="nl"><tspan fill="${col}" font-weight="700">• </tspan>${esc(t)}</text>`);
+  return o + '</g>';
+}
+
+const VIEWS = {
+  f1b: { fl: 1, after: false, t: '1F plan — BEFORE (as built)', items: ['Raised pool +0.90 m fills the courtyard (toddler hazard).', 'Pump / laundry terrace +0.90 m under the 2F overhang.', 'Sliding glass divider between pool and garage, full length.', 'Sitting room (R. Duduk) blocked by the pool wall.'] },
+  f1a: { fl: 1, after: true, t: '1F plan — AFTER (★ 2029 plan)', items: ['Pool demolished → +0.20 m WPC deck over the whole courtyard.', 'Tree in a planter, permanent, mid-courtyard.', 'Garage divider removed; planter + 2 bollards for kid/car safety.', 'Garage glass/wall removed: R. Duduk open to the cars (≥1.2 m clear path).', 'Washer + stacked dryer on the K.ART wall.', 'Gym along the service-kitchen wall: dumbbells, 2 × 1.5 m barbell pad,', '   folding wall squat rack; K.ART door + garage path kept clear.', 'Laundry: 3 pulley drying racks overhead under the 2F balcony.',  'Future L-ramp strip dashed; footings + prep cast now (~Rp 6–8 M).', 'Other access options (stair, lift): see the “Access” tab.'] },
+  f2b: { fl: 2, after: false, t: '2F plan — BEFORE (as built)', items: ['0.90 m recessed balcony between kitchen block and master block.', '3 AC units stacked on the kitchen-block side wall; laundry hung here.', 'Rear living wall (window + balcony door) at the old line.', 'Dark kitchen with pantry column, bar ledge and 2 stools.', 'Musholla closed off by a solid divider; flat front wall.'] },
+  f2a: { fl: 2, after: true, t: '2F plan — AFTER (★ 2029 plan)', items: ['Flush dining bay: glazing on the old balcony edge, X 3.90–5.44.', 'Bay enclosed only to X 5.44 (side wall). East part stays an open porch', '   1.6 × 0.9 m: existing balcony door kept on the old line.', 'Long window bench (~2.1 m, drawers) joined to the kitchen run;', '   1.65 × 0.90 oval table + 3 chairs = 6 people.', 'U-kitchen: sink at window, hob + fridge on side wall, peninsula', '   = prep + dishwasher, no stools. Kitchen window = café pass-through.', 'New 1.0 m steel balcony along the whole rear: 3 ACs on a frame,', '   fold-down sill bar + 2 folding stools, small fold-out laundry rack', '   in front of the ACs, plants, canopy.', 'Master window unchanged (faces the open porch).', 'Fixed glass panel replaces the wall between bay glazing and the old door.', 'Musholla on a +0.35 m storage platform, shoji in wall pockets,', '   new 1.0 m front bay window (could be deferred).', 'Piano on the master-side wall; musholla = yoga / stretching (mats in drawers).'] },
+  f3b: { fl: 3, after: false, t: '3F plan — BEFORE (as built)', items: ['WFH alcove projects over the 2F balcony (built-in dark desk).', 'Solid white stair parapet; brick feature wall on the side wall.', 'Alcove floor over the bay is the part cut in 2029 (red dashed).'] },
+  f3a: { fl: 3, after: true, t: '3F plan — AFTER (★ 2029 plan)', items: ['Closable alcove void ≈1.5 × 0.70 m over the enclosed dining bay only;', '   alcove slab kept over the open porch.', 'Floor-to-ceiling sliding glass doors: open = double height,', '   closed = quiet lounge / WFH.', 'WFH desk along the void glass; sofa on the kid-room panel wall.', 'Reading nook + bookshelf east of the void (over the porch).', 'Pull-up bar + suspension anchor by the brick wall (stair landing).', 'Bedrooms unchanged (furniture indicative).'] },
+};
+
+function planSheet(key) {
+  const v = VIEWS[key];
+  const S = 60, s = new Sheet(S, 30 + 0.95 * S, 58 + 2.05 * S);
+  if (v.fl === 1) plan1F(s, v.after); else if (v.fl === 2) plan2F(s, v.after); else plan3F(s, v.after);
+  const col = v.after ? C.neu : C.rem;
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sheet">${DEFS}<rect width="${W}" height="${H}" fill="#fff"/>`;
+  o += `<rect x="12" y="12" width="${W - 24}" height="${H - 24}" fill="none" stroke="#ced4da"/>`;
+  o += `<g>${s.out()}</g>`;
+  o += `<text x="40" y="44" class="orient">↑ REAR · courtyard (faces ≈277°, west)</text><text x="40" y="${H - 26}" class="orient">↓ FRONT · street (east)</text>`;
+  o += northArrow(705, 70) + scaleBar(470, H - 52, S);
+  o += `<line x1="${s.X(5.2)}" y1="${s.Y(-1.7)}" x2="${s.X(5.2)}" y2="${s.Y(-1.35)}" stroke="#1d242b" stroke-width="2"/><text x="${s.X(5.2) + 6}" y="${s.Y(-1.45)}" class="secm">A</text>`;
+  // right panel
+  const px = 830;
+  o += `<line x1="${px - 25}" y1="30" x2="${px - 25}" y2="${H - 30}" stroke="#dee2e6"/>`;
+  o += `<text x="${px}" y="58" class="tt">${esc(v.t)}</text><text x="${px}" y="82" class="st">scale bar in metres · dimensions approximate (from 3D model, ±5–10 cm) · A = section line</text>`;
+  o += listSvg(px, 122, v.after ? 'What changes on this floor (orange)' : 'What changes in 2029 (red dashed = removed)', v.items, col);
+  const ly = 122 + 30 + v.items.length * 19 + 20;
+  o += legendSvg(px, ly);
+  o += notesSvg(px + 10, Math.max(ly + 210, H - 40 - NOTES.length * 19 - 20), 700);
+  return o + '</svg>';
+}
+function sectionSheet() {
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sheet">${DEFS}<rect width="${W}" height="${H}" fill="#fff"/><rect x="12" y="12" width="${W - 24}" height="${H - 24}" fill="none" stroke="#ced4da"/>`;
+  o += `<text x="40" y="50" class="tt">Long section A–A (at ≈5.2 m from the side lot line) — rear courtyard ← → street</text>`;
+  o += `<text x="40" y="74" class="st">Left: BEFORE (as built) · Right: AFTER (★ 2029 plan). Section line A is marked on the plans. Schematic; levels from the 3D model. Black = cut slab/wall, orange = new, red dashed = removed.</text>`;
+  o += `<text x="40" y="128" class="ph" fill="${C.rem}">BEFORE (as built)</text><text x="800" y="128" class="ph" fill="${C.neu}">AFTER (★ 2029 plan)</text>`;
+  o += `<g>${section(false, 30, 560)}</g><g>${section(true, 790, 560)}</g>`;
+  o += `<line x1="780" y1="110" x2="780" y2="600" stroke="#dee2e6"/>`;
+  o += scaleBar(40, 640, 42) + legendSvg(40, 700) + notesSvg(560, 700, 900);
+  return o + '</svg>';
+}
+function accessSheet() {
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sheet">${DEFS}<rect width="${W}" height="${H}" fill="#fff"/><rect x="12" y="12" width="${W - 24}" height="${H - 24}" fill="none" stroke="#ced4da"/>`;
+  o += `<text x="40" y="50" class="tt">Future access options — NOT built in 2029 (courtyard 1F + 2F balcony)</text>`;
+  o += `<text x="40" y="74" class="st">Each sketch: top = rear boundary wall, right = garage. Upper-level balcony dashed. Honest finding: with a 2.2 m climb and 2.1 m 1F headroom, no ramp can be gentle on this plot.</text>`;
+  ACCESS.forEach((a, i) => {
+    const gx = 30 + i * 505, gy = 110;
+    o += `<rect x="${gx}" y="${gy}" width="490" height="480" fill="none" stroke="#dee2e6" rx="6"/>`;
+    o += `<text x="${gx + 14}" y="${gy + 28}" class="ph">${esc(a.t)}</text>`;
+    o += `<g>${accessMini(a.k, gx + 10, gy + 50)}</g>`;
+    a.lines.forEach((l, j) => o += `<text x="${gx + 14}" y="${gy + 370 + j * 21}" class="nl">${esc(l)}</text>`);
+  });
+  o += scaleBar(40, 625, 54) + legendSvg(40, 690) + notesSvg(560, 690, 900);
+  return o + '</svg>';
+}
+const TABS = [['f1b', '1F before'], ['f1a', '1F after'], ['f2b', '2F before'], ['f2a', '2F after'], ['f3b', '3F before'], ['f3a', '3F after'], ['sec', 'Section A–A'], ['acc', 'Access options'], ['all', 'All (print)']];
+function render() {
+  const key = (location.hash || '#f2a').slice(1);
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.k === key));
+  const one = k => k === 'sec' ? sectionSheet() : k === 'acc' ? accessSheet() : planSheet(k);
+  document.getElementById('view').innerHTML = key === 'all' ? TABS.slice(0, 8).map(t => `<div class="pg">${one(t[0])}</div>`).join('') : one(VIEWS[key] || key === 'sec' || key === 'acc' ? key : 'f2a');
+  document.body.classList.toggle('shot', new URLSearchParams(location.search).get('shot') === '1');
+}
+document.getElementById('tabs').innerHTML = TABS.map(([k, t]) => `<button data-k="${k}" onclick="location.hash='${k}'">${t}</button>`).join('') + '<span class="hint">Floor plans · BEFORE vs ★ 2029 plan</span>';
+window.addEventListener('hashchange', render);
+render();
+
+</script>
+</body>
+</html>

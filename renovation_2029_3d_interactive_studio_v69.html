@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>3D Renovation Studio</title>
+<style>
+  * { box-sizing: border-box; user-select: none; }
+  body {
+    margin: 0;
+    background: var(--background, #f5f3ee);
+    color: var(--foreground, #1d242b);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+  }
+  .app-shell { max-width: 1580px; margin: 0 auto; padding: 11px 15px 18px; }
+  .top-panel {
+    background: var(--card, #ffffff);
+    border: 1px solid var(--border, #d5cfc3);
+    border-radius: 12px;
+    padding: 11px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .row-between {
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+    gap: 8px; padding-bottom: 8px; margin-bottom: 8px;
+    border-bottom: 1px solid var(--border, #e5e0d5);
+  }
+  .row-wrap { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+  .row-toggles {
+    display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+    padding-top: 8px; margin-top: 8px; border-top: 1px solid var(--border, #e5e0d5);
+  }
+  .grp-lbl {
+    font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.35px;
+    color: var(--muted-foreground, #5a6570); margin-right: 2px;
+  }
+  .ctrl-btn {
+    border: 1px solid var(--border, #d5cfc3);
+    background: var(--card, #ffffff);
+    color: var(--foreground, #1d242b);
+    padding: 4.5px 9px;
+    border-radius: 7px;
+    font-size: 11.8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .ctrl-btn:hover { opacity: 0.88; }
+  .ctrl-btn.active {
+    background: #285943;
+    color: #ffffff;
+    border-color: #285943;
+  }
+  .ctrl-btn.warm.active {
+    background: #b67b2f;
+    color: #ffffff;
+    border-color: #b67b2f;
+  }
+  .ba-pill {
+    display: inline-flex;
+    border: 1.5px solid #285943;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-right: 6px;
+  }
+  .ba-pill button {
+    border: none;
+    background: #f6f4ef;
+    color: #4a5562;
+    padding: 5px 11px;
+    font-size: 11.8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .ba-pill button.active[data-mode="before"] { background: #525d68; color: #fff; }
+  .ba-pill button.active[data-mode="after"] { background: #285943; color: #fff; }
+  .row-toggles.before-dim { opacity: 0.42; pointer-events: none; }
+  .canvas-frame {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border, #d5cfc3);
+    background: #f3f1eb;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+  canvas#view3d {
+    display: block;
+    width: 100%;
+    height: 670px;
+    cursor: grab;
+    touch-action: none;
+  }
+  canvas#view3d:active { cursor: grabbing; }
+  body.clean-mode .app-shell { max-width: none; padding: 0; }
+  body.clean-mode .ui-chrome { display: none !important; }
+  body.clean-mode .canvas-frame { border: none; border-radius: 0; box-shadow: none; }
+  body.clean-mode canvas#view3d { height: 960px; }
+  .hud-badge {
+    position: absolute;
+    left: 16px;
+    top: 14px;
+    background: rgba(252, 250, 246, 0.94);
+    border: 1px solid #d4cdc0;
+    border-radius: 10px;
+    padding: 9px 14px;
+    pointer-events: none;
+    color: #1d242b;
+    max-width: 720px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+  .hud-title { font-size: 14px; font-weight: 700; color: #1d242b; }
+  .hud-sub { font-size: 11.8px; color: #4a5562; margin-top: 2px; }
+  .hud-help {
+    position: absolute;
+    right: 16px;
+    bottom: 14px;
+    background: rgba(29, 36, 43, 0.84);
+    color: #f8f9fa;
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 11.8px;
+    pointer-events: none;
+  }
+  .hud-legend {
+    position: absolute;
+    left: 16px;
+    bottom: 14px;
+    background: rgba(252, 250, 246, 0.93);
+    border: 1px solid #d4cdc0;
+    border-radius: 8px;
+    padding: 6px 11px;
+    font-size: 11.8px;
+    color: #2b343b;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    pointer-events: none;
+  }
+  .sw { display: inline-block; width: 11px; height: 11px; border-radius: 2px; border: 1px solid rgba(0,0,0,0.35); vertical-align: -1px; margin-right: 4px; }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <div class="ui-chrome top-panel">
+    <div class="row-between">
+      <div>
+        <h1 style="margin:0;font-size:15.5px;font-weight:700;">
+          Renovation Studio (2029 Plan)
+        </h1>
+        <p style="margin:2px 0 0;font-size:11.8px;color:var(--muted-foreground,#5a6570);">
+          Drag to orbit · Right-drag (or Shift+drag) to pan · Scroll to zoom · Ceiling heights 1F 2.10m · 2F 3.05m · 3F 2.85m
+        </p>
+      </div>
+      <div class="row-wrap">
+        <div class="ba-pill" id="baToggle3d">
+          <button data-mode="before">BEFORE (today)</button>
+          <button class="active" data-mode="after">★ AFTER (2029 plan)</button>
+        </div>
+        <span class="grp-lbl">Floors:</span>
+        <button class="ctrl-btn active" data-floor="1">1F</button>
+        <button class="ctrl-btn active" data-floor="2">2F</button>
+        <button class="ctrl-btn active" data-floor="3">3F</button>
+        <button class="ctrl-btn" data-floor="4">Roof</button>
+        <button class="ctrl-btn active" id="btnXray">See-through walls</button>
+        <button class="ctrl-btn active" id="btnScale">1.70m people</button>
+        <button class="ctrl-btn active" id="btnLabels">Labels</button>
+      </div>
+    </div>
+
+    <!-- Camera Presets -->
+    <div class="row-wrap">
+      <span class="grp-lbl">Views:</span>
+      <button class="ctrl-btn active" data-cam="dollhouse">Whole house</button>
+      <button class="ctrl-btn" data-cam="courtyard">Courtyard</button>
+      <button class="ctrl-btn" data-cam="cafe">2F balcony &amp; window bar</button>
+      <button class="ctrl-btn" data-cam="bay_ext">Dining bay from outside</button>
+      <button class="ctrl-btn" data-cam="f1_all">1F rooms</button>
+      <button class="ctrl-btn" data-cam="f2_all">2F rooms</button>
+      <button class="ctrl-btn" data-cam="f2_ldk">2F kitchen &amp; dining</button>
+      <button class="ctrl-btn" data-cam="f2_mush">2F musholla &amp; master</button>
+      <button class="ctrl-btn" data-cam="f2_genkan">Front stairs &amp; entry</button>
+      <button class="ctrl-btn" data-cam="f3_all">3F rooms</button>
+      <button class="ctrl-btn" data-cam="section_west">Side cut (all floors)</button>
+      <button class="ctrl-btn" data-cam="f2_plan">2F plan (top-down)</button>
+      <button class="ctrl-btn" data-cam="f3_plan">3F plan (top-down)</button>
+      <span class="grp-lbl" style="margin-left:6px;">Eye level:</span>
+      <button class="ctrl-btn" data-cam="f2_eye_bay">Sofa → dining bay</button>
+      <button class="ctrl-btn" data-cam="f2_eye_kitchen">Kitchen</button>
+      <button class="ctrl-btn" data-cam="f2_eye_west">TV wall &amp; stairs</button>
+      <button class="ctrl-btn" data-cam="f2_eye_south">Musholla</button>
+      <button class="ctrl-btn" data-cam="f3_eye_north">3F → void &amp; desk</button>
+      <button class="ctrl-btn" data-cam="f3_eye_south">3F → bedroom doors</button>
+    </div>
+
+    <div class="row-toggles" style="border-top:none;margin-top:4px;padding-top:4px;">
+      <span class="grp-lbl">Budget:</span>
+      <button class="ctrl-btn active" id="btnNoRampVoid">★ 2029 Plan (~Rp 489M)</button>
+      <button class="ctrl-btn" id="btnMust">Must-Do only (~Rp 419M)</button>
+      <button class="ctrl-btn" id="btnCafeStair">Plan + Stair (~Rp 527M)</button>
+      <button class="ctrl-btn" id="btnRecommended">L-Ramp from start (~Rp 550M)</button>
+      <span class="grp-lbl" style="margin-left:6px;">Courtyard ↔ 2F access:</span>
+      <button class="ctrl-btn warm active" data-access="none">None yet (ramp-ready)</button>
+      <button class="ctrl-btn warm" data-access="stair">+ Stair</button>
+      <button class="ctrl-btn warm" data-access="ramp">+ L-Ramp</button>
+      <button class="ctrl-btn warm" data-access="lift">+ Platform lift</button>
+      <button class="ctrl-btn" id="btnAlts">More options ▸</button>
+    </div>
+    <!-- Small extra options (all work with the corrected 2029 house) -->
+    <div class="row-toggles" id="afterTogglesRow" style="display:none;">
+      <span class="grp-lbl">3F void:</span>
+      <button class="ctrl-btn warm active" data-void="alcove">★ Closable void</button>
+      <button class="ctrl-btn warm" data-void="plain">Keep 3F as-is</button>
+
+      <span class="grp-lbl" style="margin-left:5px;">Musholla bay window:</span>
+      <button class="ctrl-btn warm active" data-mbay="on">★ Yes (+Rp 33M)</button>
+      <button class="ctrl-btn warm" data-mbay="off">No (existing window)</button>
+
+      <span class="grp-lbl" style="margin-left:5px;">Musholla:</span>
+      <button class="ctrl-btn active" data-mush="salah">Prayer</button>
+      <button class="ctrl-btn" data-mush="guest">Guest bed</button>
+
+      <span class="grp-lbl" style="margin-left:5px;">Shoji:</span>
+      <button class="ctrl-btn warm active" data-shoji="open">Open</button>
+      <button class="ctrl-btn warm" data-shoji="closed">Closed</button>
+    </div>
+  </div>
+
+  <div class="canvas-frame">
+    <canvas id="view3d"></canvas>
+    <div class="hud-badge" id="hudBadge">
+      <div class="hud-title" id="hudTitle">Whole house (2029 plan)</div>
+      <div class="hud-sub" id="hudSub">
+        2029 plan
+      </div>
+    </div>
+    <div class="hud-legend">
+      <span><i class="sw" style="background:#a39b8e"></i>2F balcony (bolted steel, ramp-ready)</span>
+      <span><i class="sw" style="background:#c28e58"></i>Courtyard deck (+0.20m)</span>
+      <span><i class="sw" style="background:#3e8e53"></i>Tree &amp; plants</span>
+      <span><i class="sw" style="background:#f3e4c8"></i>Musholla platform (+35cm)</span>
+      <span><i class="sw" style="background:#ffe8a3"></i>Closable 3F void</span>
+    </div>
+    <div class="hud-help ui-chrome">
+      Left-Drag: Orbit · Right/Shift-Drag: Pan · Wheel: Zoom · WASD: Move
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================================
+// TRUE-SCALE 3D SKETCHUP-STYLE ARCHITECTURAL ENGINE (X=East, Y=South, Z=Up)
+// Verified 1:1 against 60x60cm real-house floor tiles & 2.15m door frames!
+// Floor Datums: 1F=0.00m (2.10m ceiling) | 2F=+2.20m (3.05m ceiling -> +5.25m)
+//               3F=+5.45m (2.85m ceiling -> +8.30m) | Doors=2.15m clear height
+// ============================================================================
+const leftLotX = y => 0.30 + (0.70 / 13.60) * y;
+const RY = -0.90;   // (Rakina, pool photos) courtyard is ~0.9m deeper: 0.85m pump terrace under the 2F overhang + 6×3m pool + edges → rear boundary moved back
+
+const state = {
+  mode: 'after',    // 'before' (Photo-Verified As-Built) | 'after' (★ v6.9 Plan)
+  floors: { 1: true, 2: true, 3: true, 4: false },
+  xray: true,
+  scaleRefs: true,
+  labels: true,
+  ramp: 'slim',     // 'slim' (★ 0.95m balanced + 30cm chamfers + tree garden) | 'wide' (1.10m)
+  rails: 'minimal', // 'minimal' (★ Open lower bench + quick-release socketed upper) | 'loading' (Upper lifted out!) | 'full'
+  patio: 'yoga',    // 'yoga' | 'bbq'
+  cafe: 'open',     // 'open' | 'folded'
+  shoji: 'open',    // 'open' (★ 100% tucked into wall pockets -> bigger living room!) | 'closed'
+  mush: 'salah',    // 'salah' | 'guest'
+  fvoid: 'alcove',  // ★ recommended: closable alcove slot void | 'f3' skylight + glass parapet only | ★ 'bay' double-height dining bay (3F pulled back) | 'stair' void merged with stairwell | 'f3' skylight + glass parapet only
+  piano: 'front',   // ★ 2029 plan: front window; '2f' east (Master) wall | 'front' by front window between Genkan & Musholla | '3f' 3F stair nook
+  cafeStair: false, // with noRamp: true = café balcony + stair variant, false = Bay Only (ramp-ready)
+  lift: false,      // outdoor platform lift in the courtyard's east corner → balcony door
+  rampBuilt: false, // false = 2029 balcony (ramp-ready) · true = ramp built (from the start or converted later)
+  svcBalc: true,    // ★ 2029 plan: small 2F service balcony (ACs + laundry) in front of the kitchen; future ramp landing
+  mushBay: true,    // ★ front bay window on the musholla (~Rp 33M; check front setback permit)
+  noRamp: true,     // ★ 2029 plan default; Bay, No Ramp tier: full-courtyard deck, west balcony kept, ACs stay
+  must: true,       // ★ 2029 plan default (loose dining table, no banquette/larder); Must-Do tier: no void, no banquette/larder built-ins, 3F kept as-is
+  winMove: 'flush',   // ★ 2029 plan: flush bay in the recessed balcony; (was keep) keep windows (bay = existing balcony + 0.9m nook); ★ recommended: move 2F master window only | ★ 'move' = 2F & 3F master courtyard windows shifted north → full-width bay | 'keep' = windows stay → 0.9m nook + narrower bay
+  camPreset: 'dollhouse',
+  clean: false
+};
+
+const cam = {
+  tx: 5.35, ty: 5.40, tz: 2.65,
+  yaw: -2.42,
+  pitch: 0.54,
+  dist: 18.2,
+  fov: 45
+};
+
+const PRESETS = {
+  dollhouse: {
+    title: "Whole house — 2029 plan (cutaway from the street side)",
+    tx: 5.35, ty: 4.90, tz: 2.75, yaw: -2.42, pitch: 0.54, dist: 19.0, fov: 45,
+    floors: { 1: true, 2: true, 3: true, 4: false }
+  },
+  courtyard: {
+    title: "Courtyard — +0.20m deck, tree planter, garage divider removed (ramp-ready)",
+    tx: 3.70, ty: 1.40, tz: 1.05, yaw: 0.72, pitch: 0.52, dist: 6.9, fov: 50,
+    floors: { 1: true, 2: true, 3: false, 4: false }
+  },
+  cafe: {
+    title: "2F long balcony — window-sill bar at the kitchen window (2 stools), ACs at the west end, walkway clear",
+    tx: 2.70, ty: 2.05, tz: 2.95, yaw: 1.30, pitch: 0.30, dist: 3.3, fov: 62,
+    floors: { 1: true, 2: true, 3: false, 4: false }
+  },
+  f1_all: {
+    title: "1F — courtyard deck, R. Duduk (home gym), service rooms & garage",
+    tx: 5.40, ty: 5.40, tz: 0.70, yaw: -2.50, pitch: 0.72, dist: 16.4, fov: 46,
+    floors: { 1: true, 2: false, 3: false, 4: false }
+  },
+  f2_all: {
+    title: "2F — flush dining bay, U-kitchen, living, musholla platform & master suite",
+    tx: 5.45, ty: 5.10, tz: 2.95, yaw: -2.42, pitch: 0.66, dist: 16.0, fov: 46,
+    floors: { 1: true, 2: true, 3: false, 4: false }
+  },
+  f2_ldk: {
+    title: "2F kitchen & dining — light U-kitchen, long window bench + oval table (6 pax)",
+    tx: 4.15, ty: 4.90, tz: 2.95, yaw: 1.38, pitch: 0.55, dist: 8.8, fov: 50,
+    floors: { 1: true, 2: true, 3: false, 4: false }
+  },
+  f2_mush: {
+    title: "2F musholla — +35cm storage platform (drawers & hatches), front bay window & master",
+    tx: 7.75, ty: 6.35, tz: 2.95, yaw: -2.35, pitch: 0.60, dist: 11.4, fov: 48,
+    floors: { 1: false, 2: true, 3: false, 4: false }
+  },
+  f2_genkan: {
+    title: "Front stairs, 2F front terrace & entry (genkan)",
+    tx: 3.65, ty: 9.55, tz: 2.25, yaw: -0.85, pitch: 0.44, dist: 8.0, fov: 50,
+    floors: { 1: true, 2: true, 3: false, 4: false }
+  },
+  f3_all: {
+    title: "3F — lounge + WFH desk by the closable void, bedrooms & master suite",
+    tx: 5.20, ty: 4.70, tz: 5.40, yaw: -2.30, pitch: 0.80, dist: 15.6, fov: 48,
+    floors: { 1: false, 2: true, 3: true, 4: false }
+  },
+  f2_plan: {
+    title: "2F plan (top-down)",
+    tx: 5.30, ty: 4.70, tz: 2.20, yaw: -1.5708, pitch: 1.32, dist: 17.2, fov: 48,
+    floors: { 1: false, 2: true, 3: false, 4: false }
+  },
+  f3_plan: {
+    title: "3F plan (top-down)",
+    tx: 5.30, ty: 4.70, tz: 5.45, yaw: -1.5708, pitch: 1.32, dist: 17.2, fov: 48,
+    floors: { 1: false, 2: false, 3: true, 4: false }
+  },
+  f3_eye_south: {
+    title: "3F eye level — toward the bedroom doors (same angle as your photo)",
+    tx: 3.90, ty: 7.30, tz: 6.30, yaw: 2.035, pitch: 0.16, dist: 3.9, fov: 72,
+    floors: { 1: false, 2: true, 3: true, 4: false }
+  },
+  f3_eye_north: {
+    title: "3F eye level — toward the closable void & WFH desk (same angle as your photo)",
+    tx: 3.40, ty: 3.40, tz: 6.40, yaw: -2.09, pitch: 0.12, dist: 4.6, fov: 72,
+    floors: { 1: false, 2: true, 3: true, 4: false }
+  },
+  f2_eye_west: {
+    title: "2F eye level — toward the TV wall, stairs & entry doors",
+    tx: 2.60, ty: 6.60, tz: 3.30, yaw: 2.903, pitch: 0.11, dist: 4.2, fov: 74,
+    floors: { 1: false, 2: true, 3: false, 4: false }
+  },
+  f2_eye_south: {
+    title: "2F eye level — toward the musholla & front window",
+    tx: 4.60, ty: 9.90, tz: 3.20, yaw: 2.044, pitch: 0.12, dist: 4.4, fov: 74,
+    floors: { 1: false, 2: true, 3: false, 4: false }
+  },
+  f2_eye_kitchen: {
+    title: "2F eye level — into the kitchen (fridge, hob, sink at the window)",
+    tx: 0.90, ty: 4.60, tz: 3.20, yaw: 3.00, pitch: 0.10, dist: 3.3, fov: 76,
+    floors: { 1: false, 2: true, 3: false, 4: false }
+  },
+  f2_eye_bay: {
+    title: "2F eye level — from the sofa toward the dining bay (void above)",
+    tx: 5.40, ty: 2.70, tz: 4.70, yaw: -1.626, pitch: -0.20, dist: 3.9, fov: 78,
+    floors: { 1: false, 2: true, 3: true, 4: false }
+  },
+  bay_ext: {
+    title: "Dining bay from the courtyard — reused window (light frames), open porch with the existing door, master window untouched",
+    tx: 5.20, ty: 2.50, tz: 4.30, yaw: 1.25, pitch: 0.27, dist: 3.4, fov: 66,
+    floors: { 1: true, 2: true, 3: true, 4: false }
+  },
+  section_west: {
+    title: "Side cut through all floors (from the street side)",
+    tx: 5.20, ty: 5.40, tz: 3.30, yaw: -1.82, pitch: 0.28, dist: 18.4, fov: 44,
+    floors: { 1: true, 2: true, 3: true, 4: true }
+  }
+};
+
+function applyPreset(name) {
+  const p = PRESETS[name] || PRESETS.dollhouse;
+  state.camPreset = name;
+  cam.tx = p.tx; cam.ty = p.ty; cam.tz = p.tz;
+  cam.yaw = p.yaw; cam.pitch = p.pitch; cam.dist = p.dist; cam.fov = p.fov;
+  Object.assign(state.floors, p.floors);
+  syncButtons();
+  rebuildScene();
+}
+
+(function initFromUrl() {
+  const q = new URLSearchParams(window.location.search);
+  if (q.get('ui') === 'clean') {
+    state.clean = true;
+    document.body.classList.add('clean-mode');
+  }
+  if (q.get('mode') === 'before' || q.get('mode') === 'after') state.mode = q.get('mode');
+  // (ramp=, rails=, patio=, cafe=, piano=, win= are retired: the corrected 2029 house has one fixed layout for these)
+  if (q.get('shoji') === 'closed' || q.get('shoji') === 'open') state.shoji = q.get('shoji');
+  if (q.get('mush') === 'guest' || q.get('mush') === 'salah') {
+    state.mush = q.get('mush');
+    if (state.mush === 'guest' && !q.get('shoji')) state.shoji = 'closed';
+  }
+  if (q.get('mbay') === '1') state.mushBay = true;
+  if (q.get('mbay') === '0') state.mushBay = false;
+  if (q.get('svc') === '1') state.svcBalc = true;
+  if (q.get('svc') === '0') state.svcBalc = false;
+  if (q.get('rampb') === '1') state.rampBuilt = true;
+  if (['none', 'stair', 'ramp', 'lift'].includes(q.get('access'))) { const a = q.get('access'); state.cafeStair = a === 'stair'; state.rampBuilt = a === 'ramp'; state.lift = a === 'lift'; }
+  if (q.get('rampb') === '0') state.rampBuilt = false;
+  if (q.get('tier') === 'must') { state.must = true; state.fvoid = 'plain'; state.mushBay = false; state.noRamp = true; state.winMove = 'flush'; state.piano = 'front'; state.svcBalc = true; state.rampBuilt = false; state.cafeStair = false; }
+  if (q.get('tier') === 'rec' || q.get('tier') === 'ramp') { state.must = true; state.noRamp = true; state.fvoid = 'alcove'; state.mushBay = true; state.winMove = 'flush'; state.piano = 'front'; state.svcBalc = true; state.rampBuilt = true; state.cafeStair = false; }
+  if (q.get('tier') === 'noramp') { state.must = true; state.fvoid = 'plain'; state.noRamp = true; state.mushBay = false; state.svcBalc = true; state.winMove = 'flush'; state.piano = 'front'; state.rampBuilt = false; state.cafeStair = false; }
+  if (q.get('tier') === 'norampvoid') { state.must = true; state.fvoid = 'alcove'; state.noRamp = true; state.winMove = 'flush'; state.piano = 'front'; state.rampBuilt = false; state.cafeStair = false; }
+  if (q.get('tier') === 'cafestair' || q.get('tier') === 'stair') { state.must = true; state.fvoid = 'alcove'; state.mushBay = true; state.noRamp = true; state.cafeStair = true; state.winMove = 'flush'; state.piano = 'front'; state.svcBalc = true; state.rampBuilt = false; }
+  if (['alcove', 'plain'].includes(q.get('void'))) state.fvoid = q.get('void');
+  else if (q.get('void')) state.fvoid = 'alcove';   // retired void options fall back to the ★ closable void
+  if (q.get('labels') === '0') state.labels = false;
+  if (q.get('scale') === '0') state.scaleRefs = false;
+  if (q.get('xray') === '0') state.xray = false;
+  const pr = q.get('preset');
+  if (pr && PRESETS[pr]) {
+    const p = PRESETS[pr];
+    state.camPreset = pr;
+    cam.tx = p.tx; cam.ty = p.ty; cam.tz = p.tz;
+    cam.yaw = p.yaw; cam.pitch = p.pitch; cam.dist = p.dist; cam.fov = p.fov;
+    Object.assign(state.floors, p.floors);
+  }
+})();
+
+// ============================================================================
+// GEOMETRY PRIMITIVES & TRUE-SCALE ARCHITECTURAL HELPERS
+// ============================================================================
+let sceneQuads = [];
+let sceneEdges = [];
+let sceneLabels = [];
+
+function vSub(a, b) { return [a[0]-b[0], a[1]-b[1], a[2]-b[2]]; }
+function vCross(a, b) { return [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]; }
+function vDot(a, b) { return a[0]*b[0] + a[1]*b[1] + a[2]*b[2]; }
+function vLen(a) { return Math.hypot(a[0], a[1], a[2]) || 1; }
+function vNorm(a) { const l = vLen(a); return [a[0]/l, a[1]/l, a[2]/l]; }
+function vLerp(a, b, t) { return [a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t]; }
+
+function shadeHex(hex, factor) {
+  const n = parseInt(hex.slice(1), 16);
+  const r = Math.min(255, Math.max(0, Math.round(((n >> 16) & 255) * factor)));
+  const g = Math.min(255, Math.max(0, Math.round(((n >> 8) & 255) * factor)));
+  const b = Math.min(255, Math.max(0, Math.round((n & 255) * factor)));
+  return `rgb(${r},${g},${b})`;
+}
+
+const SUN_DIR = vNorm([-0.42, -0.35, 0.84]);
+
+function addQuad(p0, p1, p2, p3, color, opts = {}) {
+  const floor = opts.floor || 1;
+  if (!state.floors[floor]) return;
+  const alpha = opts.alpha !== undefined ? opts.alpha : 1.0;
+  const edgeColor = opts.edge !== undefined ? opts.edge : '#22282e';
+  const edgeWidth = opts.edgeWidth || 1.02;
+  const cutNormal = opts.cutNormal || null;
+
+  const e1 = vSub(p1, p0), e2 = vSub(p3, p0);
+  let n = vCross(e1, e2);
+  if (vLen(n) < 1e-6) n = vCross(vSub(p2, p1), vSub(p3, p1));
+  n = vNorm(n);
+  const ndl = Math.abs(vDot(n, SUN_DIR));
+  const upBias = Math.abs(n[2]) * 0.08;
+  const shade = opts.flatShade ? 1.0 : (0.76 + 0.26 * ndl + upBias);
+  const fillStyle = shadeHex(color, shade);
+
+  const maxStep = opts.subdiv || 0.72;
+  const lenU = Math.max(vLen(vSub(p1, p0)), vLen(vSub(p2, p3)));
+  const lenV = Math.max(vLen(vSub(p3, p0)), vLen(vSub(p2, p1)));
+  const nu = Math.max(1, Math.min(14, Math.ceil(lenU / maxStep)));
+  const nv = Math.max(1, Math.min(14, Math.ceil(lenV / maxStep)));
+
+  function bilerp(u, v) {
+    return vLerp(vLerp(p0, p1, u), vLerp(p3, p2, u), v);
+  }
+
+  for (let i = 0; i < nu; i++) {
+    const u0 = i / nu, u1 = (i + 1) / nu;
+    for (let j = 0; j < nv; j++) {
+      const v0 = j / nv, v1 = (j + 1) / nv;
+      sceneQuads.push({
+        pts: [bilerp(u0, v0), bilerp(u1, v0), bilerp(u1, v1), bilerp(u0, v1)],
+        fill: fillStyle,
+        alpha,
+        cutNormal,
+        bias: opts.bias || 0
+      });
+    }
+  }
+
+  if (edgeColor) {
+    const corners = [p0, p1, p2, p3];
+    for (let k = 0; k < 4; k++) {
+      const a = corners[k], b = corners[(k + 1) % 4];
+      const segs = Math.max(1, Math.min(10, Math.ceil(vLen(vSub(b, a)) / 1.1)));
+      for (let s = 0; s < segs; s++) {
+        sceneEdges.push({
+          a: vLerp(a, b, s / segs),
+          b: vLerp(a, b, (s + 1) / segs),
+          color: edgeColor,
+          width: edgeWidth,
+          alpha: Math.min(1, alpha + 0.15),
+          cutNormal
+        });
+      }
+    }
+  }
+}
+
+function addBox(x0, y0, z0, x1, y1, z1, color, opts = {}) {
+  const topCol = opts.topColor || color;
+  const sideCol = opts.sideColor || color;
+  if (!opts.skipBottom) addQuad([x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0], sideCol, opts);
+  addQuad([x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1], topCol, opts);
+  addQuad([x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1], sideCol, opts);
+  addQuad([x1,y0,z0],[x1,y1,z0],[x1,y1,z1],[x1,y0,z1], sideCol, opts);
+  addQuad([x1,y1,z0],[x0,y1,z0],[x0,y1,z1],[x1,y1,z1], sideCol, opts);
+  addQuad([x0,y1,z0],[x0,y0,z0],[x0,y0,z1],[x0,y1,z1], sideCol, opts);
+}
+
+function addPrism4(planPts, zBot, zTop, color, opts = {}) {
+  const zb = Array.isArray(zBot) ? zBot : [zBot, zBot, zBot, zBot];
+  const zt = Array.isArray(zTop) ? zTop : [zTop, zTop, zTop, zTop];
+  const B = planPts.map((p, i) => [p[0], p[1], zb[i]]);
+  const T = planPts.map((p, i) => [p[0], p[1], zt[i]]);
+  addQuad(T[0], T[1], T[2], T[3], opts.topColor || color, opts);
+  if (!opts.skipBottom) addQuad(B[0], B[3], B[2], B[1], opts.sideColor || color, opts);
+  for (let k = 0; k < 4; k++) {
+    const n = (k + 1) % 4;
+    addQuad(B[k], B[n], T[n], T[k], opts.sideColor || color, opts);
+  }
+}
+
+function addWall(x0, y0, x1, y1, t, z0, z1, color, opts = {}) {
+  const dx = x1 - x0, dy = y1 - y0;
+  const L = Math.hypot(dx, dy) || 1;
+  const nx = (-dy / L) * (t / 2), ny = (dx / L) * (t / 2);
+  addPrism4(
+    [[x0 - nx, y0 - ny], [x1 - nx, y1 - ny], [x1 + nx, y1 + ny], [x0 + nx, y0 + ny]],
+    z0, z1, color, opts
+  );
+}
+
+// ★ NEW IN v6.9: Wall with True-Scale 2.15m Framed Open Doorways + Lintel Transoms + Ajar Wood Door Leaves!
+// doors = [{ d0: distFromStart, w: 0.82, h: 2.15, swingDeg: 62, hingeAtEnd: false, side: 1 }]
+function addWallWithDoors(x0, y0, x1, y1, t, z0, z1, color, opts = {}, doors = []) {
+  const dx = x1 - x0, dy = y1 - y0;
+  const L = Math.hypot(dx, dy) || 1;
+  const ux = dx / L, uy = dy / L;
+  const nx = -uy, ny = ux;
+  const sorted = [...doors].sort((a, b) => a.d0 - b.d0);
+  let cur = 0;
+  for (const d of sorted) {
+    if (d.d0 > cur + 0.02) {
+      addWall(x0 + ux * cur, y0 + uy * cur, x0 + ux * d.d0, y0 + uy * d.d0, t, z0, z1, color, opts);
+    }
+    const d1 = Math.min(L, d.d0 + d.w);
+    const doorTop = Math.min(z1, z0 + (d.h || 2.15));
+    // Lintel / transom wall above the 2.15m doorway up to full ceiling!
+    if (z1 > doorTop + 0.03) {
+      addWall(x0 + ux * d.d0, y0 + uy * d.d0, x0 + ux * d1, y0 + uy * d1, t, doorTop, z1, color, opts);
+    }
+    // Crisp dark timber door jambs + slightly ajar 4cm solid timber door leaf
+    const hx = x0 + ux * (d.hingeAtEnd ? d1 : d.d0);
+    const hy = y0 + uy * (d.hingeAtEnd ? d1 : d.d0);
+    const dirAlong = d.hingeAtEnd ? -1 : 1;
+    const sideSign = d.side || 1;
+    const ang = ((d.swingDeg !== undefined ? d.swingDeg : 64) * Math.PI) / 180;
+    const leafW = d.w - 0.03;
+    const lx = hx + (ux * dirAlong * Math.cos(ang) + nx * sideSign * Math.sin(ang)) * leafW;
+    const ly = hy + (uy * dirAlong * Math.cos(ang) + ny * sideSign * Math.sin(ang)) * leafW;
+    if (!d.noLeaf) {
+      addWall(hx, hy, lx, ly, 0.04, z0 + 0.01, doorTop - 0.02, d.leafColor || '#8b5732', { floor: opts.floor || 1 });
+    }
+    cur = d1;
+  }
+  if (cur < L - 0.02) {
+    addWall(x0 + ux * cur, y0 + uy * cur, x1, y1, t, z0, z1, color, opts);
+  }
+}
+
+// True-Scale Furniture Helpers (Human-Scale Proportions!)
+function addTable(x0, y0, zFloor, x1, y1, h, color, floor) {
+  addBox(x0, y0, zFloor + h - 0.04, x1, y1, zFloor + h, color, { floor });
+  const legW = 0.055, ins = 0.05;
+  [[x0+ins, y0+ins], [x1-ins-legW, y0+ins], [x0+ins, y1-ins-legW], [x1-ins-legW, y1-ins-legW]].forEach(([lx, ly]) => {
+    addBox(lx, ly, zFloor, lx + legW, ly + legW, zFloor + h - 0.04, '#7d5632', { floor });
+  });
+}
+
+function addChair(x0, y0, zFloor, w, d, backDir, color, floor) {
+  // 45cm ergonomic seat height + 4 legs + 83cm backrest!
+  addBox(x0, y0, zFloor + 0.41, x0 + w, y0 + d, zFloor + 0.45, color, { floor });
+  [[x0+0.02, y0+0.02], [x0+w-0.06, y0+0.02], [x0+0.02, y0+d-0.06], [x0+w-0.06, y0+d-0.06]].forEach(([lx, ly]) => {
+    addBox(lx, ly, zFloor, lx + 0.04, ly + 0.04, zFloor + 0.41, '#6e4c2e', { floor });
+  });
+  if (backDir === 'N') addBox(x0, y0, zFloor + 0.45, x0 + w, y0 + 0.05, zFloor + 0.83, color, { floor });
+  if (backDir === 'S') addBox(x0, y0 + d - 0.05, zFloor + 0.45, x0 + w, y0 + d, zFloor + 0.83, color, { floor });
+  if (backDir === 'E') addBox(x0 + w - 0.05, y0, zFloor + 0.45, x0 + w, y0 + d, zFloor + 0.83, color, { floor });
+  if (backDir === 'W') addBox(x0, y0, zFloor + 0.45, x0 + 0.05, y0 + d, zFloor + 0.83, color, { floor });
+}
+
+function addSofa(x0, y0, zFloor, x1, y1, backSide, color, floor) {
+  // 43cm seat height + 82cm backrest + 60cm armrests!
+  const dark = shadeHexSafe(color, 0.88);
+  addBox(x0, y0, zFloor + 0.05, x1, y1, zFloor + 0.43, color, { floor });
+  if (backSide === 'E') {
+    addBox(x1 - 0.20, y0, zFloor + 0.43, x1, y1, zFloor + 0.83, dark, { floor });
+    addBox(x0, y0, zFloor + 0.43, x1 - 0.20, y0 + 0.14, zFloor + 0.60, dark, { floor });
+    addBox(x0, y1 - 0.14, zFloor + 0.43, x1 - 0.20, y1, zFloor + 0.60, dark, { floor });
+  } else if (backSide === 'N') {
+    addBox(x0, y0, zFloor + 0.43, x1, y0 + 0.20, zFloor + 0.83, dark, { floor });
+    addBox(x0, y0 + 0.20, zFloor + 0.43, x0 + 0.14, y1, zFloor + 0.60, dark, { floor });
+    addBox(x1 - 0.14, y0 + 0.20, zFloor + 0.43, x1, y1, zFloor + 0.60, dark, { floor });
+  } else if (backSide === 'S') {
+    addBox(x0, y1 - 0.20, zFloor + 0.43, x1, y1, zFloor + 0.83, dark, { floor });
+    addBox(x0, y0, zFloor + 0.43, x0 + 0.14, y1 - 0.20, zFloor + 0.60, dark, { floor });
+    addBox(x1 - 0.14, y0, zFloor + 0.43, x1, y1 - 0.20, zFloor + 0.60, dark, { floor });
+  }
+}
+function shadeHexSafe(hex, f) {
+  const n = parseInt(hex.slice(1), 16);
+  const c = v => Math.min(255, Math.max(0, Math.round(v * f))).toString(16).padStart(2, '0');
+  return `#${c((n>>16)&255)}${c((n>>8)&255)}${c(n&255)}`;
+}
+
+function addBed(x0, y0, zFloor, x1, y1, headSide, floor) {
+  // 28cm timber base + 24cm white mattress (=52cm total) + 1.05m headboard + pillows!
+  addBox(x0, y0, zFloor, x1, y1, zFloor + 0.28, '#cfa77b', { floor });
+  addBox(x0 + 0.03, y0 + 0.03, zFloor + 0.28, x1 - 0.03, y1 - 0.03, zFloor + 0.52, '#faf6ef', { floor });
+  if (headSide === 'E') {
+    addBox(x1 - 0.08, y0, zFloor, x1, y1, zFloor + 1.06, '#8b5e38', { floor });
+    const midY = (y0 + y1) / 2;
+    addBox(x1 - 0.48, y0 + 0.14, zFloor + 0.52, x1 - 0.12, midY - 0.06, zFloor + 0.64, '#e6ece8', { floor });
+    if (y1 - y0 > 1.45) addBox(x1 - 0.48, midY + 0.06, zFloor + 0.52, x1 - 0.12, y1 - 0.14, zFloor + 0.64, '#e6ece8', { floor });
+  } else if (headSide === 'S') {
+    addBox(x0, y1 - 0.08, zFloor, x1, y1, zFloor + 1.04, '#8b5e38', { floor });
+    addBox(x0 + 0.15, y1 - 0.46, zFloor + 0.52, x0 + 0.85, y1 - 0.12, zFloor + 0.64, '#e6ece8', { floor });
+  } else if (headSide === 'W') {
+    addBox(x0, y0, zFloor, x0 + 0.08, y1, zFloor + 1.04, '#8b5e38', { floor });
+    addBox(x0 + 0.12, y0 + 0.18, zFloor + 0.52, x0 + 0.46, y1 - 0.18, zFloor + 0.64, '#e6ece8', { floor });
+  }
+}
+
+// Architectural 1.70m Human Scale Silhouette (instant visual verification of ceiling, door & rail heights!)
+function addScalePerson(x, y, zFloor, floor, labelText = '') {
+  if (!state.scaleRefs || !state.floors[floor]) return;
+  addBox(x - 0.11, y - 0.08, zFloor, x - 0.02, y + 0.08, zFloor + 0.82, '#3d5a73', { floor }); // left leg
+  addBox(x + 0.02, y - 0.08, zFloor, x + 0.11, y + 0.08, zFloor + 0.82, '#3d5a73', { floor }); // right leg
+  addBox(x - 0.17, y - 0.10, zFloor + 0.82, x + 0.17, y + 0.10, zFloor + 1.44, '#4e7998', { floor }); // torso
+  addBox(x - 0.10, y - 0.10, zFloor + 1.46, x + 0.10, y + 0.10, zFloor + 1.70, '#e3be9b', { floor }); // 1.70m crown!
+  if (labelText) addLabel(x, y, zFloor + 1.92, labelText, '1.70m Scale Ref', floor, '#eef4f8', '#234969', true);
+}
+
+// Railing panel (supports normal glass/steel guard OR dashed socket sleeves in Lift-Out Loading Mode!)
+function addRailing(x0, y0, z0, x1, y1, z1, h, floor, socketedRemovable = false) {
+  if (!state.floors[floor]) return;
+  if (socketedRemovable && state.rails === 'loading') {
+    // Show flush stainless deck sockets along the open loading edge!
+    const dist = Math.hypot(x1 - x0, y1 - y0);
+    const nPosts = Math.max(2, Math.ceil(dist / 1.05) + 1);
+    for (let i = 0; i < nPosts; i++) {
+      const t = i / (nPosts - 1);
+      const px = x0 + (x1 - x0) * t, py = y0 + (y1 - y0) * t, pz = z0 + (z1 - z0) * t;
+      addBox(px - 0.04, py - 0.04, pz, px + 0.04, py + 0.04, pz + 0.03, '#495057', { floor });
+    }
+    return;
+  }
+  addQuad([x0, y0, z0 + 0.04], [x1, y1, z1 + 0.04], [x1, y1, z1 + h], [x0, y0, z0 + h], '#b8dfee', {
+    floor, alpha: 0.22, edge: socketedRemovable ? '#1b5e3a' : '#343a40', edgeWidth: 1.15, subdiv: 1.1
+  });
+  sceneEdges.push({ a: [x0, y0, z0 + h], b: [x1, y1, z1 + h], color: '#2b3036', width: 2.3, alpha: 1 });
+  const dist = Math.hypot(x1 - x0, y1 - y0);
+  const nPosts = Math.max(2, Math.ceil(dist / 1.05) + 1);
+  for (let i = 0; i < nPosts; i++) {
+    const t = i / (nPosts - 1);
+    const px = x0 + (x1 - x0) * t, py = y0 + (y1 - y0) * t, pz = z0 + (z1 - z0) * t;
+    sceneEdges.push({ a: [px, py, pz], b: [px, py, pz + h], color: '#2b3036', width: 1.7, alpha: 0.92 });
+    if (socketedRemovable) {
+      addBox(px - 0.035, py - 0.035, pz, px + 0.035, py + 0.035, pz + 0.045, '#285943', { floor });
+    }
+  }
+}
+
+function addBarRail(x0, y0, z0, x1, y1, z1, h, floor) {
+  // Slim black steel balusters (~11cm) + timber handrail — lighter look than glass for ramps
+  if (!state.floors[floor]) return;
+  const dist = Math.hypot(x1 - x0, y1 - y0), n = Math.max(2, Math.ceil(dist / 0.11) + 1);
+  for (let i = 0; i < n; i++) {
+    const t = i / (n - 1), px = x0 + (x1 - x0) * t, py = y0 + (y1 - y0) * t, pz = z0 + (z1 - z0) * t;
+    sceneEdges.push({ a: [px, py, pz + 0.03], b: [px, py, pz + h], color: '#2b3036', width: 1.1, alpha: 0.85 });
+  }
+  sceneEdges.push({ a: [x0, y0, z0 + h], b: [x1, y1, z1 + h], color: '#8a5a33', width: 4.2, alpha: 1 });
+  sceneEdges.push({ a: [x0, y0, z0 + 0.06], b: [x1, y1, z1 + 0.06], color: '#2b3036', width: 2.0, alpha: 0.9 });
+}
+function addLabel(x, y, z, text, sub, floor, bg = '#fcfbf7', fg = '#1d242b', outdoor = false) {
+  if (!state.floors[floor]) return;
+  if (y > 10.30 && cam.ty < 5.2) return;
+  const isOpenSky = outdoor || (x < 6.80 && y < 2.50) || y > 10.30;   // courtyard + 2F balcony (house rear line is now Y=2.55)
+  if (!isOpenSky) {
+    if (floor === 1 && (state.floors[2] || state.floors[3])) return;
+    if (floor === 2 && state.floors[3]) return;
+  }
+  sceneLabels.push({ pos: [x, y, z], text, sub: sub || '', bg, fg, floor, outdoor: isOpenSky });
+}
+
+// ============================================================================
+// BUILD COMPLETE 3-STORY HOUSE MODEL (ALL 7 ITEMS FIXED & SCALE-CALIBRATED!)
+// ============================================================================
+function rebuildScene() {
+  sceneQuads = [];
+  sceneEdges = [];
+  sceneLabels = [];
+
+  const slim = state.ramp === 'slim';
+  const noRamp = state.mode === 'after' && state.noRamp;
+  const winMoved = state.mode === 'after' && (state.winMove === 'move' || state.winMove === 'move2f');   // 2F master window moved
+  const win3Moved = state.mode === 'after' && state.winMove === 'move';   // 3F master window moved too (only needed for full double-height)
+  const stepBay = state.mode === 'after' && state.winMove === 'step';   // keep windows, stepped bay: 0.98m deep at door end, 0.45m along banquette
+  const keepWin = state.mode === 'after' && state.winMove === 'keep';
+  const flushBay = state.mode === 'after' && state.winMove === 'flush';   // ★ enclose the recessed balcony flush with the kitchen wall; chamfered end keeps the master window outdoors
+  const yShal = 3.00, xStep = 4.90;
+  const bayX1 = (winMoved || stepBay || flushBay) ? 7.10 : 6.20;   // ★ flush bay runs full width to the master wall, in line with the kitchen      // 2F bay east end
+  const dhX1 = win3Moved ? 6.90 : 5.80;       // double-height (3F) east end
+  const showF2 = state.floors[2];
+  const showF3 = state.floors[3];
+
+  // ★ PHOTO-VERIFIED TRUE ARCHITECTURAL CEILING HEIGHTS (1:1 w/ 60x60cm tiles & 2.15m door frames!):
+  // 1F: 0.00 -> 2.10m clear soffit | 2F: +2.20 -> +5.25m (3.05m ceiling!) | 3F: +5.45 -> +8.30m (2.85m ceiling!)
+  const z1Wall = 2.10;
+  const z2Wall = 5.25;
+  const z3Wall = 8.30;
+
+  // --------------------------------------------------------------------------
+  // FLOOR 1: LOT SLAB, CARPORT, GARDEN, TANDEM GARAGE, R. DUDUK GYM, SERVICE
+  //          WING, +0.20m SUNNY DECK, ALIGNED +0.58m STEP-BENCH & 0.92m ADA RAMP
+  // --------------------------------------------------------------------------
+  addPrism4([[leftLotX(RY), RY], [10.40, RY], [10.40, 10.25], [leftLotX(10.25), 10.25]], -0.22, 0.00, '#eae4d8', { floor: 1, subdiv: 1.5 });
+  addBox(5.40, 10.25, -0.28, 10.40, 13.60, -0.20, '#dcd6c8', { floor: 1, subdiv: 1.2 });
+  addLabel(7.90, 12.10, -0.05, 'Front Carport (-0.20m)', '1:12 Bevel to Garage', 1);
+  addPrism4([[leftLotX(10.95), 10.95], [5.40, 10.95], [5.40, 13.60], [leftLotX(13.60), 13.60]], -0.28, -0.16, '#cfe3c2', { floor: 1, subdiv: 1.2 });
+  addBox(1.15, 11.20, -0.16, 5.15, 11.75, 0.12, '#6da863', { floor: 1, topColor: '#7cb872' });
+  addLabel(3.20, 12.45, 0.05, 'Front Garden & Bike Pocket', '', 1, '#eef7eb', '#1e563b');
+
+  // 2-Car Tandem Garage (X=6.75..10.40, Y=0..10.25) + True-Scale SUV & Innova Zenix
+  addQuad([6.75, 0.02, 0.01], [10.38, 0.02, 0.01], [10.38, 10.23, 0.01], [6.75, 10.23, 0.01], '#e1e5e9', { floor: 1, subdiv: 1.2 });
+  addBox(7.65, 0.45, 0.16, 9.50, 4.85, 0.88, '#8fb8d8', { floor: 1 });
+  addBox(7.80, 1.30, 0.88, 9.35, 3.90, 1.58, '#b9d6ec', { floor: 1 });
+  addBox(7.65, 5.20, 0.16, 9.50, 9.95, 0.90, '#9aa3ac', { floor: 1 });
+  addBox(7.80, 6.05, 0.90, 9.35, 9.10, 1.66, '#c2c9d0', { floor: 1 });
+  addLabel(8.58, 2.65, 1.82, '2-Car Tandem Garage', 'SUV + Innova (3.65×10.25m)', 1);
+
+  // 1F R. Duduk (Gym in AFTER vs Cramped Poolside Room in BEFORE)
+  addQuad([3.00, 3.45, 0.01], [6.75, 3.45, 0.01], [6.75, 6.60, 0.01], [3.00, 6.60, 0.01], state.mode === 'after' ? '#e6f0ea' : '#ebe6dc', { floor: 1, subdiv: 0.9 });
+  if (state.mode === 'after') {
+    // Washer + stacked dryer against the K.ART wall (south of the K.ART door, which stays clear Y 4.85–5.63);
+    // slim dumbbell/kettlebell cabinet with a mirror front by the courtyard edge; ≥1.2m clear path courtyard ↔ garage
+    addBox(3.05, 3.55, 0.01, 3.70, 4.20, 0.86, '#f1f3f5', { floor: 1 });                    // washing machine
+    addBox(3.05, 3.55, 0.88, 3.70, 4.20, 1.76, '#e9ecef', { floor: 1 });                    // stacked dryer
+    addBox(3.70, 3.75, 0.25, 3.73, 4.05, 0.62, '#9aa3ab', { floor: 1 });                    // washer door
+    addBox(3.70, 3.75, 1.10, 3.73, 4.05, 1.47, '#9aa3ab', { floor: 1 });                    // dryer door
+    addBox(3.05, 4.25, 0.86, 3.40, 4.75, 0.89, '#d9b48a', { floor: 1 });                    // small folding shelf
+    addLabel(3.40, 4.00, 2.00, 'Laundry corner (washer + dryer)', 'On the K.ART wall · K.ART door kept clear', 1, '#eef4f8', '#34495e');
+    // Gym corner along the service-dapur wall (Y 6.60): ~2×1.5m rubber pad, wall-mounted folding squat rack, wall-hung
+    // dumbbell cabinet with mirror doors. Path courtyard → garage stays ≥1.5m (Y 3.45–5.05); K.ART door + dapur door clear.
+    addBox(4.55, 5.05, 0.01, 6.55, 6.55, 0.04, '#2f3437', { floor: 1 });                    // rubber barbell pad
+    [5.35, 6.35].forEach(ux => {
+      addBox(ux - 0.04, 6.50, 0.04, ux + 0.04, 6.56, 2.00, '#3a3f45', { floor: 1 });        // wall-mounted upright
+      addBox(ux - 0.04, 6.00, 1.95, ux + 0.04, 6.56, 2.01, '#3a3f45', { floor: 1 });        // fold-out arm (deployed)
+      addBox(ux - 0.04, 6.00, 0.04, ux + 0.04, 6.06, 1.95, '#3a3f45', { floor: 1 });
+      addBox(ux - 0.04, 5.94, 1.30, ux + 0.04, 6.00, 1.36, '#e03131', { floor: 1 });        // J-hook
+    });
+    addBox(5.15, 5.95, 1.36, 6.55, 5.99, 1.40, '#adb5bd', { floor: 1 });                    // barbell on the hooks
+    addBox(4.55, 6.25, 0.90, 5.05, 6.55, 1.90, '#e6dccb', { floor: 1 });                    // wall-hung dumbbell/kettlebell cabinet
+    addBox(4.58, 6.23, 0.95, 5.02, 6.25, 1.85, '#cfe3ee', { floor: 1 });                    // mirror doors
+    addLabel(5.55, 5.80, 1.30, 'Gym corner: barbell pad + folding wall rack', 'Wall-hung dumbbell cabinet (mirror) · ≥1.5m path to the garage', 1, '#eef7f2', '#1e563b');
+  } else {
+    addLabel(4.65, 5.15, 0.95, 'BEFORE: 1F R. Duduk (±0.00m)', 'Blocked by +0.90m Pool Wall!', 1, '#f8e8e6', '#8a2b20');
+  }
+
+  // 1F Service Dapur + West Service Rooms (with Real Open Doorways!)
+  addQuad([2.45, 6.60, 0.01], [6.75, 6.60, 0.01], [6.75, 9.30, 0.01], [2.45, 9.30, 0.01], '#f4eee1', { floor: 1, subdiv: 1.0 });
+  addBox(2.52, 8.68, 0.01, 5.20, 9.24, 0.88, '#dfd5c5', { floor: 1 });
+  addLabel(4.55, 7.95, 0.90, '1F Service Dapur', '', 1);
+
+  addPrism4([[leftLotX(3.45), 3.45], [3.00, 3.45], [3.00, 5.80], [leftLotX(5.80), 5.80]], 0.00, 0.02, '#f5efe4', { floor: 1 });
+  addBed(0.75, 3.70, 0.02, 2.65, 4.68, 'W', 1);
+  addLabel(1.75, 4.65, 0.85, 'K. ART', '', 1);
+  addPrism4([[leftLotX(5.80), 5.80], [3.00, 5.80], [3.00, 7.10], [leftLotX(7.10), 7.10]], 0.00, 0.02, '#e4edf0', { floor: 1 });
+  addLabel(1.85, 6.45, 0.85, '1F WC', '', 1);
+
+  for (let s = 0; s < 9; s++) {
+    const yA = 9.10 - s * 0.24, yB = yA - 0.24;
+    addBox(leftLotX(yA) + 0.06, yB, s * 0.22, 2.40, yA, (s + 1) * 0.24, '#d8ccb8', { floor: 1 });
+  }
+  addPrism4([[leftLotX(9.30), 9.30], [5.40, 9.30], [5.40, 10.25], [leftLotX(10.25), 10.25]], 0.00, 0.02, '#ebe5d8', { floor: 1 });
+  addLabel(3.45, 9.80, 0.85, 'Gudang', '', 1);
+
+  // 1F Interior Partitions WITH Framed Doorways
+  addWallWithDoors(3.00, 3.45, 3.00, 7.10, 0.11, 0.00, z1Wall, '#f2efe9', { floor: 1 }, [
+    { d0: 1.40, w: 0.78, h: 1.98, swingDeg: 60, side: 1 },
+    { d0: 2.55, w: 0.72, h: 1.98, swingDeg: 60, side: 1 }
+  ]);
+  addWall(leftLotX(5.80), 5.80, 3.00, 5.80, 0.10, 0.00, z1Wall, '#f2efe9', { floor: 1 });
+  addWall(leftLotX(7.10), 7.10, 3.00, 7.10, 0.10, 0.00, z1Wall, '#f2efe9', { floor: 1 });
+  addWall(2.45, 7.10, 2.45, 8.35, 0.10, 0.00, z1Wall, '#f2efe9', { floor: 1 });
+  addWallWithDoors(3.00, 6.60, 6.75, 6.60, 0.11, 0.00, z1Wall, '#f2efe9', { floor: 1 }, [
+    { d0: 0.55, w: 0.95, h: 1.98, noLeaf: true }
+  ]);
+  addWallWithDoors(leftLotX(9.30), 9.30, 5.40, 9.30, 0.11, 0.00, z1Wall, '#f2efe9', { floor: 1 }, [
+    { d0: 3.10, w: 0.78, h: 1.98, swingDeg: 62, side: 1 }
+  ]);
+  // (photos/Rakina) Courtyard ↔ garage divider = full-height aluminium sliding glass, running to the boundary wall
+  // (Rakina) no wall/glass between R. Duduk and the garage (X 6.75, Y 3.45–6.60): open path to the cars
+  if (state.mode === 'before') {
+    addQuad([6.75, RY, 0.02], [6.75, 3.45, 0.02], [6.75, 3.45, 2.05], [6.75, RY, 2.05], '#b9e3f0', { floor: 1, alpha: 0.35, edge: '#9aa4ab' });
+    [RY, RY + 1.08, RY + 2.16, RY + 3.24, 3.40].forEach(fy => addBox(6.72, fy, 0.00, 6.78, fy + 0.05, 2.08, '#c9ced3', { floor: 1 }));
+    addLabel(6.75, 1.70, 2.35, 'Glass Divider to Garage', 'Sliding aluminium · runs to the boundary wall', 1, '#eef4f8', '#34495e', true);
+  } else {
+    // ★ Divider removed: courtyard opens to the garage (step-free from the car; future ramp starts at garage level).
+    //   Low planter + 2 bollards keep toddlers and cars apart.
+    if (!state.rampBuilt) addBox(6.80, RY + 0.15, 0.00, 7.15, 1.10, 0.45, '#b9a58a', { floor: 1, topColor: '#6da863' });
+    [2.10, 3.00].forEach(by => addBox(6.90, by, 0.00, 7.02, by + 0.12, 0.80, '#495057', { floor: 1 }));
+    addLabel(6.95, 1.80, 1.35, 'Garage Divider Removed', state.rampBuilt ? 'Ramp starts at the garage edge · bollards for car safety' : 'Open to courtyard · planter + bollards for kid/car safety', 1, '#eef4f8', '#34495e', true);
+  }
+  addWall(6.75, 6.60, 6.75, 10.25, 0.12, 0.00, z1Wall, '#f2efe9', { floor: 1 });
+
+  // Rear (west) boundary wall up to ~2F ceiling (+5.25m) + neighbour's house behind (roof ~3F ceiling, +8.3m) — from Rakina
+  addWall(leftLotX(RY) - 0.06, RY - 0.22, 6.75, RY - 0.22, 0.16, 0.00, 5.25, '#9aa0a6', { floor: 1, cutNormal: [0, -1, 0] });
+  addBox(0.20, RY - 6.20, 0.00, 10.40, RY - 1.40, 6.90, '#c9c2b6', { floor: 1, alpha: 0.22, cutNormal: [0, -1, 0], edge: '#8a8378' });
+  addQuad([0.10, RY - 1.30, 6.90], [10.50, RY - 1.30, 6.90], [10.50, RY - 3.80, 8.30], [0.10, RY - 3.80, 8.30], '#b5704f', { floor: 1, alpha: 0.30, cutNormal: [0, -1, 0] });
+  addLabel(3.40, RY - 0.40, 5.55, 'Rear Boundary Wall (+5.25m)', 'Shades low afternoon (west) sun on 2F', 1, '#f1f3f5', '#343a40', true);
+  // 1F Exterior Walls (offset outward by 0.07m so interior 0.00..10.40m has ZERO z-fighting!)
+  addWall(leftLotX(RY)-0.06, RY - 0.07, 10.47, RY - 0.07, 0.14, 0.00, 2.20, '#f4f1ea', { floor: 1, cutNormal: [0, -1, 0] });
+  addWall(10.47, RY - 0.07, 10.47, 10.32, 0.14, 0.00, 2.20, '#f4f1ea', { floor: 1, cutNormal: [1, 0, 0] });
+  addWall(leftLotX(RY)-0.07, RY, leftLotX(10.25)-0.07, 10.25, 0.14, 0.00, 2.20, '#f4f1ea', { floor: 1, cutNormal: [-1, 0, 0] });
+  addWall(leftLotX(10.25), 10.32, 5.45, 10.32, 0.14, 0.00, 2.20, '#f4f1ea', { floor: 1, cutNormal: [0, 1, 0] });
+
+  // Front Exterior Carport Stair (11 steps -> 1.50×0.70m Bottom Landing)
+  const nExtSteps = 11;
+  for (let i = 0; i < nExtSteps; i++) {
+    const xA = 5.40 - i * (3.07 / nExtSteps), xB = 5.40 - (i + 1) * (3.07 / nExtSteps);
+    const zTop = -0.02 + i * (2.06 / nExtSteps);
+    addBox(xB, 10.32, -0.20, xA, 10.98, zTop, '#d5dadf', { floor: 1, topColor: '#e3e7eb' });
+  }
+  addPrism4([[leftLotX(10.25), 10.32], [2.33, 10.32], [2.33, 10.98], [leftLotX(10.98), 10.98]], 1.88, 2.06, '#cfd5db', { floor: 1 });
+  addRailing(5.40, 10.98, -0.02, 2.33, 10.98, 2.06, 0.90, 1);
+  addRailing(2.33, 10.98, 2.06, leftLotX(10.98), 10.98, 2.06, 0.90, 1);
+
+  // --------------------------------------------------------------------------
+  // COURTYARD: BEFORE (+0.90m Raised Tiled Pool Wall & Cramped ~1.20m Clearance)
+  //         vs AFTER (+0.20m Sunny Deck, Aligned +0.58m Bench, Tree & 0.92m Ramp)
+  // --------------------------------------------------------------------------
+  const rW = slim ? 0.95 : 1.10;       // ★ 0.95m clear = 65-70cm wheelchair + ~13cm knuckle room each side (ADA min 0.915m)
+  const balcD = slim ? 0.90 : 1.10;   // = existing recessed balcony depth (kitchen wall line, photos)
+  const bayY = state.mode === 'after' ? (3.45 - balcD) : 3.45;
+  const leg1X0 = 6.75 - rW;            // 5.83m (slim) vs 5.65m (wide)
+  const leg2Y1 = 0.04 + rW;            // 0.96m (slim) vs 1.14m (wide)
+  const zNE = 0.58, zNW = 1.54, zSW = 1.86, zDoor = 2.20;
+
+  if (state.mode === 'before') {
+    // BEFORE: +0.90m High Tiled Brick Swimming Pool Filling Entire Courtyard (X=leftLotX..6.75, Y=0.00..3.45)!
+    addPrism4([[leftLotX(RY)+0.02, RY + 0.02], [6.74, RY + 0.02], [6.74, 2.55], [leftLotX(2.55)+0.02, 2.55]], 0.00, 0.90, '#c8d6df', { floor: 1, topColor: '#dce6ec', subdiv: 0.9 });
+    // Pool water 6×3m inside the coping
+    addPrism4([[leftLotX(RY + 0.22)+0.24, RY + 0.22], [6.52, RY + 0.22], [6.52, 2.33], [leftLotX(2.33)+0.24, 2.33]], 0.76, 0.82, '#3a86cf', { floor: 1, topColor: '#4fa0eb', alpha: 0.88, subdiv: 0.8 });
+    // 0.85m pump/laundry terrace under the 2F overhang (at coping level)
+    addPrism4([[leftLotX(2.55)+0.02, 2.55], [6.74, 2.55], [6.74, 3.45], [leftLotX(3.45)+0.02, 3.45]], 0.00, 0.90, '#d8d2c6', { floor: 1, topColor: '#e4ded2' });
+    addBox(5.70, 2.75, 0.90, 6.40, 3.25, 1.35, '#8d949b', { floor: 1 });   // pump box
+    addScalePerson(3.35, 1.75, 0.00, 1);
+    addLabel(3.55, 0.80, 1.25, 'BEFORE: +0.90m Raised Pool (6×3m + edges)', 'Toddler hazard · 0.85m pump terrace under the 2F overhang', 1, '#fff0ed', '#9c2b1c', true);
+  } else {
+    if (noRamp) {
+      // ★ 2029 PLAN courtyard (ramp-ready)  —or—  RAMP BUILT (state.rampBuilt: from the start, or converted later)
+      const RB = state.rampBuilt;
+      addPrism4([[leftLotX(RY + 0.04)+0.02, RY + 0.04], [6.74, RY + 0.04], [6.74, 3.45], [leftLotX(3.45)+0.02, 3.45]], 0.00, 0.20, '#b58350', { floor: 1, topColor: '#c28e58', subdiv: 0.7 });
+      addBox(3.12, 3.35, 0.00, 6.60, 3.58, 0.12, '#d8d0c2', { floor: 1 });
+      // ★ L-RAMP (uses the WHOLE balcony as its top leg → small courtyard footprint):
+      //   garage edge → leg C along the rear wall → SW corner → leg D up the west strip → NW corner (balcony west end)
+      //   → leg A = the whole balcony, rising east → flat landing at the bay door (east end). 0.95m clear.
+      const yO = bayY - 1.00;
+      const cY0 = RY + 0.05, cY1 = RY + 1.00, cX1 = 6.70;
+      const wX1 = 1.32, dL0 = 5.40;                         // west strip inner edge, door landing start
+      const LA = dL0 - wX1, LD = yO - cY1, LC = cX1 - wX1;
+      const sl = 2.0 / (LA + LD + LC);
+      const zNW = 2.20 - LA * sl, zSW = zNW - LD * sl;
+      const zCx = x => 0.20 + (cX1 - x) * sl, zAx = x => zNW + (x - wX1) * sl, zDy = y => zSW + (y - cY1) * sl;
+      const wx = y => leftLotX(y) + 0.04;
+      if (!RB) {
+        // Tree stays for good in the middle of the courtyard (outside the future ramp footprint)
+        addBox(2.55, 0.32, 0.20, 3.95, 1.28, 0.58, '#d6c2a5', { floor: 1, topColor: '#c9935b' });
+        addBox(2.67, 0.44, 0.56, 3.83, 1.16, 0.76, '#3d8b4f', { floor: 1, topColor: '#4ca660' });
+        addBox(3.18, 0.73, 0.56, 3.32, 0.87, 2.62, '#6e4e35', { floor: 1 });
+        addBox(2.55, 0.25, 1.84, 3.99, 1.40, 2.08, '#39884c', { floor: 1, topColor: '#4ea863', alpha: 0.90 });
+        addBox(2.69, 0.35, 2.32, 3.85, 1.30, 2.55, '#439857', { floor: 1, topColor: '#5bc072', alpha: 0.90 });
+        // Future L-ramp footprint (dashed) + flush footing plates cast now
+        const fpc = { floor: 1, alpha: 0.18, edge: '#b67b2f', edgeWidth: 1.2 };
+        addQuad([wX1, cY0, 0.215], [cX1, cY0, 0.215], [cX1, cY1, 0.215], [wX1, cY1, 0.215], '#f3dcb9', fpc);
+        addQuad([wx(cY0), cY0, 0.215], [wX1, cY0, 0.215], [wX1, yO, 0.215], [wx(yO), yO, 0.215], '#f3dcb9', fpc);
+        [[2.40, cY1], [3.90, cY1], [5.40, cY1], [wX1, cY0 + 0.10], [wX1, 0.85], [wx(0.10) + 0.10, 0.85]].forEach(([fx, fy]) => addBox(fx - 0.10, fy - 0.10, 0.20, fx + 0.10, fy + 0.10, 0.22, '#495057', { floor: 1 }));
+        if (!state.svcBalc) {
+          addBox(4.10, 2.70, 1.95, 6.40, 3.30, 1.99, '#adb5bd', { floor: 1 });
+          [4.25, 4.75, 5.25, 5.75, 6.25].forEach(lx => addBox(lx, 2.72, 1.55, lx + 0.03, 3.28, 1.95, '#e9ecef', { floor: 1 }));
+        }
+        if (state.patio === 'yoga') {
+          [4.45, 5.15].forEach(mx => addBox(mx, 0.25, 0.205, mx + 0.56, 1.45, 0.23, '#52b788', { floor: 1 }));   // 2 yoga mats east of the tree
+        } else {
+          addTable(4.30, 0.45, 0.20, 6.10, 1.15, 0.75, '#d9ad77', 1);
+          [4.50, 5.10, 5.70].forEach(cx => addChair(cx, 1.21, 0.20, 0.42, 0.40, 'S', '#e8dfd1', 1));
+        }
+        // Ceiling-mounted pulley drying racks under the balcony (covered strip), next to the washer in R. Duduk
+        [1.05, 2.35, 3.65].forEach((rx, k) => {
+          [rx + 0.05, rx + 1.05].forEach(px => addBox(px, 1.95, 2.02, px + 0.05, 2.05, 2.08, '#868e96', { floor: 1 }));   // pulleys
+          [1.72, 1.92, 2.12, 2.32].forEach(ly => addBox(rx, ly, 1.96, rx + 1.15, ly + 0.02, 1.98, '#ced4da', { floor: 1 }));
+          [rx, rx + 1.13].forEach(ex => addBox(ex, 1.70, 1.94, ex + 0.02, 2.36, 1.98, '#adb5bd', { floor: 1 }));
+          if (k < 2) [[0.10, 1.72, '#90caf9'], [0.55, 1.92, '#f4a261'], [0.25, 2.12, '#e9ecef'], [0.70, 2.32, '#a5d6a7']].forEach(([dx, ly, col]) =>
+            addBox(rx + dx, ly - 0.005, 1.48, rx + dx + 0.34, ly + 0.025, 1.96, col, { floor: 1 }));
+        });
+        addLabel(2.90, 2.05, 1.20, 'Pulley drying racks under the balcony (next to the washer)', 'Lowered to ~1.8m to hang · hoisted up when not in use', 1, '#f1f3f5', '#343a40', true);
+        addScalePerson(6.10, 0.40, 0.20, 1);
+        addLabel(3.80, 0.30, 1.25, 'Ramp-Ready Courtyard (~6.5×4.3m)', 'Dashed = future L-ramp (rear + west strip only) · tree stays', 1, '#fcfbf7', '#1e563b', true);
+      } else {
+        const rc = '#a8784e', lc = '#b5855a';
+        const segX = (x0, y0, x1, y1, za, zb) => addPrism4([[x0, y0], [x1, y0], [x1, y1], [x0, y1]], [za - 0.14, zb - 0.14, zb - 0.14, za - 0.14], [za, zb, zb, za], rc, { floor: 1, subdiv: 0.6 });
+        segX(wX1, cY0, cX1, cY1, zSW, 0.20);                                                         // leg C
+        addPrism4([[wx(cY0), cY0], [wX1, cY0], [wX1, cY1], [wx(cY1), cY1]], zSW - 0.14, zSW, lc, { floor: 1 });   // SW corner landing
+        addPrism4([[wx(cY1), cY1], [wX1, cY1], [wX1, yO], [wx(yO), yO]], [zSW - 0.14, zSW - 0.14, zNW - 0.14, zNW - 0.14], [zSW, zSW, zNW, zNW], rc, { floor: 1 });   // leg D (up the west strip)
+        addBox(cX1, cY0, 0.00, 7.30, cY1, 0.20, '#d8d0c2', { floor: 1 });                           // bevel to the garage floor
+        [[2.40, cY1, zCx(2.40)], [3.90, cY1, zCx(3.90)], [5.40, cY1, zCx(5.40)], [wX1 - 0.05, cY0 + 0.06, zSW], [wX1 - 0.05, 0.85, zDy(0.85)], [wx(0.85) + 0.05, 0.85, zDy(0.85)]].forEach(([px, py, pz]) =>
+          addBox(px - 0.04, py - 0.04, 0.20, px + 0.04, py + 0.04, pz - 0.14, '#2c3238', { floor: 1 }));
+        addBarRail(wX1, cY1, zSW, cX1, cY1, 0.20, 0.95, 1);
+        addBarRail(wX1, cY0 + 0.03, zSW, cX1, cY0 + 0.03, 0.20, 0.90, 1);
+        addBarRail(wX1, cY1, zSW, wX1, yO, zNW, 1.05, 1);
+        // courtyard keeps the tree + deck; planter along the rear-leg guard
+        addBox(2.55, 0.32, 0.20, 3.95, 1.28, 0.58, '#d6c2a5', { floor: 1, topColor: '#c9935b' });
+        addBox(3.18, 0.73, 0.56, 3.32, 0.87, 2.62, '#6e4e35', { floor: 1 });
+        addBox(2.55, 0.25, 1.84, 3.99, 1.40, 2.08, '#39884c', { floor: 1, topColor: '#4ea863', alpha: 0.90 });
+        addBox(2.69, 0.35, 2.32, 3.85, 1.30, 2.55, '#439857', { floor: 1, topColor: '#5bc072', alpha: 0.90 });
+        addBox(4.30, cY1 + 0.02, 0.20, 6.50, cY1 + 0.18, 0.50, '#b9a58a', { floor: 1, topColor: '#6da863' });   // slim planter on the ramp guard
+        [4.5, 5.2, 5.9].forEach(gx => addBox(gx, cY1 + 0.04, 0.50, gx + 0.45, cY1 + 0.12, zCx(gx) + 0.85, '#5fa35a', { floor: 1, alpha: 0.8 }));  // climbers
+        // ① small nook west of the tree: herb box + small water feature
+        addBox(1.42, 0.20, 0.20, 2.40, 0.55, 0.75, '#b9a58a', { floor: 1, topColor: '#7cb872' });
+        addBox(1.50, 0.85, 0.20, 2.00, 1.35, 0.70, '#9aa3ab', { floor: 1, topColor: '#8ecae6' });
+        addLabel(1.90, 0.80, 1.35, '① Herb box + water feature', '', 1, '#e6f5ea', '#1b5e3a', true);
+        // ② open patio east of the tree: bistro table for 4 + toddler water table
+        addTable(4.45, 0.45, 0.20, 5.15, 1.15, 0.74, '#f4f1ea', 1);
+        [[4.55, 0.02, 'N'], [4.55, 1.20, 'S'], [4.02, 0.55, 'W'], [5.20, 0.55, 'E']].forEach(([cx, cy, d]) => addChair(cx, cy, 0.20, 0.40, 0.40, d, '#d9b48a', 1));
+        addBox(5.75, 0.30, 0.20, 6.45, 0.85, 0.75, '#4dabf7', { floor: 1, topColor: '#a5d8ff' });
+        addLabel(5.00, 0.80, 1.45, '② Bistro table for 4 · toddler water table', 'Open sky, shade from the tree', 1, '#fcfbf7', '#1e563b', true);
+        // ③ covered strip: BBQ at the garage end + outdoor bench (laundry pulley already drawn)
+        addBox(6.05, 2.75, 0.20, 6.65, 3.25, 1.10, '#343a40', { floor: 1 });
+        addBox(4.05, 3.05, 0.20, 5.75, 3.40, 0.65, '#b5855a', { floor: 1 });
+        addLabel(4.90, 3.00, 1.55, '③ Covered: BBQ · bench · laundry rack', '~1.9m headroom · rain-proof', 1, '#fcfbf7', '#343a40', true);
+        // under the ramp's high end: lockable storage for bikes / stroller / tools
+        addBox(wx(0.30) + 0.05, 0.25, 0.20, wX1 - 0.05, 1.40, 0.95, '#868e96', { floor: 1 });
+        addLabel(0.85, 0.80, 1.20, 'Storage under ramp', 'bikes · stroller · tools', 1, '#f1f3f5', '#343a40', true);
+        // laundry → pulley rack on the 1F pump terrace
+        addBox(1.20, 2.70, 1.95, 3.60, 3.30, 1.99, '#adb5bd', { floor: 1 });
+        [1.35, 1.85, 2.35, 2.85, 3.35].forEach(lx => addBox(lx, 2.72, 1.55, lx + 0.03, 3.28, 1.95, '#e9ecef', { floor: 1 }));
+        addScalePerson(4.60, cY0 + 0.45, zCx(4.60), 1);
+        addLabel(3.90, -0.35, zSW + 1.25, 'L-Ramp — 0.95m clear, ~' + Math.round(sl * 100) + '%', 'Garage edge → rear wall → west strip → whole balcony → bay door · tree stays', 1, '#fff3e0', '#8a4b0f', true);
+      }
+      const bF = 2;
+      if (state.svcBalc) {
+        const sx0 = leftLotX(yO) + 0.04;
+        (RB ? [[3.00, yO + 0.04], [4.60, yO + 0.04], [6.85, yO - 0.46]] : [[1.60, yO + 0.04], [3.80, yO + 0.04], [5.55, yO + 0.04], [6.85, yO + 0.04]]).forEach(([px, py]) => addBox(px, py, 0.20, px + 0.08, py + 0.08, RB ? (px < dL0 ? zAx(px) - 0.14 : 2.06) : 2.08, '#2b3036', { floor: 1 }));
+        if (!RB) {
+          // ★ 2029: flat 1.0m balcony, bolted steel; ACs at the west end, laundry by the kitchen, plants by the dining glass
+          addPrism4([[sx0, yO], [6.97, yO], [6.97, bayY], [leftLotX(bayY) + 0.04, bayY]], 2.08, 2.20, '#8f8a82', { floor: bF, topColor: '#a39b8e' });
+          if (state.lift) {
+            addRailing(sx0, yO, 2.20, 5.70, yO, 2.20, 1.10, bF);
+            addRailing(6.72, yO, 2.20, 6.97, yO, 2.20, 1.10, bF);
+          } else if (state.cafeStair) {
+            addRailing(sx0, yO, 2.20, 5.88, yO, 2.20, 1.10, bF);
+            addRailing(6.72, yO, 2.20, 6.97, yO, 2.20, 1.10, bF);
+            addRailing(5.88, yO - 0.03, 2.20, 6.72, yO - 0.03, 2.20, 0.95, bF, true);   // lockable child gate at the stair head
+          } else addRailing(sx0, yO, 2.20, 6.97, yO, 2.20, 1.10, bF);
+          addBox(sx0 + 0.05, bayY - 0.36, 2.20, sx0 + 0.09, bayY - 0.02, 4.30, '#495057', { floor: bF });
+          addBox(sx0 + 0.91, bayY - 0.36, 2.20, sx0 + 0.95, bayY - 0.02, 4.30, '#495057', { floor: bF });
+          [2.30, 2.95, 3.60].forEach(az => {
+            addBox(sx0 + 0.10, bayY - 0.34, az, sx0 + 0.90, bayY - 0.04, az + 0.56, '#e3eef2', { floor: bF });
+            addBox(sx0 + 0.28, bayY - 0.35, az + 0.12, sx0 + 0.72, bayY - 0.34, az + 0.46, '#6c757d', { floor: bF });
+          });
+          // ★ Window-sill bar: slim counter on the OUTSIDE of the kitchen window = pass-through; 2 stools face the window/kitchen.
+          //   Balcony walkway stays clear. (Laundry moved downstairs: washer/dryer in R. Duduk + pulley racks under the balcony.)
+          addBox(1.66, bayY - 0.30, 3.08, 3.26, bayY - 0.02, 3.12, '#e6cfae', { floor: bF, topColor: '#efdcc0' });
+          [1.78, 3.10].forEach(bx => addBox(bx, bayY - 0.04, 2.80, bx + 0.04, bayY - 0.01, 3.08, '#495057', { floor: bF }));   // wall hinge plates
+          [1.78, 3.10].forEach(bx => addWall(bx + 0.02, bayY - 0.03, bx + 0.02, bayY - 0.27, 0.03, 2.84, 3.07, '#495057', { floor: bF }));   // fold-down stays (shown up)
+          [2.05, 2.85].forEach(sx => {
+            const sy = bayY - 0.52;
+            addBox(sx - 0.17, sy - 0.15, 2.82, sx + 0.17, sy + 0.15, 2.86, '#c89b66', { floor: bF });   // folding seat (~0.65m)
+            addWall(sx - 0.14, sy - 0.13, sx - 0.14, sy + 0.13, 0.03, 2.20, 2.82, '#3a3f45', { floor: bF });   // X-frame legs
+            addWall(sx + 0.14, sy - 0.13, sx + 0.14, sy + 0.13, 0.03, 2.20, 2.82, '#3a3f45', { floor: bF });
+            addBox(sx - 0.14, sy - 0.02, 2.48, sx + 0.14, sy + 0.02, 2.50, '#3a3f45', { floor: bF });
+          });
+          // Small fold-out laundry rack in front of the AC stack, pushed out to the railing (as far from the fins as 1.0m allows)
+          const rk0 = sx0 + 0.05, rk1 = sx0 + 0.95, rky0 = yO + 0.06, rky1 = yO + 0.36;
+          [rk0, rk1 - 0.03].forEach(ax => addBox(ax, rky0, 2.20, ax + 0.03, rky1, 3.30, '#868e96', { floor: bF }));   // side frames
+          [rky0 + 0.02, rky0 + 0.14, rky0 + 0.26].forEach(ly => addBox(rk0, ly, 3.27, rk1, ly + 0.012, 3.285, '#ced4da', { floor: bF }));
+          [[rk0 + 0.10, rky0 + 0.02, '#90caf9'], [rk0 + 0.45, rky0 + 0.14, '#e9ecef'], [rk0 + 0.20, rky0 + 0.26, '#f4a261']].forEach(([cx, ly, col]) =>
+            addBox(cx, ly - 0.005, 2.92, cx + 0.28, ly + 0.02, 3.27, col, { floor: bF }));
+          addLabel(sx0 + 0.55, yO + 0.20, 3.80, 'Small laundry rack in front of the ACs', 'light items · fold away when not drying', bF, '#f1f3f5', '#343a40', true);
+          addLabel(2.55, bayY - 0.50, 3.70, 'Fold-down sill bar + 2 folding stools', 'folds flat to keep the 1.0 m balcony clear · kitchen pass-through', bF, '#fff8eb', '#5c3a16', true);
+          addBox(4.00, yO + 0.05, 2.20, 5.30, yO + 0.30, 2.55, '#6da863', { floor: bF, topColor: '#7cb872' });
+          addLabel(4.70, yO + 0.30, 4.45, 'Long 2F Balcony (1.0m × ~6.5m)', 'Bolted steel · ramp-ready (becomes the ramp’s top leg later) · plants by the dining glass', bF, '#fff8eb', '#5c3a16', true);
+        } else {
+          // Ramp built: whole balcony re-pitched as leg A (west end low → east end high), flat landing at the bay door
+          addPrism4([[sx0, yO], [wX1, yO], [wX1, bayY], [leftLotX(bayY) + 0.04, bayY]], zNW - 0.14, zNW, '#b5855a', { floor: bF });   // NW corner landing
+          addPrism4([[wX1, yO], [dL0, yO], [dL0, bayY], [wX1, bayY]], [zNW - 0.14, 2.06, 2.06, zNW - 0.14], [zNW, 2.20, 2.20, zNW], '#a8784e', { floor: bF });
+          addPrism4([[dL0, yO - 0.50], [6.97, yO - 0.50], [6.97, bayY], [dL0, bayY]], 2.06, 2.20, '#8f8a82', { floor: bF, topColor: '#a39b8e' });   // 1.0×1.5m door landing
+          addBarRail(wX1, yO, zNW, dL0, yO, 2.20, 1.10, bF);
+          addBarRail(dL0, yO - 0.50, 2.20, 6.97, yO - 0.50, 2.20, 1.10, bF);
+          addBarRail(dL0, yO - 0.50, 2.20, dL0, yO, 2.20, 1.10, bF);
+          addBox(1.50, yO + 0.02, zNW + 0.05, 1.60, bayY - 0.02, zNW + 0.95, '#8a5a33', { floor: bF });   // wall handrail bracket
+          addLabel(3.70, yO + 0.45, 3.70, 'Balcony = Ramp Leg A', 'ACs moved (due for replacement ~2041) · door landing 1.0×1.5m', bF, '#fff8eb', '#5c3a16', true);
+        }
+        addPrism4([[sx0, yO - 0.05], [3.90, yO - 0.05], [3.90, bayY], [leftLotX(bayY) + 0.04, bayY]], 4.92, 4.96, '#d8eef7', { floor: bF, alpha: 0.45, edge: '#7a9aa8' });
+        if (state.lift && !RB) {
+          // Outdoor PLATFORM LIFT (screw/hydraulic, ~2.0m rise) in the east corner by the garage → stops at the balcony
+          // right beside the bay door. Platform ~1.0×1.45m, glass-walled tower, small roof. Car → lift → door → 2F.
+          const lx0 = 5.70, lx1 = 6.72, ly0 = yO - 1.50, ly1 = yO - 0.02;
+          [[lx0, ly0], [lx1 - 0.08, ly0], [lx0, ly1 - 0.08], [lx1 - 0.08, ly1 - 0.08]].forEach(([px, py]) => addBox(px, py, 0.20, px + 0.08, py + 0.08, 4.70, '#3a3f45', { floor: 1 }));
+          const gq = { floor: 1, alpha: 0.22, edge: '#3a3f45', edgeWidth: 1.2 };
+          addQuad([lx0, ly0, 0.25], [lx1, ly0, 0.25], [lx1, ly0, 4.55], [lx0, ly0, 4.55], '#cfe8f3', gq);
+          addQuad([lx0, ly0, 0.25], [lx0, ly1, 0.25], [lx0, ly1, 4.55], [lx0, ly0, 4.55], '#cfe8f3', gq);
+          addQuad([lx1, ly0, 0.25], [lx1, ly1, 0.25], [lx1, ly1, 4.55], [lx1, ly0, 4.55], '#cfe8f3', gq);
+          addBox(lx0 - 0.10, ly0 - 0.10, 4.70, lx1 + 0.10, ly1 + 0.05, 4.76, '#d8eef7', { floor: 1, alpha: 0.6, edge: '#7a9aa8' });   // roof
+          addBox(lx0 + 0.04, ly0 + 0.04, 2.12, lx1 - 0.04, ly1 - 0.04, 2.20, '#9aa3ab', { floor: 1 });                                // platform (at the 2F stop)
+          addBox(lx0 + 0.04, ly0 + 0.04, 0.20, lx1 - 0.04, ly1 - 0.04, 0.23, '#6c757d', { floor: 1 });                                 // pit-less base plate
+          addRailing(lx0 + 0.05, ly0 + 0.05, 2.20, lx1 - 0.05, ly0 + 0.05, 2.20, 1.10, 1);
+          addBox(lx1 - 0.20, ly0 + 0.30, 2.20, lx1 - 0.12, ly0 + 0.40, 3.30, '#2b3036', { floor: 1 });                                // control post
+          addLabel(6.20, ly0 - 0.10, 5.05, 'Outdoor Platform Lift (~2.0m rise)', 'East corner by the garage → balcony beside the bay door · ~1.4×1.7m footprint', 1, '#e7f5ff', '#1864ab', true);
+        }
+        if (state.cafeStair && !RB && !state.lift) {
+          // Gentler QUARTER-TURN steel stair at the EAST end, by the balcony door:
+          //   flight 1 down along the garage edge (6 × 16.7cm risers, 26.7cm treads) → landing in the rear corner →
+          //   flight 2 west along the rear wall (6 risers) to the deck. ~32°, 0.84m wide. Removed if the ramp is ever built.
+          const stX0 = 5.88, stX1 = 6.72, rz = 2.0 / 12, td = 0.267, lY0 = -0.90, lY1 = -0.05;
+          for (let k = 0; k < 6; k++) {                        // flight 1 (south)
+            const yt = yO - k * td, zt = 2.20 - (k + 1) * rz;
+            addBox(stX0, yt - td, zt - 0.04, stX1, yt, zt, '#7d6650', { floor: 1 });
+          }
+          const zL = 2.20 - 6 * rz;
+          addBox(stX0, lY0, zL - 0.08, stX1, lY1, zL, '#7d6650', { floor: 1 });   // corner landing
+          for (let k = 0; k < 6; k++) {                        // flight 2 (west, along the rear wall)
+            const xt = stX0 - k * td, zt = zL - (k + 1) * rz;
+            addBox(xt - td, lY0, zt - 0.04, xt, lY1, zt, '#7d6650', { floor: 1 });
+          }
+          [[stX0 + 0.02, lY0 + 0.04], [stX1 - 0.06, lY0 + 0.04], [stX1 - 0.06, lY1 - 0.06], [stX0 + 0.02, 0.75], [stX1 - 0.06, 0.75]].forEach(([px, py]) =>
+            addBox(px, py, 0.20, px + 0.05, py + 0.05, py > lY1 ? 2.20 - ((yO - py) / td) * rz - 0.05 : zL - 0.08, '#2b3036', { floor: 1 }));
+          addBarRail(stX0, yO, 2.20, stX0, lY1, zL, 0.95, 1);
+          addBarRail(stX1, yO, 2.20, stX1, lY0, zL, 0.95, 1);
+          addBarRail(stX0, lY1, zL, stX0 - 6 * td, lY1, 0.20, 0.95, 1);
+          addLabel(5.60, -0.45, 2.35, 'Quarter-Turn Steel Stair (gentler, ~32°)', '12 × 16.7cm risers · corner landing · child gate at top', 1, '#fff8eb', '#5c3a16', true);
+        }
+      } else {
+        addRailing(6.06, bayY - 0.08, 2.20, 6.98, bayY - 0.08, 2.20, 1.05, bF, true);
+        addLabel(6.50, bayY - 0.30, 3.40, 'Juliet Guard at Bay Door', 'Removed when the ramp is added', bF, '#fff8eb', '#5c3a16', true);
+      }
+    } else if (noRamp) {
+      // ★ BAY + CAFÉ BALCONY + STAIR (no ramp): new light-steel café balcony in front of the kitchen (door from the bay),
+      //   L-shaped steel stair down to the deck along the west & rear walls; ACs go to the roof platform.
+      addPrism4([[leftLotX(0.04)+0.02, 0.04], [6.74, 0.04], [6.74, 3.45], [leftLotX(3.45)+0.02, 3.45]], 0.00, 0.20, '#b58350', { floor: 1, topColor: '#c28e58', subdiv: 0.7 });
+      addBox(3.12, 3.35, 0.00, 6.60, 3.58, 0.12, '#d8d0c2', { floor: 1 });
+      // Tree planter moved to the rear-centre; bench along the rear wall east of it
+      addBox(3.10, 0.10, 0.20, 4.50, 1.45, 0.58, '#d6c2a5', { floor: 1, topColor: '#c9935b' });
+      addBox(3.22, 0.22, 0.56, 4.38, 1.33, 0.76, '#3d8b4f', { floor: 1, topColor: '#4ca660' });
+      addBox(3.73, 0.73, 0.56, 3.87, 0.87, 2.62, '#6e4e35', { floor: 1 });
+      addBox(3.15, 0.20, 1.84, 4.45, 1.40, 2.08, '#39884c', { floor: 1, topColor: '#4ea863', alpha: 0.90 });
+      addBox(3.30, 0.32, 2.32, 4.30, 1.25, 2.55, '#439857', { floor: 1, topColor: '#5bc072', alpha: 0.90 });
+      addBox(4.50, 0.10, 0.20, 6.60, 0.55, 0.58, '#c9935b', { floor: 1, topColor: '#d29a61' });
+      // Laundry pulley rack under the bay overhang
+      addBox(4.10, 2.70, 1.95, 6.40, 3.30, 1.99, '#adb5bd', { floor: 1 });
+      [4.25, 4.75, 5.25, 5.75, 6.25].forEach(lx => addBox(lx, 2.72, 1.55, lx + 0.03, 3.28, 1.95, '#e9ecef', { floor: 1 }));
+      if (state.patio === 'yoga') {
+        [2.60, 3.28, 3.96, 4.64].forEach(mx => addBox(mx, 1.55, 0.205, mx + 0.56, 2.45, 0.23, '#52b788', { floor: 1 }));
+      } else {
+        addTable(2.80, 1.55, 0.20, 4.80, 2.35, 0.75, '#d9ad77', 1);
+        [3.00, 3.60, 4.20].forEach(cx => addChair(cx, 2.41, 0.20, 0.42, 0.40, 'S', '#e8dfd1', 1));
+      }
+      addScalePerson(5.40, 1.80, 0.20, 1);
+      addLabel(4.40, 1.90, 1.25, 'Courtyard Deck + Tree', 'Stair down from the café balcony · laundry rack', 1, '#fcfbf7', '#1e563b', true);
+      // New café balcony (light steel frame + timber deck) X≈0.5..3.90, Y 2.47..3.45, posts down to the deck
+      const bF = 2;
+      const bx0 = leftLotX(2.47) + 0.04;
+      addPrism4([[bx0, bayY], [3.90, bayY], [3.90, 3.45], [leftLotX(3.45) + 0.04, 3.45]], 2.08, 2.20, '#c49a6c', { floor: bF, topColor: '#d4a676' });
+      [[1.60, bayY + 0.05], [3.80, bayY + 0.05]].forEach(([px, py]) => addBox(px, py, 0.20, px + 0.08, py + 0.08, 2.08, '#2b3036', { floor: 1 }));
+      addRailing(1.55, bayY, 2.20, 3.90, bayY, 2.20, 1.05, bF);
+      // Café: 2 flip-down seats on the railing + drop-leaf counter at the kitchen window
+      [1.80, 2.65].forEach(sx => {
+        addBox(sx, bayY + 0.03, 2.62, sx + 0.48, bayY + 0.36, 2.66, '#d89b5a', { floor: bF });
+        addBox(sx, bayY + 0.02, 2.66, sx + 0.48, bayY + 0.06, 3.00, '#c78846', { floor: bF });
+      });
+      addBox(1.68, 3.23, 3.06, 3.18, 3.44, 3.10, '#d89b5a', { floor: bF });
+      // L-shaped steel stair: run 1 down along the west wall (north), landing in the NW corner, run 2 east along the rear wall
+      const sw = 0.90, r1 = 6, r2 = 5, rise = 2.00 / (r1 + r2 + 1);
+      for (let i = 0; i < r1; i++) {
+        const yA = bayY - i * 0.265, yB = yA - 0.265, z = 2.20 - (i + 1) * rise;
+        addBox(leftLotX(yA) + 0.04, yB, z - 0.04, leftLotX(yA) + 0.04 + sw, yA, z, '#c49a6c', { floor: 1 });
+      }
+      const yL1 = bayY - r1 * 0.265, zL = 2.20 - (r1 + 1) * rise;
+      addBox(leftLotX(yL1) + 0.04, 0.06, zL - 0.05, leftLotX(yL1) + 0.04 + sw, yL1, zL, '#c49a6c', { floor: 1 });
+      const xS = leftLotX(0.5) + 0.04 + sw;
+      for (let i = 0; i < r2; i++) {
+        const xA = xS + i * 0.28, z = zL - (i + 1) * rise;
+        addBox(xA, 0.06, z - 0.04, xA + 0.28, 0.06 + sw, z, '#c49a6c', { floor: 1 });
+      }
+      addRailing(leftLotX(bayY) + 0.04 + sw, bayY, 2.20, leftLotX(yL1) + 0.04 + sw, yL1, zL, 0.95, 1);
+      addRailing(xS, 0.06 + sw, zL, xS + r2 * 0.28, 0.06 + sw, 0.20, 0.95, 1);
+      addLabel(1.40, 1.30, 2.70, 'Steel L-Stair to Deck', '~12 risers · 0.9m wide · open treads', 1, '#fff8eb', '#5c3a16', true);
+      addLabel(2.60, 3.00, 3.25, 'New Café Balcony', 'Door from bay · 2 flip seats · kitchen-window ledge', bF, '#fff8eb', '#5c3a16', true);
+    } else {
+    // +0.20m Sunny Merbau Deck Base
+    addPrism4([[leftLotX(0.04)+rW, leg2Y1], [leg1X0, leg2Y1], [leg1X0, 3.45], [leftLotX(3.45)+rW, 3.45]], 0.00, 0.20, '#b58350', { floor: 1, topColor: '#c28e58', subdiv: 0.7 });
+    addBox(3.12, 3.35, 0.00, leg1X0 - 0.06, 3.58, 0.12, '#d8d0c2', { floor: 1 });
+
+    if (slim) {
+      // ★ v6.9 CONTINUOUS FLUSH-ALIGNED +0.58m (38cm Seat Height) NORTH STEP-BENCH & TREE PLANTER COPING!
+      addBox(1.42, leg2Y1 + 0.01, 0.20, 2.86, 2.38, zNE, '#d6c2a5', { floor: 1, topColor: '#c9935b' });
+      addBox(1.54, leg2Y1 + 0.14, 0.42, 2.72, 2.22, 0.56, '#4a3828', { floor: 1 });
+      addBox(1.60, leg2Y1 + 0.18, 0.56, 2.66, 2.16, 0.76, '#3d8b4f', { floor: 1, topColor: '#4ca660' });
+      addBox(2.86, leg2Y1 + 0.01, 0.20, leg1X0, 1.40, zNE, '#c9935b', { floor: 1, topColor: '#d29a61' });
+      addBox(2.96, leg2Y1 + 0.04, zNE, 4.35, 1.18, zNE + 0.18, '#469658', { floor: 1, topColor: '#58b36c' });
+
+      // Organic Multi-Branch Courtyard Tree (Ketapang Kencana Mini rising beside 2F Café!)
+      addBox(1.98, 1.58, 0.56, 2.12, 1.72, 2.62, '#6e4e35', { floor: 1 });
+      addBox(1.80, 1.46, 1.55, 1.98, 1.58, 2.22, '#78563c', { floor: 1 });
+      addBox(2.12, 1.66, 1.72, 2.28, 1.78, 2.40, '#78563c', { floor: 1 });
+      addBox(1.42, 1.14, 1.84, 2.68, 2.18, 2.08, '#39884c', { floor: 1, topColor: '#4ea863', alpha: 0.90 });
+      addBox(1.56, 1.26, 2.32, 2.54, 2.06, 2.55, '#439857', { floor: 1, topColor: '#5bc072', alpha: 0.90 });
+      addBox(1.72, 1.38, 2.74, 2.38, 1.92, 2.98, '#52ad67', { floor: 1, topColor: '#69cc80', alpha: 0.90 });
+      addLabel(2.05, 1.68, 3.22, 'Courtyard Tree & Flush +0.58m Coping', '~2.0 m² Root-Contained Planter', 1, '#e6f5ea', '#1b5e3a', true);
+    }
+
+    if (state.patio === 'yoga') {
+      const matXs = slim ? [3.00, 3.68, 4.36, 5.04] : [1.75, 2.52, 3.29, 4.06, 4.83];
+      matXs.forEach(mx => {
+        addBox(mx, slim ? 1.50 : 1.28, 0.205, mx + 0.56, slim ? 3.10 : 2.90, 0.23, '#52b788', { floor: 1 });
+      });
+      addScalePerson(4.70, 2.25, 0.20, 1);
+      addLabel(slim ? 4.35 : 3.55, 2.35, 0.55, slim ? 'Aligned +0.58m Bench + Sunny Deck' : '+0.20m Sunny Deck (10.2 m²)', 'Flush 38cm Bench Across North & NE!', 1, '#fcfbf7', '#1e563b', true);
+    } else {
+      const bx = slim ? 3.22 : 2.45;
+      addTable(bx, 1.72, 0.20, bx + 2.00, 2.52, 0.75, '#d9ad77', 1);
+      [bx+0.20, bx+0.80, bx+1.40].forEach(cx => addChair(cx, 2.58, 0.20, 0.42, 0.40, 'S', '#e8dfd1', 1));
+      addBox(slim ? 5.32 : 1.68, 1.50, 0.20, slim ? 5.76 : 2.22, 1.98, 1.02, '#2f353b', { floor: 1 });
+      addScalePerson(3.00, 2.15, 0.20, 1);
+      addLabel(bx + 1.0, 2.12, 1.28, '8-Pax Legged BBQ Table + Flush Bench', 'Friends Sit Right on +0.58m North Bench!', 1, '#fcfbf7', '#1e563b', true);
+    }
+
+    // 4-LEG CONTINUOUS 0.92m ADA MERBAU RAMP (32cm Inner Chamfers = 1.15m Wheelchair+Pusher Turn Throat!)
+    const rampCol = '#c87d44', landCol = '#d69159';
+    const fullRails = state.rails === 'full';
+    const ch = slim ? 0.30 : 0.0;
+
+    addPrism4([[leg1X0, 4.55], [6.74, 4.55], [6.74, leg2Y1], [leg1X0, leg2Y1]], 0.00, [0.02, 0.02, zNE, zNE], rampCol, { floor: 1, subdiv: 0.6 });
+    if (fullRails) {
+      addRailing(leg1X0, 3.45, 0.20, leg1X0, leg2Y1, zNE, 0.90, 1);
+      addRailing(6.72, 3.45, 0.20, 6.72, leg2Y1, zNE, 0.90, 1);
+    }
+    addBox(leg1X0, 0.04, 0.00, 6.74, leg2Y1, zNE, landCol, { floor: 1 });
+    if (slim) {
+      addPrism4([[leg1X0 - ch, leg2Y1], [leg1X0, leg2Y1], [leg1X0, leg2Y1 + ch], [leg1X0 - ch*0.5, leg2Y1 + ch*0.5]], 0.20, zNE, landCol, { floor: 1 });
+    }
+
+    const nwX1 = leftLotX(0.04) + rW, nwX1b = leftLotX(leg2Y1) + rW;
+    addPrism4([[nwX1, 0.04], [leg1X0, 0.04], [leg1X0, leg2Y1], [nwX1b, leg2Y1]], [zNW-0.18, zNE-0.18, zNE-0.18, zNW-0.18], [zNW, zNE, zNE, zNW], rampCol, { floor: 1, subdiv: 0.65 });
+    [[4.30, leg2Y1-0.08, zNE+0.30], [2.75, leg2Y1-0.08, zNE+0.62], [nwX1b-0.08, leg2Y1-0.08, zNW-0.18]].forEach(([px, py, zt]) => {
+      addBox(px-0.05, py-0.05, 0.20, px+0.05, py+0.05, zt, '#2c3238', { floor: 1 });
+    });
+    if (!fullRails) {
+      const railStartX = slim ? 3.55 : 4.25;
+      const tStart = (leg1X0 - railStartX) / (leg1X0 - nwX1b);
+      const zRailStart = zNE + tStart * (zNW - zNE);
+      addWall(leg1X0, leg2Y1 - 0.03, railStartX, leg2Y1 - 0.03, 0.05, zNE, zRailStart + 0.05, '#a86431', { floor: 1 });
+      addRailing(railStartX, leg2Y1, zRailStart, nwX1b, leg2Y1, zNW, 0.92, 1, true);
+    } else {
+      addRailing(leg1X0, leg2Y1, zNE, nwX1b, leg2Y1, zNW, 0.92, 1);
+      addRailing(leg1X0, 0.06, zNE, nwX1, 0.06, zNW, 0.92, 1);
+    }
+
+    addPrism4([[leftLotX(0.04)+0.02, 0.04], [nwX1, 0.04], [nwX1b, leg2Y1], [leftLotX(leg2Y1)+0.02, leg2Y1]], zNW - 0.18, zNW, landCol, { floor: 1 });
+    if (slim) {
+      addPrism4([[nwX1b, leg2Y1], [nwX1b + ch, leg2Y1], [nwX1b + ch*0.5, leg2Y1 + ch*0.5], [nwX1b, leg2Y1 + ch]], zNW - 0.18, zNW, landCol, { floor: 1 });
+    }
+
+    const swX1 = leftLotX(bayY) + rW, swX1b = leftLotX(3.45) + rW;
+    addPrism4(
+      [[leftLotX(leg2Y1)+0.02, leg2Y1], [nwX1b, leg2Y1], [swX1, bayY], [leftLotX(bayY)+0.02, bayY]],
+      [zNW - 0.16, zNW - 0.16, zSW - 0.16, zSW - 0.16],
+      [zNW, zNW, zSW, zSW],
+      rampCol, { floor: 1, subdiv: 0.55 }
+    );
+    addRailing(nwX1b, leg2Y1, zNW, swX1, bayY, zSW, 0.92, 1, !fullRails);
+    if (fullRails) addRailing(leftLotX(leg2Y1)+0.05, leg2Y1, zNW, leftLotX(bayY)+0.05, bayY, zSW, 0.92, 1);
+
+    const balcFloor = state.floors[2] ? 2 : 1;
+    addPrism4([[leftLotX(bayY)+0.02, bayY], [swX1, bayY], [swX1b, 3.45], [leftLotX(3.45)+0.02, 3.45]], zSW - 0.16, zSW, landCol, { floor: balcFloor });
+    if (slim) {
+      addPrism4([[swX1, bayY - ch], [swX1 + ch*0.5, bayY - ch*0.5], [swX1 + ch, bayY], [swX1, bayY]], zSW - 0.16, zSW, landCol, { floor: balcFloor });
+    }
+    addPrism4([[swX1, bayY], [3.55, bayY], [3.55, 3.45], [swX1b, 3.45]], [zSW-0.16, 2.04, 2.04, zSW-0.16], [zSW, zDoor, zDoor, zSW], rampCol, { floor: balcFloor, subdiv: 0.55 });
+    addRailing(swX1, bayY, zSW, 3.55, bayY, zDoor, 0.95, balcFloor, !fullRails);
+    addBox(3.55, bayY, 2.04, 3.90, 3.45, 2.20, '#cfd5db', { floor: balcFloor });
+
+    if (state.rails !== 'loading') {
+      if (state.cafe === 'open') {
+        [1.76, 2.62].forEach(sx => {
+          const tMid = (sx + 0.24 - swX1) / (3.55 - swX1);
+          const zSeat = zSW + tMid * (zDoor - zSW) + 0.43;
+          addBox(sx, bayY + 0.03, zSeat - 0.04, sx + 0.48, bayY + 0.36, zSeat, '#d89b5a', { floor: balcFloor });
+          addBox(sx, bayY + 0.02, zSeat, sx + 0.48, bayY + 0.06, zSeat + 0.34, '#c78846', { floor: balcFloor });
+        });
+        addBox(1.68, 3.23, 3.06, 3.18, 3.44, 3.10, '#d89b5a', { floor: balcFloor });
+      } else {
+        [1.76, 2.62].forEach(sx => {
+          const tMid = (sx + 0.24 - swX1) / (3.55 - swX1);
+          const zSeat = zSW + tMid * (zDoor - zSW) + 0.42;
+          addBox(sx, bayY + 0.02, zSeat, sx + 0.48, bayY + 0.08, zSeat + 0.44, '#c78846', { floor: balcFloor });
+        });
+        addBox(1.68, 3.41, 2.66, 3.18, 3.44, 3.08, '#c78846', { floor: balcFloor });
+      }
+    }
+    addLabel(2.55, bayY + 0.45, 2.95, slim ? '2F Café Balcony (0.95m Ramp · 2.17m Span)' : '2F Café Balcony (1.10m)', state.rails === 'loading' ? '★ Upper Rails Lifted Out for Fridge Moving!' : '2 Flip-Down 0° Seats + 22cm Sill', balcFloor, '#fff8eb', '#5c3a16', true);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // FLOOR 2 (+2.20m, True 3.05m Ceiling -> +5.25m):
+  //   BEFORE (As-Built 0.90m Concrete Balcony w/ ACs, Box Bar, 2x2m Sofa, Walled Musholla)
+  //   vs AFTER (Extended Bay, 92cm Door, Open Kitchen, Wall-Pocketed Open Musholla!)
+  // --------------------------------------------------------------------------
+  if (showF2) {
+    addPrism4([[leftLotX(3.45), 3.45], [10.40, 3.45], [10.40, 5.95], [leftLotX(5.95), 5.95]], 2.10, 2.20, '#f3ede2', { floor: 2, subdiv: 1.0 });
+    addBox(2.50, 5.95, 2.10, 10.40, 10.25, 2.20, '#f3ede2', { floor: 2, subdiv: 1.0 });
+    addPrism4([[leftLotX(7.95), 7.95], [3.40, 7.95], [3.40, 10.25], [leftLotX(10.25), 10.25]], 2.08, 2.18, '#dfd8ca', { floor: 2, subdiv: 0.8 });
+    addBox(7.10, RY, 2.10, 10.40, 3.45, 2.20, '#f5efe6', { floor: 2, subdiv: 0.9 });
+    // Kitchen block projects 0.90m to the balcony edge (photos: AC side wall + deeper sink window)
+    addPrism4([[leftLotX(2.55), 2.55], [3.90, 2.55], [3.90, 3.45], [leftLotX(3.45), 3.45]], 2.10, 2.20, '#f3ede2', { floor: 2 });
+
+    if (state.mode === 'before') {
+      // BEFORE: Narrow 0.90m Concrete Rear Balcony (X=0.95..7.10, Y=2.55..3.45) + 2 Noisy Hot AC Condensers!
+      // (photos) Recessed balcony between the kitchen block and the master block, under the 3F soffit
+      addBox(3.90, 2.55, 2.10, 7.03, 3.45, 2.20, '#cbd2d9', { floor: 2, subdiv: 0.9 });
+      addRailing(3.90, 2.55, 2.20, 7.03, 2.55, 2.20, 0.92, 2);
+      addWall(3.90, 2.55, 3.90, 3.45, 0.12, 2.20, z2Wall, '#f4f0e8', { floor: 2 });   // kitchen block side wall
+      [2.95, 3.55, 4.15].forEach(az => addBox(3.97, 2.62, az, 4.29, 3.42, az + 0.55, '#ffd8d8', { floor: 2 }));   // 3 condensers stacked on brackets
+      addLabel(5.40, 2.95, 2.95, 'BEFORE: 0.90m Recessed Balcony', '3 ACs stacked on kitchen side wall · laundry rack', 2, '#fff0ed', '#9c2b1c', true);
+
+      // BEFORE: Solid Grid 3 Rear Wall (Y=3.45, X=leftLotX..7.10) with regular windows
+      // BEFORE north wall (photos): small kitchen window by the sink + full-height curtained sliding door to the balcony
+      const nw = { floor: 2, cutNormal: [0, -1, 0] };
+      addWall(leftLotX(2.55), 2.55, 1.60, 2.55, 0.13, 2.20, z2Wall, '#f4f0e8', nw);
+      addWall(1.60, 2.55, 2.40, 2.55, 0.13, 2.20, 3.20, '#f4f0e8', nw);
+      addQuad([1.60, 2.55, 3.20], [2.40, 2.55, 3.20], [2.40, 2.55, 4.20], [1.60, 2.55, 4.20], '#90caf9', { floor: 2, alpha: 0.35, edge: '#5c4033', cutNormal: [0, -1, 0] });
+      addWall(1.60, 2.55, 2.40, 2.55, 0.13, 4.20, z2Wall, '#f4f0e8', nw);
+      addWall(2.40, 2.55, 3.96, 2.55, 0.13, 2.20, z2Wall, '#f4f0e8', nw);
+      addWall(3.90, 3.45, 4.30, 3.45, 0.13, 2.20, z2Wall, '#f4f0e8', nw);
+      addWall(4.30, 3.45, 6.15, 3.45, 0.13, 2.20, 2.65, '#f4f0e8', nw);                  // large window (low sill)
+      addQuad([4.30, 3.45, 2.65], [6.15, 3.45, 2.65], [6.15, 3.45, 4.60], [4.30, 3.45, 4.60], '#90caf9', { floor: 2, alpha: 0.30, edge: '#5c4033', cutNormal: [0, -1, 0] });
+      addWall(4.30, 3.45, 6.15, 3.45, 0.13, 4.60, z2Wall, '#f4f0e8', nw);
+      addWall(6.15, 3.45, 6.25, 3.45, 0.13, 2.20, z2Wall, '#f4f0e8', nw);
+      addWall(6.25, 3.45, 7.00, 3.45, 0.13, 4.35, z2Wall, '#f4f0e8', nw);                // brown balcony door opening
+      addWall(6.25, 3.50, 6.62, 3.85, 0.05, 2.21, 4.33, '#7c4824', { floor: 2 });        // door leaf, ajar inward
+      addWall(7.00, 3.45, 7.10, 3.45, 0.13, 2.20, z2Wall, '#f4f0e8', nw);
+      addBox(4.15, 3.52, 2.22, 4.45, 3.62, 4.65, '#c8b49a', { floor: 2 });   // curtains
+      addBox(5.95, 3.52, 2.22, 6.20, 3.62, 4.65, '#c8b49a', { floor: 2 });
+      addBox(4.80, 3.52, 4.70, 5.70, 3.75, 4.98, '#f1f3f5', { floor: 2 });   // AC above the window
+
+      // BEFORE: Existing Dapur + Heavy Dark-Brown Overhead Box Bar (X=2.80..3.40, Y=3.48..5.16)
+      addBox(0.54, 2.58, 2.20, 2.80, 3.18, 3.08, '#4e3426', { floor: 2, topColor: '#8d8781' });
+      addPrism4([[leftLotX(3.18)+0.04, 3.18], [leftLotX(3.18)+0.64, 3.18], [leftLotX(5.00)+0.64, 5.00], [leftLotX(5.00)+0.04, 5.00]], 2.20, 3.08, '#4e3426', { floor: 2, topColor: '#8d8781' });
+      addBox(leftLotX(4.4)+0.10, 4.25, 4.15, leftLotX(4.4)+0.45, 4.85, 4.30, '#b8c0c6', { floor: 2 });   // hood
+      addBox(0.54, 2.58, 4.20, 2.40, 2.93, 5.05, '#4e3426', { floor: 2 });                       // wall cabinets
+      addBox(leftLotX(5.5)+0.04, 5.02, 2.20, leftLotX(5.5)+0.74, 5.92, 4.02, '#c7cdd3', { floor: 2 });   // side-by-side fridge on west wall, under stair slope
+      addBox(2.80, 3.48, 2.20, 3.40, 3.98, z2Wall, '#4e3426', { floor: 2 });                     // full-height pantry column
+      addBox(2.80, 3.48, 2.20, 3.30, 5.16, 3.08, '#4e3426', { floor: 2, topColor: '#8d8781' });  // peninsula
+      addBox(3.30, 3.48, 3.24, 3.55, 5.16, 3.28, '#8d8781', { floor: 2 });                       // raised bar ledge
+      addBox(2.80, 3.48, 4.30, 3.40, 5.16, z2Wall, '#4e3426', { floor: 2 });                     // tall cabinets over peninsula (pass-through below)
+      addChair(3.62, 3.95, 2.20, 0.40, 0.38, 'E', '#d9663a', 2);
+      addChair(3.62, 4.60, 2.20, 0.40, 0.38, 'E', '#d9663a', 2);
+      addLabel(2.05, 4.50, 3.55, 'BEFORE: Dark-Wood Kitchen + Bar', 'Granite · 2 stools · fridge on west wall', 2);
+      addBox(5.55, 3.55, 2.20, 6.90, 3.95, 3.00, '#262322', { floor: 2 }); // Existing piano against rear wall
+    } else {
+      if (stepBay) {
+        addBox(3.90, bayY, 2.10, xStep, 3.45, 2.20, '#f6f1e7', { floor: 2, subdiv: 0.7 });
+        addBox(xStep, yShal, 2.10, 7.10, 3.45, 2.20, '#f6f1e7', { floor: 2 });
+      } else {
+        if (flushBay) { addBox(3.90, bayY, 2.10, 5.44, 3.45, 2.20, '#f6f1e7', { floor: 2, subdiv: 0.7 }); }
+        else addBox(3.90, bayY, 2.10, bayX1, 3.45, 2.20, '#f6f1e7', { floor: 2, subdiv: 0.7 });
+      }
+      if (keepWin) {
+        // Open-air nook X=6.20..7.03 (kept part of the old balcony slab): master window stays outdoors
+        addBox(6.20, 2.55, 2.10, 7.03, 3.45, 2.20, '#cbd2d9', { floor: 2 });
+        if (flushBay) {
+          // ★ Planted nook: raised planter fills it (not walkable) → green view + light for the master window
+          addBox(6.28, 2.62, 2.20, 6.96, 3.40, 2.75, '#b9a58a', { floor: 2, topColor: '#7a5c3e' });
+          addBox(6.34, 2.68, 2.75, 6.90, 3.34, 3.35, '#5fa35a', { floor: 2, topColor: '#74bb6c', alpha: 0.92 });
+          addLabel(6.62, 2.95, 3.70, 'Planted Nook 0.8m', 'Master window keeps light & privacy', 2, '#e6f5ea', '#1b5e3a', true);
+        } else {
+          addBox(6.30, 2.65, 2.20, 7.00, 3.05, 2.80, '#e3eef2', { floor: 2 });
+          addBox(6.30, 3.12, 2.20, 7.00, 3.40, 2.55, '#6da863', { floor: 2, topColor: '#7cb872' });
+          addLabel(6.65, 2.90, 3.35, 'Open-Air Nook 0.9m', 'Keeps 2F master window outdoors · AC + planter', 2, '#e7f5ff', '#1864ab', true);
+        }
+        addRailing(6.20, 2.55, 2.20, 7.03, 2.55, 2.20, 1.0, 2);
+        addWall(6.20, 3.45, 7.03, 3.45, 0.12, 2.20, z2Wall, '#f4f0e8', { floor: 2 });
+      }
+
+      // North Kitchen Wall + 1.60m 2-Panel Sliding Café Window (Z=3.10..4.35m)
+      // Kitchen wall is on the old balcony-edge line (Y=2.55), flush with the bay
+      addWall(leftLotX(2.55), 2.55, 3.90, 2.55, 0.12, 2.20, 3.10, '#f4f0e8', { floor: 2 });
+      addWall(leftLotX(2.55), 2.55, 1.66, 2.55, 0.12, 3.10, z2Wall, '#f4f0e8', { floor: 2 });
+      addWall(3.26, 2.55, 3.90, 2.55, 0.12, 3.10, z2Wall, '#f4f0e8', { floor: 2 });
+      addWall(1.66, 2.55, 3.26, 2.55, 0.12, 4.35, z2Wall, '#f4f0e8', { floor: 2 });
+      if (state.svcBalc && !state.rampBuilt) {
+        // Café-bar pass-through: both sashes slid to the west half → east half open over the sink to the balcony counter
+        addQuad([1.66, 2.55, 3.10], [2.46, 2.55, 3.10], [2.46, 2.55, 4.35], [1.66, 2.55, 4.35], '#8ecae6', { floor: 2, alpha: 0.34, edge: '#d9d3c7', edgeWidth: 2.0 });
+        addQuad([1.70, 2.51, 3.10], [2.50, 2.51, 3.10], [2.50, 2.51, 4.35], [1.70, 2.51, 4.35], '#8ecae6', { floor: 2, alpha: 0.30, edge: '#d9d3c7', edgeWidth: 2.0 });
+      } else {
+        addQuad([1.66, 2.55, 3.10], [3.26, 2.55, 3.10], [3.26, 2.55, 4.35], [1.66, 2.55, 4.35], '#8ecae6', { floor: 2, alpha: 0.34, edge: '#2b3036' });
+      }
+
+      // Framed 92cm-clear hinged full-lite glass door in the bay FRONT → balcony / future ramp top landing.
+      //   Flush bay: door at the EAST end (next to the master wall) so the whole balcony can become the ramp's top leg.
+      const dA = 3.90, dB = dA + 1.02;   // (non-flush variants only)
+      const gA = flushBay ? 3.90 : 4.92, gB = flushBay ? 5.44 : bayX1;   // glazed run (reused big window)
+      const frm = flushBay ? '#ece7dc' : '#2b3036';
+      if (flushBay) {
+        // ★ East end NOT enclosed: open porch (X 5.44–7.03, Y 2.55–3.45) continuous with the balcony; the EXISTING wall +
+        //   balcony door stay on the original line Y=3.45 (door repainted light) → master window untouched, casement opens onto the porch.
+        const nwp = { floor: 2, cutNormal: [0, -1, 0] };
+        addWall(5.44, bayY, 5.44, 3.45, 0.12, 2.20, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [-1, 0, 0] });   // side wall (end of the bay glazing)
+        addWall(5.44, 3.45, 6.25, 3.45, 0.13, 4.35, z2Wall, '#f4f0e8', nwp);                       // wall above the new fixed glass
+        addQuad([5.50, 3.45, 2.24], [6.21, 3.45, 2.24], [6.21, 3.45, 4.31], [5.50, 3.45, 4.31], '#8ecae6', { floor: 2, alpha: 0.38, edge: '#d9d3c7', edgeWidth: 2.0 });
+        addBox(5.44, 3.40, 2.20, 5.50, 3.50, 4.35, frm, { floor: 2 });
+        addBox(5.44, 3.40, 2.20, 6.25, 3.50, 2.24, frm, { floor: 2 });
+        addBox(5.44, 3.40, 4.31, 6.25, 3.50, 4.35, frm, { floor: 2 });
+        addWall(6.25, 3.45, 7.00, 3.45, 0.13, 4.35, z2Wall, '#f4f0e8', nwp);
+        addWall(7.00, 3.45, 7.10, 3.45, 0.13, 2.20, z2Wall, '#f4f0e8', nwp);
+        [6.25, 6.96].forEach(fx => addBox(fx, 3.40, 2.20, fx + 0.04, 3.50, 4.35, frm, { floor: 2 }));
+        addBox(6.25, 3.40, 4.31, 7.00, 3.50, 4.35, frm, { floor: 2 });
+        addWall(6.27, 3.50, 6.64, 3.85, 0.05, 2.21, 4.31, '#e9e4da', { floor: 2 });   // existing door leaf (repainted light), ajar inward
+        addBox(5.44, bayY, 2.08, 7.03, 3.40, 2.20, '#8f8a82', { floor: 2, topColor: '#a39b8e' });   // porch floor = balcony level
+        addLabel(6.25, 2.95, 4.95, 'Open porch keeps the existing balcony door', 'master window untouched · 1.6×0.9m', 2, '#e7f5ff', '#1864ab', true);
+      } else {
+        addBox(dA, bayY - 0.04, 2.20, dA + 0.06, bayY + 0.04, 4.35, frm, { floor: 2 });
+        addBox(dB - 0.06, bayY - 0.04, 2.20, dB, bayY + 0.04, 4.35, frm, { floor: 2 });
+        addWall(dA, bayY, dB, bayY, 0.12, 4.35, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        addPrism4([[dA + 0.06, bayY - 0.02], [dB - 0.06, bayY - 0.02], [dB - 0.06, bayY + 0.02], [dA + 0.06, bayY + 0.02]], 2.21, 4.29, '#8ecae6', { floor: 2, alpha: 0.42, edge: '#181c20', edgeWidth: 1.8 });
+      }
+
+      const dblBay = state.fvoid === 'bay';
+      const gl2 = { floor: 2, alpha: 0.28, edge: '#2b3036', cutNormal: [0, -1, 0] };
+      if (stepBay) {
+        const zTop = dblBay ? 5.25 : 4.45;
+        // Deep part (door end): X 3.90..4.90, face at bayY
+        addWall(3.90, bayY, xStep, bayY, 0.12, 2.20, 3.10, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        addQuad([3.95, bayY, 3.10], [xStep - 0.04, bayY, 3.10], [xStep - 0.04, bayY, zTop], [3.95, bayY, zTop], '#90caf9', gl2);
+        if (!dblBay) addWall(3.90, bayY, xStep, bayY, 0.12, 4.45, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        addWall(xStep, bayY, xStep, yShal, 0.12, 2.20, dblBay ? 5.25 : z2Wall, '#f4f0e8', { floor: 2 });
+        // Shallow part (banquette): X 4.90..7.10, face at Y=3.00 → master window (Y≤2.90) stays outdoors
+        addWall(xStep, yShal, 7.10, yShal, 0.12, 2.20, 3.10, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        addQuad([xStep + 0.04, yShal, 3.10], [5.76, yShal, 3.10], [5.76, yShal, zTop], [xStep + 0.04, yShal, zTop], '#90caf9', gl2);
+        addQuad([5.84, yShal, 3.10], [7.05, yShal, 3.10], [7.05, yShal, 4.45], [5.84, yShal, 4.45], '#90caf9', gl2);
+        addWall(5.80, yShal, 7.10, yShal, 0.12, 4.45, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        if (!dblBay) addWall(xStep, yShal, 5.80, yShal, 0.12, 4.45, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        addBox(5.76, yShal - 0.05, 3.10, 5.84, yShal + 0.05, zTop, '#2b3036', { floor: 2 });
+      } else {
+      addWall(gA, bayY, gB, bayY, 0.12, 2.20, 3.10, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+      if (keepWin) addWall(6.20, bayY, 6.20, 3.45, 0.12, 2.20, z2Wall, '#f4f0e8', { floor: 2 });   // solid square end (privacy to master window)
+      if (dblBay) {
+        addQuad([3.95, bayY, 3.10], [dhX1 - 0.04, bayY, 3.10], [dhX1 - 0.04, bayY, 5.25], [3.95, bayY, 5.25], '#90caf9', { floor: 2, alpha: 0.28, edge: '#2b3036', cutNormal: [0, -1, 0] });
+        addBox(dhX1 - 0.04, bayY - 0.05, 3.10, dhX1 + 0.04, bayY + 0.05, 5.25, '#2b3036', { floor: 2 });
+        addQuad([dhX1 + 0.04, bayY, 3.10], [bayX1 - 0.04, bayY, 3.10], [bayX1 - 0.04, bayY, 4.45], [dhX1 + 0.04, bayY, 4.45], '#90caf9', { floor: 2, alpha: 0.28, edge: '#2b3036', cutNormal: [0, -1, 0] });
+        addWall(dhX1, bayY, bayX1, bayY, 0.12, 4.45, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+      } else {
+        addQuad([gA + 0.04, bayY, 3.10], [gB - 0.04, bayY, 3.10], [gB - 0.04, bayY, 4.45], [gA + 0.04, bayY, 4.45], '#90caf9', { floor: 2, alpha: 0.28, edge: flushBay ? '#bdb6a8' : '#2b3036', cutNormal: [0, -1, 0] });
+        addWall(gA, bayY, gB, bayY, 0.12, 4.45, z2Wall, '#f4f0e8', { floor: 2, cutNormal: [0, -1, 0] });
+        if (flushBay) {
+          // Reused big window, repainted light: outer frame + 2 mullions (3 panes) + a transom bar
+          const fq = { floor: 2 };
+          addBox(gA, bayY - 0.05, 3.06, gB, bayY + 0.05, 3.12, frm, fq);          // sill
+          addBox(gA, bayY - 0.05, 4.41, gB, bayY + 0.05, 4.47, frm, fq);          // head
+          addBox(gA, bayY - 0.05, 3.06, gA + 0.06, bayY + 0.05, 4.47, frm, fq);   // jambs
+          addBox(gB - 0.06, bayY - 0.05, 3.06, gB, bayY + 0.05, 4.47, frm, fq);
+          const nP = 3, pw = (gB - gA) / nP;
+          for (let k = 1; k < nP; k++) addBox(gA + k * pw - 0.03, bayY - 0.05, 3.06, gA + k * pw + 0.03, bayY + 0.05, 4.47, frm, fq);   // mullions
+          addBox(gA, bayY - 0.05, 4.04, gB, bayY + 0.05, 4.08, frm, fq);          // transom (top-hung vents above)
+        }
+      }
+      }
+
+      // ★ U-shaped kitchen: back run under the window (sink) + west-wall run (hob, fridge at its end) + peninsula (no stools)
+      //   Light HPL fronts + light quartz top (owner wants a lighter house)
+      const kF = '#f3eee6', kT = '#fbfaf7';
+      addBox(0.54, 2.58, 2.20, 3.16, 3.18, 3.08, kF, { floor: 2, topColor: kT });
+      addBox(1.46, 2.65, 3.08, 2.24, 3.08, 3.10, '#b8c4cc', { floor: 2 });
+      addPrism4([[leftLotX(3.18)+0.04, 3.18], [leftLotX(3.18)+0.64, 3.18], [leftLotX(5.00)+0.64, 5.00], [leftLotX(5.00)+0.04, 5.00]], 2.20, 3.08, kF, { floor: 2, topColor: kT });
+      addBox(0.68, 4.25, 3.08, 1.12, 4.96, 3.11, '#22262a', { floor: 2 });
+      addBox(0.58, 4.20, 3.80, 1.14, 5.00, 4.45, '#e3e6e9', { floor: 2 });
+      addBox(0.54, 2.58, 4.40, 1.60, 2.93, 5.05, '#f6f3ee', { floor: 2 });   // light wall cabinets (west of the window)
+      addBox(leftLotX(5.5)+0.04, 5.02, 2.20, leftLotX(5.5)+0.74, 5.92, 4.02, '#c7cdd3', { floor: 2 });   // side-by-side fridge (same spot as today)
+      addBox(2.56, 3.18, 2.20, 3.16, 4.70, 3.08, kF, { floor: 2, topColor: kT });   // peninsula base (DW + drawers)
+      addBox(2.54, 3.18, 3.06, 3.18, 4.70, 3.10, kT, { floor: 2 });                        // quartz top (no stools: dining bench is right there)
+      addLabel(1.85, 4.10, 3.55, 'U-Shaped Kitchen', 'Sink under window · hob on west wall · peninsula = prep + DW (no stools)', 2);
+
+      // ★ v6.9: Built-in window banquette INSIDE the extended bay (X=4.95..7.04) — keeps the
+      //   92cm door swing zone (X=3.90..4.85) clear and pulls the whole dining set 0.95m north.
+      const bqY0 = bayY + 0.07, bqY1 = bayY + 0.53;
+      const bqX1 = winMoved ? 7.04 : flushBay ? 5.36 : 6.14;
+      if (state.must && winMoved) {
+        // Must-Do: loose 1.60m table + 6 chairs straddling the bay (no built-in banquette)
+        addTable(4.95, bayY + 0.48, 2.20, 6.55, bayY + 1.28, 0.75, '#cfa068', 2);
+        [5.10, 5.80].forEach(cx => addChair(cx, bayY + 0.04, 2.20, 0.44, 0.40, 'N', '#e8dfd1', 2));
+        [5.10, 5.80].forEach(cx => addChair(cx, bayY + 1.34, 2.20, 0.44, 0.40, 'S', '#e8dfd1', 2));
+      } else if (stepBay) {
+        // Banquette in the 0.45m shallow bay; 1.70m table reaches into the room (piano moved to front wall)
+        addBox(4.95, yShal + 0.03, 2.20, 7.04, yShal + 0.48, 2.64, '#c89b66', { floor: 2, topColor: '#e9dcc6' });
+        addBox(4.95, yShal + 0.03, 2.64, 7.04, yShal + 0.15, 3.04, '#d9cbb3', { floor: 2 });
+        addTable(5.15, yShal + 0.40, 2.20, 6.85, yShal + 1.20, 0.75, '#cfa068', 2);
+        addChair(5.45, yShal + 1.26, 2.20, 0.44, 0.42, 'S', '#e8dfd1', 2);
+        addChair(6.20, yShal + 1.26, 2.20, 0.44, 0.42, 'S', '#e8dfd1', 2);
+      } else {
+      const bqX0 = flushBay ? 3.22 : 4.88;   // flush: bench starts right where the kitchen run ends (no coffee counter)
+      addBox(bqX0, bqY0, 2.20, bqX1, bqY1, 2.64, flushBay ? '#e6dccb' : '#c89b66', { floor: 2, topColor: '#efe6d6' });
+      addBox(bqX0, bqY0, 2.64, bqX1, bqY0 + 0.12, 3.04, '#e3d8c6', { floor: 2 });
+      if (flushBay) {
+        // ★ One continuous built-in along the window wall: kitchen back run → end panel → long drawer bench
+        addBox(3.16, 2.58, 2.20, 3.21, bqY1 + 0.02, 3.18, '#e6dccb', { floor: 2 });                // end panel: steps 90cm counter → 45cm bench
+        for (let dx = bqX0 + 0.04; dx < bqX1 - 0.30; dx += 0.66) {
+          addBox(dx, bqY1, 2.26, dx + 0.62, bqY1 + 0.012, 2.58, '#efe7da', { floor: 2 });          // bench drawers
+          addBox(dx + 0.24, bqY1 + 0.012, 2.47, dx + 0.38, bqY1 + 0.025, 2.49, '#8a8f95', { floor: 2 });
+        }
+      }
+      if (winMoved) {
+        // 1.60×0.80m oak table (6 pax: 3 on banquette + 2 chairs + 1 at end)
+        addTable(5.10, bqY1 - 0.08, 2.20, 6.70, bqY1 + 0.72, 0.75, '#cfa068', 2);
+        addChair(5.38, bqY1 + 0.78, 2.20, 0.44, 0.42, 'S', '#e8dfd1', 2);
+        addChair(6.08, bqY1 + 0.78, 2.20, 0.44, 0.42, 'S', '#e8dfd1', 2);
+      } else if (flushBay) {
+        // ★ Flush bay: 1.65m banquette along the glass + 1.55×0.80m table parallel to it;
+        //   3 on the banquette + 3 chairs on the room side + 1 at the east end = 7 (6 everyday), ~1.4m clear to sofa.
+        // Full-width flush bay: 2.1m banquette + 1.60×0.80m table: 3 on banquette + 3 chairs + 1 at the east end = 7
+        // (door now at the east end) 2.0m banquette + 1.60×0.80m table: 3 on the banquette + 3 chairs = 6
+        // Long window bench (~2.1m) + 1.65×0.90m oval pedestal table + 3 chairs = 6 (3 on the bench)
+        const tx0 = 3.45, tx1 = 5.10, ty0 = bqY1 - 0.10, ty1 = bqY1 + 0.80, tz = 2.95;
+        addBox(tx0 + 0.20, ty0, tz - 0.03, tx1 - 0.20, ty1, tz, '#f4f1ea', { floor: 2 });
+        addPrism4([[tx0 + 0.20, ty0], [tx0 + 0.20, ty1], [tx0, ty1 - 0.25], [tx0, ty0 + 0.25]], tz - 0.03, tz, '#f4f1ea', { floor: 2 });
+        addPrism4([[tx1 - 0.20, ty0], [tx1, ty0 + 0.25], [tx1, ty1 - 0.25], [tx1 - 0.20, ty1]], tz - 0.03, tz, '#f4f1ea', { floor: 2 });
+        [tx0 + 0.45, tx1 - 0.45].forEach(lx => { addBox(lx - 0.04, (ty0 + ty1) / 2 - 0.04, 2.20, lx + 0.04, (ty0 + ty1) / 2 + 0.04, tz - 0.03, '#c89b66', { floor: 2 }); addBox(lx - 0.22, (ty0 + ty1) / 2 - 0.22, 2.20, lx + 0.22, (ty0 + ty1) / 2 + 0.22, 2.23, '#c89b66', { floor: 2 }); });
+        [3.62, 4.17, 4.72].forEach(cx => addChair(cx, ty1 + 0.06, 2.20, 0.42, 0.42, 'S', '#d9b48a', 2));
+        [[3.35, '#f2e6d8'], [3.80, '#dfe9f2'], [4.25, '#a9c6e0'], [4.70, '#f2e6d8']].forEach(([cx, col]) => addBox(cx, bqY0 + 0.02, 2.64, cx + 0.36, bqY0 + 0.16, 2.98, col, { floor: 2 }));   // cushions
+        addBox(bqX0, bqY0 + 0.02, 2.64, bqX1, bqY1 - 0.02, 2.70, '#5b7fa6', { floor: 2 });   // seat pad
+      } else if (state.piano !== '2f') {
+        // ★ 2029 plan (window kept, piano moved off the master-side wall): 1.60×0.85m table runs from the
+        //   bay banquette INTO the room — 2 on the banquette + 2 chairs each side = 6 pax, ~1.1m clear to sofa.
+        addTable(5.08, bqY1 - 0.06, 2.20, 5.93, bqY1 + 1.54, 0.75, '#cfa068', 2);
+        [3.62, 4.22].forEach(cy => {
+          addChair(4.58, cy, 2.20, 0.42, 0.44, 'E', '#e8dfd1', 2);
+          addChair(6.00, cy, 2.20, 0.42, 0.44, 'W', '#e8dfd1', 2);
+        });
+      } else {
+        addTable(4.88, bqY1 - 0.08, 2.20, 6.16, bqY1 + 0.72, 0.75, '#cfa068', 2);
+        addChair(5.02, bqY1 + 0.78, 2.20, 0.44, 0.42, 'S', '#e8dfd1', 2);
+        addChair(5.62, bqY1 + 0.78, 2.20, 0.44, 0.42, 'S', '#e8dfd1', 2);
+      }
+      }
+      if (state.piano === '2f') {
+        // 1.36×0.38m digital piano stood vertically on the solid 2F Master west wall, facing East wall
+        addBox(6.66, 4.30, 2.20, 7.04, 5.66, 3.00, '#262322', { floor: 2 });
+        addTable(6.12, 4.70, 2.20, 6.47, 5.26, 0.48, '#5c4033', 2);
+        addLabel(6.70, 4.98, 3.40, 'Piano on Solid Master-Side Wall', '0.50m clear of dining chairs', 2);
+      } else if (state.piano === 'front') {
+        // Piano against the front wall under the front window, between Genkan and Musholla (0.75m tall, below sill)
+        // (owner) digital piano back on the master-side wall next to the dining area; door zone Y 3.45–4.30 kept clear
+        addBox(6.66, 4.30, 2.20, 7.04, 5.66, 3.00, '#262322', { floor: 2 });
+        addTable(6.12, 4.70, 2.20, 6.47, 5.26, 0.48, '#5c4033', 2);
+        addLabel(6.70, 4.98, 3.40, 'Digital piano on the master-side wall', '~1.0m to the dining chairs · door zone clear', 2);
+      }
+      addLabel(5.85, 3.30, 3.55, (state.must && winMoved) ? 'Bay Dining (loose table, 6 pax)' : winMoved ? 'Bay Banquette Dining (6 pax)' : stepBay ? 'Stepped-Bay Dining (6 pax)' : state.piano !== '2f' ? (flushBay ? 'Long Window Bench + Oval Table (6 pax)' : 'Bay Banquette + Long Table (6 pax)') : 'Bay Banquette Dining (4–5 pax)', (stepBay || (!winMoved && !flushBay && state.piano !== '2f')) ? '~1.1m clear to sofa · door swing clear' : '~1.5m clear to sofa · door swing clear', 2);
+    }
+
+    // 2F->3F Stairwell + 1.40m TV Wall
+    addWall(2.55, 5.95, 2.55, 7.35, 0.12, 2.20, z2Wall, state.mode === 'after' ? '#e3c79f' : '#a65341', { floor: 2 });
+    addBox(2.61, 5.98, 2.45, 2.92, 7.32, 2.82, '#c89b66', { floor: 2 });
+    addBox(2.62, 6.02, 3.05, 2.68, 7.28, 3.88, '#181a1d', { floor: 2 });
+    for (let s = 0; s < 4; s++) {
+      addBox(2.60 - (s + 1) * 0.42, 7.35, 2.20, 2.60 - s * 0.42, 7.95, 2.20 + (s + 1) * 0.20, '#dfd5c5', { floor: 2 });
+    }
+    // Empty ledge along the west wall beside the 2F→3F flight (same strip as the 3F cabinet ledge above; no racks)
+    addPrism4([[leftLotX(5.95) + 0.04, 5.95], [leftLotX(5.95) + 0.48, 5.95], [leftLotX(7.35) + 0.48, 7.35], [leftLotX(7.35) + 0.04, 7.35]], 2.20, 2.32, '#e9e4da', { floor: 2 });
+    if (state.mode === 'after' && !state.must) {
+      // Pull-out larder only on the reachable kitchen end (next to fridge); rest left as a low display/plant ledge
+      addBox(leftLotX(6.3) + 0.05, 5.96, 2.32, leftLotX(6.3) + 0.47, 6.66, 4.25, '#cfa068', { floor: 2 });
+      addLabel(1.00, 6.30, 4.55, 'Pull-Out Larder (0.7m)', 'Only the reachable end of the ledge', 2);
+    }
+    for (let s = 0; s < 10; s++) {
+      const yA = 7.35 - s * 0.205, yB = yA - 0.205;
+      addBox(leftLotX(yA) + 0.50, yB, 3.05 + s * 0.23, 2.43, yA, 3.05 + (s + 1) * 0.24, '#dfd5c5', { floor: 2 });
+    }
+
+    if (state.mode === 'before') {
+      // BEFORE: Huge 2.00×2.00m Square Green Corduroy Island Sofa + Bare Entry w/ Water Gallons!
+      addBox(3.75, 5.90, 2.20, 5.75, 7.90, 2.62, '#627552', { floor: 2 });
+      addBox(4.55, 6.35, 2.62, 4.95, 7.45, 2.98, '#536544', { floor: 2 }); // Center island backrest
+      addBox(4.15, 9.88, 2.20, 4.42, 10.15, 2.68, '#74c0fc', { floor: 2 }); // Water gallon #1
+      addBox(4.50, 9.88, 2.20, 4.77, 10.15, 2.68, '#74c0fc', { floor: 2 }); // Water gallon #2
+      addScalePerson(6.20, 8.90, 2.20, 2);
+      addLabel(4.75, 6.85, 3.45, 'BEFORE: 2.0×2.0m Island Sofa', 'Walled Off from Musholla!', 2);
+    } else {
+      addSofa(4.82, 5.75, 2.20, 5.70, 7.75, 'E', '#6d805c', 2);
+      addBox(4.10, 5.80, 2.25, 4.80, 6.40, 2.62, '#829470', { floor: 2 });
+      addTable(3.88, 6.62, 2.20, 4.38, 7.54, 0.40, '#cfa068', 2);
+      addScalePerson(6.25, 6.70, 2.20, 2);
+      addLabel(4.95, 6.70, 3.55, '2F Living Pavilion', state.shoji === 'open' ? '★ Open to Musholla = 6.9m Wide Space!' : '1.05m Rear & 0.96m Front Walk', 2);
+      // Indoor Slate Genkan + Shoe Bench
+      addQuad([3.42, 8.20, 2.205], [4.95, 8.20, 2.205], [4.95, 10.23, 2.205], [3.42, 10.23, 2.205], '#7b858e', { floor: 2 });
+      addBox(3.48, 9.82, 2.20, 4.92, 10.22, 2.65, '#cfa068', { floor: 2 });
+      addLabel(4.25, 9.15, 3.10, 'Indoor Genkan', '1.45×0.40m Bench', 2);
+    }
+
+    // West Double Entry Doors + Front Terrace
+    addWall(3.40, 7.95, 3.40, 8.35, 0.12, 2.20, z2Wall, '#f4f0e8', { floor: 2 });
+    addWall(3.40, 8.35, 3.40, 9.65, 0.12, 4.35, z2Wall, '#f4f0e8', { floor: 2 });
+    addWall(3.40, 9.65, 3.40, 10.25, 0.12, 2.20, z2Wall, '#f4f0e8', { floor: 2 });
+    addBox(3.42, 8.35, 2.21, 4.02, 8.40, 4.34, '#7c4824', { floor: 2 });
+    addBox(3.42, 9.60, 2.21, 4.02, 9.65, 4.34, '#7c4824', { floor: 2 });
+    addRailing(leftLotX(7.95), 7.95, 2.18, leftLotX(10.25), 10.25, 2.18, 0.92, 2);
+    addRailing(2.33, 10.25, 2.18, 3.40, 10.25, 2.18, 0.92, 2);
+    addLabel(2.15, 9.10, 2.95, '2F Front Terrace', 'West Double Doors → Entry', 2, '#fcfbf7', '#1d242b', false);
+
+    if (state.mode === 'before') {
+      // BEFORE MUSHOLLA: Solid 10cm Masonry Wall at X=7.15 (blocking Living Room!), Flat +2.20m Tile Floor,
+      // Bulky 52cm-Deep Dark Brown Cabinet on Left Wall (X=7.21..7.73), Flat Y=10.25m Front Wall (No 1.0m Bay)!
+      addWall(7.15, 7.35, 7.15, 10.25, 0.11, 2.20, z2Wall, '#e9e2d6', { floor: 2 }); // Solid dividing wall!
+      addBox(7.03, 7.70, 2.20, 7.09, 10.20, 4.90, '#8a5a3c', { floor: 2 });                     // brown panel on living side
+      addBox(6.98, 7.36, 2.20, 7.32, 7.68, 4.50, '#9a5a32', { floor: 2 });                     // open display shelves (north end)
+      [2.75, 3.25, 3.75, 4.20].forEach(z => addBox(6.96, 7.36, z, 7.34, 7.68, z + 0.03, '#6e3b22', { floor: 2 }));
+      addBox(7.21, 7.90, 2.20, 7.66, 10.00, 2.95, '#8a4b2a', { floor: 2 });                     // low wall unit + ledge
+      addBox(7.21, 7.90, 2.95, 7.25, 10.00, 4.10, '#7a4026', { floor: 2 });
+      addBox(7.21, 7.90, 4.10, 7.56, 10.00, 4.80, '#6e3b22', { floor: 2 });                     // glass-door upper cabinets
+      addBox(10.28, 7.90, 2.20, 10.39, 10.24, 4.90, '#a0703f', { floor: 2 });                   // wood-plank accent (south part of east wall)
+      addBox(8.40, 10.05, 4.55, 9.30, 10.24, 4.85, '#f1f3f5', { floor: 2 });                    // AC above front window
+      addWall(6.80, 10.32, 10.47, 10.32, 0.14, 2.20, 5.45, '#f4f1ea', { floor: 2, cutNormal: [0, 1, 0] });
+      addQuad([8.05, 10.32, 2.95], [9.60, 10.32, 2.95], [9.60, 10.32, 4.45], [8.05, 10.32, 4.45], '#90caf9', { floor: 2, alpha: 0.35, edge: '#2b3036', cutNormal: [0, 1, 0] });
+      addLabel(8.95, 9.10, 3.35, 'BEFORE: Musholla (from photos)', 'Panelled divider · wall unit · plank wall', 2, '#fff0ed', '#9c2b1c');
+    } else {
+      // ★ v6.9 STORAGE PLATFORM MUSHOLLA (+35cm seat height, drawers + lift-up hatches) WITH WALL-POCKETED DUAL SHOJI (OPEN BY DEFAULT!)
+      addBox(6.85, 7.35, 2.20, 10.38, 10.25, 2.55, '#d9b48a', { floor: 2, topColor: '#c9a27a', subdiv: 0.8 });
+      const mBay = state.mushBay;
+      if (mBay) addBox(7.05, 10.25, 2.20, 10.12, 11.25, 2.55, '#ebd9bc', { floor: 2, topColor: '#f3e5cb' });
+      addBox(10.12, 7.38, 2.55, 10.38, 8.38, 4.55, '#e6d3b8', { floor: 2 });
+      addBox(10.12, 8.38, 2.55, 10.38, 10.22, 4.55, '#cfa068', { floor: 2 });
+      if (mBay) addBox(6.80, 10.25, 2.55, 7.04, 11.25, 4.55, '#e9dfd0', { floor: 2, cutNormal: [0, 1, 0] });
+      addBox(6.82, 7.35, 4.42, 6.90, 10.25, 4.55, '#b6895b', { floor: 2 });
+      addBox(7.15, 7.31, 4.42, 8.65, 7.39, 4.55, '#b6895b', { floor: 2 });
+
+      // Living-side edge: 6 pull-out drawers (~70cm deep) + built-in 17cm drawer-step; lift-up hatches in the middle
+      for (let k = 0; k < 6; k++) {
+        const y0 = 7.55 + k * 0.45;
+        addBox(6.80, y0, 2.24, 6.86, y0 + 0.42, 2.51, '#b98a5a', { floor: 2 });
+        addBox(6.79, y0 + 0.16, 2.36, 6.80, y0 + 0.26, 2.38, '#5c3d19', { floor: 2 });
+      }
+      addBox(6.40, 8.45, 2.20, 6.85, 9.25, 2.37, '#c89b66', { floor: 2, topColor: '#d9b48a' });
+      [[7.40, 8.10], [8.40, 8.10], [7.40, 9.10], [8.40, 9.10]].forEach(([hx, hy]) =>
+        addQuad([hx, hy, 2.556], [hx + 0.85, hy, 2.556], [hx + 0.85, hy + 0.85, 2.556], [hx, hy + 0.85, 2.556], '#e2c9a3', { floor: 2, edge: '#8c6239', edgeWidth: 1.1 }));
+      if (state.shoji === 'open') {
+        addBox(6.83, 10.13, 2.55, 6.89, 10.25, 4.42, '#cfa068', { floor: 2 });
+        addBox(8.53, 7.32, 2.55, 8.65, 7.38, 4.42, '#cfa068', { floor: 2 });
+      } else {
+        addQuad([6.85, 7.36, 2.55], [6.85, 10.24, 2.55], [6.85, 10.24, 4.42], [6.85, 7.36, 4.42], '#fff9ec', { floor: 2, alpha: 0.72, edge: '#8c6239', subdiv: 0.7 });
+        addQuad([7.18, 7.35, 2.55], [8.64, 7.35, 2.55], [8.64, 7.35, 4.42], [7.18, 7.35, 4.42], '#fff9ec', { floor: 2, alpha: 0.72, edge: '#8c6239' });
+      }
+
+      if (state.mush === 'salah') {
+        if (mBay) addBox(7.52, 10.26, 2.55, 9.52, 11.22, 2.78, '#faf4e8', { floor: 2 });
+        [[9.20, 7.90], [8.65, 8.65], [9.25, 8.85], [8.15, 9.45], [8.75, 9.65]].forEach(([mx, my]) => {
+          const ang = 18 * Math.PI / 180, c = Math.cos(ang), s = Math.sin(ang);
+          const pts = [[-0.29,-0.46],[0.29,-0.46],[0.29,0.46],[-0.29,0.46]].map(([dx,dy]) => [mx + dx*c - dy*s, my + dx*s + dy*c]);
+          addPrism4(pts, 2.555, 2.575, '#2f7d58', { floor: 2 });
+        });
+      } else {
+        if (mBay) addBed(7.52, 9.25, 2.55, 9.52, 11.22, 'S', 2); else addBed(7.40, 8.15, 2.55, 9.40, 10.15, 'S', 2);   // 2×2m guest mattress from the platform hatches
+      }
+      if (mBay) {
+        addQuad([7.05, 11.26, 2.85], [10.12, 11.26, 2.85], [10.12, 11.26, 4.45], [7.05, 11.26, 4.45], '#90caf9', { floor: 2, alpha: 0.35, edge: '#2b3036', cutNormal: [0, 1, 0] });
+      } else {
+        // Flat front wall with the existing window (no bay — matches the costs)
+        addWall(6.80, 10.32, 10.47, 10.32, 0.14, 2.20, 5.45, '#f4f1ea', { floor: 2, cutNormal: [0, 1, 0] });
+        addQuad([8.05, 10.24, 2.95], [9.60, 10.24, 2.95], [9.60, 10.24, 4.45], [8.05, 10.24, 4.45], '#90caf9', { floor: 2, alpha: 0.35, edge: '#2b3036' });
+      }
+      if (state.mush === 'salah') {
+      [9.55, 9.80].forEach(rx => addBox(rx, 7.55, 2.55, rx + 0.16, 8.15, 2.71, '#7fb59b', { floor: 2 }));   // 2 rolled yoga mats
+      addLabel(9.40, 7.90, 3.15, 'Yoga/stretching here', 'Mats live in the platform drawers', 2, '#eef7f2', '#1e563b');
+    }
+    addLabel(8.55, 8.95, 3.35, 'Storage-Platform Musholla (+35cm)', state.shoji === 'open' ? '★ Shoji Hidden in Wall Pockets!' : 'Shoji Closed (Guest / Private)', 2, '#fff8eb', '#5c3d19');
+    }
+
+    // 2F East Wing (Shared WC + 2F Master Suite w/ Real 2.15m Framed Open Doors)
+    addWallWithDoors(8.65, 5.85, 8.65, 7.35, 0.10, 2.20, z2Wall, '#f2efe9', { floor: 2 }, [
+      { d0: 0.38, w: 0.75, h: 2.15, swingDeg: 62, side: -1 }
+    ]);
+    addWall(8.65, 7.35, 10.40, 7.35, 0.11, 2.20, z2Wall, '#f2efe9', { floor: 2 });
+    addWall(7.10, RY, 7.10, 5.85, 0.12, 2.20, z2Wall, '#f2efe9', { floor: 2 });
+    addWallWithDoors(7.10, 5.85, 10.40, 5.85, 0.11, 2.20, z2Wall, '#f2efe9', { floor: 2 }, [
+      { d0: 0.25, w: 0.82, h: 2.15, swingDeg: 65, hingeAtEnd: true, side: -1 }
+    ]);
+    addWallWithDoors(7.10, 1.20, 10.40, 1.20, 0.11, 2.20, z2Wall, '#f2efe9', { floor: 2 }, [
+      { d0: 0.55, w: 0.75, h: 2.15, swingDeg: 58, side: -1 }
+    ]);
+
+    addBed(8.34, 1.75, 2.20, 10.34, 3.55, 'E', 2);
+    // Courtyard-facing master windows (from photos): big 2F casement just north of the balcony/bay, opens out over the pool
+    const mw0 = winMoved ? 1.33 : 1.95, mw1 = winMoved ? 2.28 : 2.90;   // flush plan: master window unchanged (door porch keeps it outdoors)
+    addQuad([7.03, mw0, 3.05], [7.03, mw1, 3.05], [7.03, mw1, 4.45], [7.03, mw0, 4.45], '#8ecae6', { floor: 2, alpha: 0.55, edge: '#7c4824', edgeWidth: 2.2 });
+    if (winMoved) addWall(7.02, mw0, 6.62, mw0 + 0.28, 0.04, 3.07, 4.43, '#8b5732', { floor: 2 });   // hinged on north side
+    addWall(7.02, mw1, 6.62, mw1 - 0.28, 0.04, 3.07, 4.43, '#8b5732', { floor: 2 });
+    addQuad([7.03, 0.35, 4.05], [7.03, 0.85, 4.05], [7.03, 0.85, 4.55], [7.03, 0.35, 4.55], '#8ecae6', { floor: 2, alpha: 0.55, edge: '#7c4824', edgeWidth: 1.8 });
+    if (!state.floors[3] || state.camPreset === 'bay_ext') addLabel(6.70, 1.85, 4.85, '2F Master Window', winMoved ? 'Moved ~0.6m north · faces courtyard directly' : flushBay ? 'Unchanged · casement opens onto the open porch' : stepBay ? 'Unchanged · shallow bay stops just south of it' : 'Existing window', 2, '#e7f5ff', '#1864ab', true);
+    addBox(7.16, 3.62, 2.20, 7.76, 5.17, 4.35, '#cfa068', { floor: 2 });
+    if (winMoved) {
+      addBox(7.16, 1.28, 2.20, 7.60, 2.33, 3.00, '#c8945e', { floor: 2 });   // dresser under moved window
+      addBox(7.16, 2.43, 2.20, 7.76, 3.03, 4.35, '#c8945e', { floor: 2 });   // tall wardrobe swaps south
+    } else {
+      addBox(7.16, 1.95, 2.20, 7.60, 3.30, 3.00, '#c8945e', { floor: 2 });   // dresser under window (photo)
+      addBox(7.16, 1.28, 2.20, 7.76, 1.88, 4.35, '#c8945e', { floor: 2 });   // small tall wardrobe
+    }
+    addLabel(9.05, 2.75, 3.45, '2F Master Suite', '2.0×1.8m King + 2.15m Doors', 2);
+    addLabel(8.75, 0.62, 3.15, '2F Ensuite', '', 2);
+    addLabel(9.50, 6.60, 3.15, 'Shared WC', '', 2);
+
+    addWall(7.10, RY - 0.07, 10.47, RY - 0.07, 0.14, 2.20, 5.45, '#f4f1ea', { floor: 2, cutNormal: [0, -1, 0] });
+    addWall(10.47, RY - 0.07, 10.47, 10.32, 0.14, 2.20, 5.45, '#f4f1ea', { floor: 2, cutNormal: [1, 0, 0] });
+    addWall(leftLotX(3.45)-0.07, 3.45, leftLotX(7.95)-0.07, 7.95, 0.14, 2.20, 5.45, '#f4f1ea', { floor: 2, cutNormal: [-1, 0, 0] });
+    addWall(3.40, 10.32, 6.80, 10.32, 0.14, 2.20, 5.45, '#f4f1ea', { floor: 2, cutNormal: [0, 1, 0] });
+    addQuad([5.05, 10.32, 2.95], [6.45, 10.32, 2.95], [6.45, 10.32, 4.45], [5.05, 10.32, 4.45], '#90caf9', { floor: 2, alpha: 0.35, edge: '#2b3036', cutNormal: [0, 1, 0] });
+  }
+
+  // --------------------------------------------------------------------------
+  // FLOOR 3 (+5.45m, True 2.85m Ceiling -> +8.30m):
+  //   BEFORE (Solid White Masonry Stair Parapet, Empty Lounge, Dark Wood Front Wall)
+  //   vs AFTER (F1 Slot Fukinuke Void Default, Open WFH & Lounge, West Cupboard!)
+  // --------------------------------------------------------------------------
+  if (showF3) {
+    // ======================================================================
+    // FLOOR 3 — rebuilt from Rakina's photos (estimates from 60×60cm tiles):
+    //  • West: brick feature wall + floating shelves + AC; low dark cabinet ledge (0.48m) along it
+    //  • Stair between that ledge and a white parapet (dark wood cap) at X≈2.45, arriving NORTH at Y≈5.30
+    //  • Small landing in front of a small north window; WFH alcove recessed 0.70m (X 2.95..5.80) w/ 3-pane window
+    //  • South: dark-wood panel X 3.40..7.95 with Kid #1 + Kid #2 doors side by side; Front-Left door in white wall
+    // ======================================================================
+    const after = state.mode === 'after';
+    const vMode = after ? state.fvoid : 'none';
+    const L = leftLotX;
+    const ledgeW = 0.48, sX0 = L(6.5) + ledgeW, sX1 = 2.45, sY0 = 5.30, sY1 = 7.75;
+    const fl = '#f4eee3', z0 = 5.32, zf = 5.45;
+    // Option 1 void (merged with stairwell) and Option 2 (double-height bay over the 2F dining bay)
+    const v1 = { x0: 2.45, x1: 4.25, y0: 5.30, y1: 6.85 };
+    const bay = { x0: 3.90, x1: 6.90, y0: bayY, y1: 3.45 };
+
+    // ---- Floor slabs (with real openings) ----
+    addPrism4([[L(3.45), 3.45], [6.90, 3.45], [6.90, sY0], [L(sY0), sY0]], z0, zf, fl, { floor: 3, subdiv: 1.0 });
+    addPrism4([[L(sY0), sY0], [L(sY0) + ledgeW, sY0], [L(sY1) + ledgeW, sY1], [L(sY1), sY1]], z0, zf, fl, { floor: 3 });
+    addPrism4([[L(sY1), sY1], [sX1, sY1], [sX1, 7.85], [L(7.85), 7.85]], z0, zf, fl, { floor: 3 });
+    if (vMode === 'stair') {
+      addBox(v1.x0, v1.y1, z0, v1.x1, 7.85, zf, fl, { floor: 3 });
+      addBox(v1.x1, sY0, z0, 6.90, 7.85, zf, fl, { floor: 3, subdiv: 0.9 });
+    } else {
+      addBox(sX1, sY0, z0, 6.90, 7.85, zf, fl, { floor: 3, subdiv: 0.9 });
+    }
+    addBox(6.90, 5.60, z0, 8.50, 7.85, zf, fl, { floor: 3 });
+    addBox(6.90, RY, z0, 10.40, 5.60, zf, '#f6f0e6', { floor: 3, subdiv: 1.0 });
+    addBox(8.50, 5.60, z0, 10.40, 7.85, zf, '#e8f0f2', { floor: 3 });
+    addPrism4([[L(7.85), 7.85], [10.40, 7.85], [10.40, 10.25], [L(10.25), 10.25]], z0, zf, '#f7f2e9', { floor: 3, subdiv: 1.0 });
+    // 3F rear alcove (WFH / lounge alcove) — projects over the old recessed balcony, outer face flush with the
+    //   2F kitchen wall + flush dining bay (Y = 2.55), from the landing pier (X 2.95) to the master wall (X 6.90).
+    //   ★ Closable void: the alcove floor over the 2F dining bay (X 3.90..6.84) is removed; a small nook stays at the west end.
+    const yAl = 2.61, yAlIn = 2.55, xVoid1 = 5.42;        // wall centre line (0.12 thick → outer face 2.55), void east edge = master wall face
+    const isVoid = vMode === 'alcove';
+    if (isVoid) {
+      addBox(2.95, yAlIn, 5.25, 3.90, 3.45, zf, fl, { floor: 3 });   // small nook floor stays
+      addBox(5.44, yAlIn, 5.25, 6.90, 3.45, zf, fl, { floor: 3 });    // slab over the 2F door porch stays (porch roof)
+    } else {
+      addBox(2.95, yAlIn, 5.25, 6.90, 3.45, zf, fl, { floor: 3 });   // whole alcove floor (= ceiling of the 2F bay / old balcony soffit)
+    }
+    // Kitchen-block roof below the stair-landing window (outside, AC ledge) — runs out to the 2F kitchen wall line
+    addPrism4([[L(yAlIn) + 0.02, yAlIn], [2.95, yAlIn], [2.95, 3.45], [L(3.45) + 0.02, 3.45]], 5.25, zf, '#d5dade', { floor: 3 });
+    addPrism4([[L(10.25) + 0.20, 10.32], [10.00, 10.32], [10.00, 10.92], [L(10.92) + 0.20, 10.92]], 5.35, zf, '#d5dade', { floor: 3 });
+    if (after && (state.rampBuilt || !state.svcBalc)) {
+      // ACs moved off the 2F balcony (ramp built / no balcony) → galvanised steel platform on the rear roof slope
+      addBox(2.90, 3.45, 8.62, 5.10, 4.45, 8.70, '#8d949b', { floor: 3 });
+      [[3.00, 3.55], [4.05, 3.55]].forEach(([ax, ay]) => addBox(ax, ay, 8.70, ax + 0.90, ay + 0.40, 9.32, '#e3eef2', { floor: 3 }));
+      addRailing(2.90, 4.45, 8.70, 5.10, 4.45, 8.70, 0.6, 3);
+      addLabel(4.00, 3.95, 9.75, 'Roof AC Platform', 'Service via roof hatch · pipes down the stair shaft', 3, '#f1f3f5', '#343a40', true);
+    }
+
+    // ---- North walls: landing wall w/ small window, alcove wall w/ 3-pane window ----
+    const zC = z3Wall;
+    addWall(L(3.45) - 0.06, 3.38, 2.95, 3.38, 0.14, zf, zC, '#f4f1ea', { floor: 3, cutNormal: [0, -1, 0] });
+    addQuad([1.55, 3.30, 6.55], [1.95, 3.30, 6.55], [1.95, 3.30, 7.75], [1.55, 3.30, 7.75], '#90caf9', { floor: 3, alpha: 0.5, edge: '#5c3a1e', edgeWidth: 1.6 });
+    addWall(2.95, yAlIn, 2.95, 3.45, 0.12, 5.25, zC, '#f4f1ea', { floor: 3, cutNormal: [-1, 0, 0] });   // alcove west end (pier by the landing)
+    const nw3 = { floor: 3, cutNormal: [0, -1, 0] };
+    addWall(2.95, yAl, 6.90, yAl, 0.12, 5.25, 6.30, '#f4f1ea', nw3);
+    addQuad([3.35, yAlIn - 0.01, 6.30], [5.45, yAlIn - 0.01, 6.30], [5.45, yAlIn - 0.01, 7.65], [3.35, yAlIn - 0.01, 7.65], '#90caf9', { floor: 3, alpha: 0.42, edge: after ? '#bdb6a8' : '#5c3a1e', edgeWidth: 1.8, cutNormal: [0, -1, 0] });
+    [4.05, 4.75].forEach(mx => addBox(mx - 0.025, yAlIn - 0.03, 6.30, mx + 0.025, yAlIn + 0.03, 7.65, after ? '#ece7dc' : '#5c3a1e', nw3));   // 3-pane window mullions
+    addWall(2.95, yAl, 3.35, yAl, 0.12, 6.30, zC, '#f4f1ea', nw3);
+    addWall(5.45, yAl, 6.90, yAl, 0.12, 6.30, zC, '#f4f1ea', nw3);
+    addWall(3.35, yAl, 5.45, yAl, 0.12, 7.65, zC, '#f4f1ea', nw3);
+    if (isVoid) {
+      addBox(2.95, yAl + 0.06, 7.95, 3.90, 3.45, zC, '#f1ece2', { floor: 3 });     // dropped soffit stays over the nook only
+      // ★ Closable edge: floor-to-ceiling sliding glass doors along Y≈3.45 (2 fixed + 2 sliding), one shown half open
+      const gD = { floor: 3, alpha: 0.26, edge: '#2b3036', edgeWidth: 1.4 };
+      addQuad([3.90, yAl + 0.06, zf], [3.90, 3.45, zf], [3.90, 3.45, 7.95], [3.90, yAl + 0.06, 7.95], '#b8dfee', gD);   // fixed side panel by the nook
+      addQuad([3.92, 3.45, zf], [4.70, 3.45, zf], [4.70, 3.45, 7.95], [3.92, 3.45, 7.95], '#b8dfee', gD);               // closed panel
+      addQuad([4.60, 3.52, zf], [5.40, 3.52, zf], [5.40, 3.52, 7.95], [4.60, 3.52, 7.95], '#b8dfee', gD);               // sliding panel, half open
+      [3.92, 4.68, xVoid1].forEach(mx => addBox(mx - 0.025, 3.42, zf, mx + 0.025, 3.48, 7.95, '#2b3036', { floor: 3 }));
+      addBox(3.90, 3.40, 7.92, xVoid1, 3.56, 7.97, '#2b3036', { floor: 3 });                                           // top track
+      addBox(3.90, 3.40, 7.97, xVoid1, 3.52, zC, '#f1ece2', { floor: 3 });                                             // head bulkhead over the doors
+      addBox(3.90, 3.40, zf - 0.13, xVoid1, 3.48, zf, '#e9e4da', { floor: 3 });                                        // slab edge trim
+      addQuad([3.95, yAlIn + 0.02, 5.30], [5.42, yAlIn + 0.02, 5.30], [5.42, 3.42, 5.30], [3.95, 3.42, 5.30], '#ffe8a3', { floor: 3, alpha: 0.18, edge: '#c98a18' });
+      addRailing(5.44, yAlIn + 0.06, zf, 5.44, 3.40, zf, 1.0, 3);   // glass guard on the void's east edge
+      addLabel(5.10, 3.00, 6.75, 'Closable Void ~' + (xVoid1 - 3.92).toFixed(1) + '×0.9m over the dining bay', 'Sliding glass doors: open = double height · closed = quiet', 3, '#fff8e1', '#8a5a0a', true);
+    } else {
+      addBox(2.95, yAl + 0.06, 7.95, 6.90, 3.45, zC, '#f1ece2', { floor: 3 });     // dropped alcove soffit (to master wall)
+    }
+
+    // ---- West: brick feature wall, floating shelves, AC, low dark cabinet ledge ----
+    addPrism4([[L(3.50) + 0.06, 3.50], [L(3.50) + 0.10, 3.50], [L(7.75) + 0.10, 7.75], [L(7.75) + 0.06, 7.75]], zf, zC, '#8e4b3a', { floor: 3, edge: '#5e2f24', subdiv: 3.0 });
+    [[6.55, 4.6, 5.6], [7.05, 5.9, 7.1], [6.9, 4.2, 4.9]].forEach(([zz, ya, yb]) => addBox(L(ya) + 0.10, ya, zz, L(ya) + 0.34, yb, zz + 0.04, '#3e2a1e', { floor: 3 }));
+    addBox(L(5.6) + 0.10, 5.0, 7.70, L(5.6) + 0.34, 5.85, 8.00, '#f1f3f5', { floor: 3 });
+    addPrism4([[L(sY0) + 0.04, sY0], [L(sY0) + ledgeW, sY0], [L(sY1) + ledgeW, sY1], [L(sY1) + 0.04, sY1]], zf, zf + 0.82, after ? '#8a6a4e' : '#3f2a1f', { floor: 3, topColor: after ? '#a8845f' : '#4b3326' });
+
+    // ---- Stair guard: BEFORE = solid white parapet + dark wood cap; options vary AFTER ----
+    const solidParapet = (x, ya, yb) => {
+      addWall(x, ya, x, yb, 0.12, zf, zf + 0.98, '#f7f5f0', { floor: 3 });
+      addBox(x - 0.10, ya, zf + 0.98, x + 0.10, yb, zf + 1.03, '#5a3220', { floor: 3 });
+    };
+    if (vMode === 'none' || vMode === 'bay' || vMode === 'alcove' || vMode === 'plain') {
+      solidParapet(sX1 + 0.06, sY0, sY1);
+    } else if (vMode === 'f3') {
+      addRailing(sX1 + 0.06, sY0, zf, sX1 + 0.06, sY1, zf, 1.0, 3);
+      addLabel(1.55, 6.40, 6.70, 'Skylight + Glass Parapet', 'No slab cut', 3, '#e7f5ff', '#1864ab');
+    } else {
+      addRailing(v1.x0, v1.y0, zf, v1.x1, v1.y0, zf, 1.0, 3);
+      addRailing(v1.x1, v1.y0, zf, v1.x1, v1.y1, zf, 1.0, 3);
+      addRailing(v1.x0, v1.y1, zf, v1.x1, v1.y1, zf, 1.0, 3);
+      addRailing(sX1 + 0.06, v1.y1, zf, sX1 + 0.06, sY1, zf, 1.0, 3);
+      addLabel(3.35, 6.05, 6.75, 'Opt 1: Void by Stair 1.8×1.55m', 'Merged with stairwell · over 2F TV wall', 3, '#fff8e1', '#8a5a0a');
+    }
+
+    // ---- Interior walls & doors (photo-verified positions) ----
+    // Lounge east wall = Master west wall (solid)
+    addWall(6.90, RY, 6.90, 5.60, 0.12, zf, zC, '#f2efe9', { floor: 3 });
+    addWallWithDoors(6.90, 1.60, 10.40, 1.60, 0.10, zf, zC, '#f2efe9', { floor: 3 }, [
+      { d0: 0.65, w: 0.75, h: 2.15, swingDeg: 60, side: -1 }
+    ]);
+    addWallWithDoors(6.90, 5.60, 10.40, 5.60, 0.11, zf, zC, '#f2efe9', { floor: 3 }, [
+      { d0: 0.35, w: 0.82, h: 2.15, swingDeg: 65, hingeAtEnd: true, side: -1 }   // Master door (unchanged)
+    ]);
+    addWallWithDoors(8.50, 5.60, 8.50, 7.85, 0.10, zf, zC, '#f2efe9', { floor: 3 }, [
+      { d0: 0.72, w: 0.75, h: 2.15, swingDeg: 62, side: -1 }
+    ]);
+    const xFL = L(7.85);
+    addWallWithDoors(xFL, 7.85, 10.40, 7.85, 0.11, zf, zC, '#f2efe9', { floor: 3 }, [
+      { d0: 2.62 - xFL, w: 0.78, h: 2.15, swingDeg: 66, side: 1 },                    // Front-Left BR (white wall next to parapet)
+      { d0: 5.98 - xFL, w: 0.82, h: 2.15, swingDeg: 64, side: 1, hingeAtEnd: true },  // Kid #1
+      { d0: 7.06 - xFL, w: 0.82, h: 2.15, swingDeg: 64, side: 1 }                     // Kid #2 (side by side with Kid #1)
+    ]);
+    // Dark wood panel cladding on the lounge side (as in photos) — lightened to oak in AFTER
+    const panelCol = after ? '#c9a27a' : '#5e3523';
+    [[3.40, 5.98], [6.80, 7.06], [7.88, 7.95]].forEach(([pa, pb]) => addBox(pa, 7.76, zf, pb, 7.79, zC - 0.12, panelCol, { floor: 3 }));
+    [[5.98, 6.80], [7.06, 7.88]].forEach(([pa, pb]) => addBox(pa, 7.76, zf + 2.15, pb, 7.79, zC - 0.12, panelCol, { floor: 3 }));
+    addWall(3.15, 7.85, 3.15, 10.25, 0.10, zf, zC, '#f2efe9', { floor: 3 });
+    addWall(6.90, 7.85, 6.90, 10.25, 0.11, zf, zC, '#f2efe9', { floor: 3 });
+
+    // ---- Bedrooms ----
+    addBed(8.34, 2.15, zf, 10.34, 3.95, 'E', 3);
+    addBox(6.98, 2.85, zf, 7.58, 3.55, 7.58, '#cfa068', { floor: 3 });
+    const w3a = win3Moved ? 1.68 : 1.80, w3b = win3Moved ? 2.40 : 2.70;   // moved: 0.72m wide, fits between ensuite wall (1.60) and bay (2.47)
+    addQuad([6.83, w3a, 6.25], [6.83, w3b, 6.25], [6.83, w3b, 7.75], [6.83, w3a, 7.75], '#8ecae6', { floor: 3, alpha: 0.55, edge: '#7c4824', edgeWidth: 2.0 });
+    addQuad([6.83, 0.60, 7.35], [6.83, 1.15, 7.35], [6.83, 1.15, 7.85], [6.83, 0.60, 7.85], '#8ecae6', { floor: 3, alpha: 0.55, edge: '#7c4824', edgeWidth: 1.8 });
+    addLabel(8.95, 3.15, 6.75, '3F Master Suite', '4.0×3.5m + rear ensuite (to the boundary wall)', 3);
+    // 3F rear ensuite (Y RY..1.60, same block depth as the 2F master below): vanity + shower
+    addBox(7.00, 0.25, zf, 7.55, 1.35, zf + 0.85, '#e9e4da', { floor: 3, topColor: '#f6f4f0' });
+    addBox(9.55, RY + 0.02, zf, 10.38, RY + 0.95, zf + 0.04, '#dfe7ea', { floor: 3 });
+    addQuad([9.55, RY + 0.95, zf + 0.04], [10.38, RY + 0.95, zf + 0.04], [10.38, RY + 0.95, zf + 2.00], [9.55, RY + 0.95, zf + 2.00], '#cfe8f3', { floor: 3, alpha: 0.30, edge: '#7a9aa8' });
+    addBox(8.30, RY + 0.02, zf, 8.70, RY + 0.55, zf + 0.42, '#f8f9fa', { floor: 3 });
+    addLabel(8.60, 0.40, 6.45, '3F Ensuite', '', 3);
+    addLabel(9.45, 6.75, 6.60, '3F Shared WC', '', 3);
+    addPrism4([[L(8.05) + 0.04, 8.05], [L(8.05) + 0.64, 8.05], [L(9.45) + 0.64, 9.45], [L(9.45) + 0.04, 9.45]], zf, 7.55, after ? '#cfa068' : '#8a5d3b', { floor: 3 });
+    addLabel(1.95, 9.15, 6.65, 'Front-Left BR', after ? (vMode === 'stair' ? 'Study / WFH room' : 'West cupboard') : 'As-built', 3);
+    if (after) {
+      addBed(4.35, 8.98, zf, 6.35, 10.18, 'E', 3);
+      addBox(3.22, 7.94, zf, 3.82, 8.88, 7.55, '#cfa068', { floor: 3 });
+      addTable(3.25, 9.64, zf, 4.25, 10.18, 0.73, '#c89b66', 3);
+      addBed(8.34, 8.98, zf, 10.34, 10.18, 'E', 3);
+      addBox(8.05, 7.94, zf, 9.25, 8.54, 7.55, '#cfa068', { floor: 3 });
+      addTable(7.02, 9.64, zf, 8.15, 10.18, 0.73, '#c89b66', 3);
+      if (vMode === 'stair') addTable(1.05, 9.60, zf, 2.85, 10.15, 0.74, '#cfa068', 3);  // WFH moves into the Front-Left study
+    }
+    addLabel(4.95, 9.15, 6.65, 'Kid #1 BR', '3.75 × 2.40m', 3);
+    addLabel(9.10, 9.15, 6.65, 'Kid #2 BR', '3.50 × 2.40m', 3);
+
+    // ---- Lounge furniture ----
+    if (!after) {
+      addBox(3.02, 2.78, zf, 5.72, 3.38, zf + 0.74, '#6e4228', { floor: 3 });                 // built-in dark desk in alcove
+      addBox(3.10, 2.85, zf, 3.55, 3.30, zf + 0.55, '#5a3825', { floor: 3 });
+      addBox(5.25, 2.85, zf, 5.70, 3.30, zf + 0.55, '#5a3825', { floor: 3 });
+      addBox(3.55, 7.40, zf + 0.25, 5.55, 7.76, zf + 0.78, '#c8743d', { floor: 3 });           // floating TV console
+      addScalePerson(6.30, 6.60, zf, 3);
+      addLabel(4.70, 5.60, 6.85, 'BEFORE: 3F Lounge (from your photos)', 'Brick wall · solid parapet · dark panel wall', 3, '#fff0ed', '#9c2b1c');
+    } else if (vMode === 'bay' || vMode === 'alcove') {
+      // Void X 3.92–5.42 (over the 2F dining bench/table) with sliding glass along Y 3.45
+      addTable(3.95, 3.62, zf, 5.35, 4.20, 0.74, '#e6cfae', 3);                                  // WFH desk along the void glass
+      addChair(4.25, 4.30, zf, 0.46, 0.44, 'S', '#eae4d8', 3);
+      addChair(4.95, 4.30, zf, 0.46, 0.44, 'S', '#eae4d8', 3);
+      addLabel(4.65, 3.95, 6.55, 'WFH desk at the void', 'Faces the void glass · looks down to the dining bay', 3, '#fff8e1', '#8a5a0a');
+      // Reading nook on the slab east of the void (over the 2F porch)
+      addBox(5.50, 2.64, zf, 6.80, 2.94, zf + 1.90, '#e6dccb', { floor: 3 });                   // bookshelf on the alcove wall
+      [0.45, 0.90, 1.35].forEach(hz => addBox(5.52, 2.66, zf + hz, 6.78, 2.92, zf + hz + 0.03, '#cfb894', { floor: 3 }));
+      addBox(5.85, 3.00, zf, 6.55, 3.42, zf + 0.42, '#7a9cb8', { floor: 3 });                   // reading chair / daybed cushion
+      addBox(5.85, 3.00, zf + 0.42, 6.55, 3.10, zf + 0.80, '#6b8dab', { floor: 3 });
+      addBox(6.68, 3.20, zf, 6.74, 3.26, zf + 1.55, '#3a3f45', { floor: 3 });                   // floor lamp
+      addLabel(6.15, 3.10, 7.35, 'Reading nook over the porch', 'Bookshelf on the alcove wall · reading chair', 3, '#fcfbf7', '#1d242b');
+      addSofa(3.75, 7.00, zf, 5.75, 7.74, 'S', '#6d805c', 3);     // sofa on the kid-room panel wall
+      addTable(4.30, 6.25, zf, 5.20, 6.70, 0.40, '#cfa068', 3);
+      addScalePerson(6.30, 6.10, zf, 3);
+      addLabel(4.80, 6.40, 6.55, '3F Lounge', 'Sofa on the kid-room panel wall', 3);
+      // Indoor pull-up bar (ceiling 2.85m) by the west brick wall, over the landing + suspension anchor
+      [1.05, 1.95].forEach(px => addBox(px - 0.03, 4.27, 8.05, px + 0.03, 4.33, zC, '#3a3f45', { floor: 3 }));
+      addBox(1.05, 4.28, 8.03, 1.95, 4.32, 8.07, '#2b3036', { floor: 3 });
+      addBox(1.47, 4.85, 8.24, 1.53, 4.91, zC, '#868e96', { floor: 3 });
+      [1.45, 1.54].forEach(tx => addBox(tx, 4.86, 6.55, tx + 0.02, 4.88, 8.24, '#f2c94c', { floor: 3 }));
+      addLabel(1.50, 4.30, 8.45, 'Pull-up bar (indoor, 2.85 m ceiling)', 'Ceiling-mounted · suspension anchor beside it', 3, '#eef7f2', '#1e563b');
+    } else if (vMode === 'stair') {
+      addBox(3.02, 2.78, zf, 5.72, 3.40, zf + 0.45, '#cfa068', { floor: 3, topColor: '#efe6d6' });   // alcove window daybed
+      addBox(3.05, 2.78, zf + 0.45, 5.70, 2.92, zf + 0.85, '#e6dccb', { floor: 3 });
+      addBox(4.40, 7.70, zf + 0.95, 5.65, 7.75, zf + 1.65, '#1d1f22', { floor: 3 });              // wall-mounted TV
+      addScalePerson(6.30, 6.60, zf, 3);
+      addLabel(4.40, 3.90, 6.70, 'Alcove Window Daybed', 'WFH moves to Front-Left study', 3);
+    } else {
+      addTable(3.05, 2.80, zf, 5.70, 3.40, 0.74, '#cfa068', 3);
+      addChair(3.70, 3.50, zf, 0.46, 0.44, 'S', '#eae4d8', 3);
+      addChair(4.80, 3.50, zf, 0.46, 0.44, 'S', '#eae4d8', 3);
+      addSofa(3.75, 7.00, zf, 5.75, 7.74, 'S', '#6d805c', 3);
+      addTable(4.30, 6.25, zf, 5.20, 6.70, 0.40, '#cfa068', 3);
+      addScalePerson(6.30, 6.60, zf, 3);
+      addLabel(4.80, 5.60, 6.80, vMode === 'plain' ? '3F Lounge — Kept As-Is' : '3F Lounge — Skylight Only', vMode === 'plain' ? 'Refresh desk, paint, roof insulation' : 'Alcove desk kept · glass parapet', 3);
+    }
+    if (after && state.piano === '3f') {
+      addBox(0.80, 3.48, zf, 2.16, 3.86, 6.25, '#262322', { floor: 3 });
+      addTable(1.20, 3.94, zf, 1.76, 4.26, 0.48, '#5c4033', 3);
+    }
+    addLabel(1.55, 4.55, 6.30, 'Stair Arrival Landing', 'Small rear window', 3);
+
+    // ---- Exterior walls ----
+    addWall(6.90, RY - 0.07, 10.47, RY - 0.07, 0.14, zf, 8.35, '#f4f1ea', { floor: 3, cutNormal: [0, -1, 0] });
+    addWall(10.47, RY - 0.07, 10.47, 10.32, 0.14, zf, 8.35, '#f4f1ea', { floor: 3, cutNormal: [1, 0, 0] });
+    addWall(L(3.45) - 0.07, 3.45, L(10.25) - 0.07, 10.25, 0.14, zf, 8.35, '#f4f1ea', { floor: 3, cutNormal: [-1, 0, 0] });
+    addWall(L(10.25) - 0.06, 10.32, 10.47, 10.32, 0.14, zf, 8.35, '#f4f1ea', { floor: 3, cutNormal: [0, 1, 0] });
+  }
+
+  // --------------------------------------------------------------------------
+  // LAYER 4: PITCHED ROOF (With Skylight in AFTER vs Solid Tile Roof in BEFORE)
+  // --------------------------------------------------------------------------
+  if (state.floors[4]) {
+    addQuad([0.40, 3.20, 8.35], [10.55, 3.20, 8.35], [10.55, 6.85, 9.65], [0.55, 6.85, 9.65], '#b56e4f', { floor: 4, subdiv: 1.4 });
+    addQuad([0.55, 6.85, 9.65], [10.55, 6.85, 9.65], [10.55, 10.50, 8.35], [0.75, 10.50, 8.35], '#bd7656', { floor: 4, subdiv: 1.4 });
+    addBox(6.83, RY - 0.16, 8.20, 10.55, 3.25, 8.45, '#b56e4f', { floor: 4 });   // flat roof over the master block (to the rear wall)
+    addBox(2.88, 2.47, 8.20, 6.83, 3.25, 8.45, '#b56e4f', { floor: 4 });         // flat roof over the 3F alcove
+    if (state.mode === 'after' && !['bay', 'alcove', 'plain'].includes(state.fvoid)) {
+      addQuad([0.95, 5.35, 9.10], [state.fvoid === 'stair' ? 4.25 : 2.45, 5.35, 9.10], [state.fvoid === 'stair' ? 4.25 : 2.45, 6.85, 9.65], [0.95, 6.85, 9.65], '#90e0ef', { floor: 4, alpha: 0.55, edge: '#1d3557' });
+    }
+  }
+
+  updateHudText();
+  requestRender();
+}
+
+function updateHudText() {
+  const p = PRESETS[state.camPreset];
+  if (state.mode === 'before') {
+    document.getElementById('hudTitle').textContent = 'BEFORE (today) — ' + (p ? p.title.split('—')[0].trim() : '3D House');
+    document.getElementById('hudSub').textContent = 'Raised pool (+0.90m) · 0.90m recessed balcony with 3 ACs · dark kitchen · walled-in musholla · 3F alcove kept';
+    return;
+  }
+  document.getElementById('hudTitle').textContent = p ? p.title : '3D House (2029 plan)';
+  const tier = state.rampBuilt ? 'L-Ramp from the start (~Rp 550M)'
+    : (state.fvoid === 'plain' && !state.mushBay) ? 'Must-Do only (~Rp 419M)'
+    : state.cafeStair ? '2029 Plan + Stair (~Rp 527M)'
+    : '★ 2029 Plan (~Rp 489M)';
+  const parts = [tier, 'Flush dining bay (reused window + door)', 'Light U-kitchen'];
+  parts.push(state.fvoid === 'alcove' ? 'Closable 3F void' : '3F kept as-is');
+  parts.push(state.mushBay ? 'Musholla platform + bay window' : 'Musholla platform');
+  if (state.rampBuilt) parts.push('Balcony = ramp top leg');
+  else if (state.svcBalc) parts.push('1.0m balcony: fold-down sill bar · ACs');
+  parts.push('Open porch with the existing balcony door (master window untouched)');
+  parts.push('Washer/dryer + pulley racks · 1F gym corner + 3F pull-up bar · piano on the master-side wall');
+  parts.push(state.rampBuilt ? 'L-ramp in courtyard' : state.cafeStair ? 'Stair to courtyard' : state.lift ? 'Platform lift' : 'Ramp-ready courtyard + tree');
+  document.getElementById('hudSub').textContent = parts.join(' · ');
+}
+
+// ============================================================================
+// PERSPECTIVE CAMERA PROJECTION + NEAR-PLANE CLIPPING + PAINTER'S RENDER
+// ============================================================================
+const canvas = document.getElementById('view3d');
+const ctx = canvas.getContext('2d');
+let needsRender = false;
+
+function requestRender() {
+  if (!needsRender) {
+    needsRender = true;
+    requestAnimationFrame(drawFrame);
+  }
+}
+
+function getCameraBasis() {
+  const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch);
+  const cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+  const eye = [
+    cam.tx - cam.dist * cp * cy,
+    cam.ty - cam.dist * cp * sy,
+    cam.tz + cam.dist * sp
+  ];
+  const fwd = vNorm(vSub([cam.tx, cam.ty, cam.tz], eye));
+  const worldUp = [0, 0, 1];
+  const right = vNorm(vCross(worldUp, fwd));
+  const up = vCross(fwd, right);
+  return { eye, fwd, right, up };
+}
+
+function toCamSpace(pt, basis) {
+  const d = vSub(pt, basis.eye);
+  return [vDot(d, basis.right), vDot(d, basis.up), vDot(d, basis.fwd)];
+}
+
+const NEAR = 0.22;
+function clipNearPoly(ptsCam) {
+  const out = [];
+  for (let i = 0; i < ptsCam.length; i++) {
+    const a = ptsCam[i], b = ptsCam[(i + 1) % ptsCam.length];
+    const inA = a[2] >= NEAR, inB = b[2] >= NEAR;
+    if (inA && inB) {
+      out.push(b);
+    } else if (inA && !inB) {
+      const t = (NEAR - a[2]) / (b[2] - a[2]);
+      out.push(vLerp(a, b, t));
+    } else if (!inA && inB) {
+      const t = (NEAR - a[2]) / (b[2] - a[2]);
+      out.push(vLerp(a, b, t));
+      out.push(b);
+    }
+  }
+  return out;
+}
+
+function clipNearSeg(a, b) {
+  const inA = a[2] >= NEAR, inB = b[2] >= NEAR;
+  if (!inA && !inB) return null;
+  if (inA && inB) return [a, b];
+  const t = (NEAR - a[2]) / (b[2] - a[2]);
+  const m = vLerp(a, b, t);
+  return inA ? [a, m] : [m, b];
+}
+
+function drawFrame() {
+  needsRender = false;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = canvas.clientWidth, H = canvas.clientHeight;
+  if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+    canvas.width = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#eef3f7');
+  grad.addColorStop(0.45, '#f6f4ee');
+  grad.addColorStop(1, '#ebe7dd');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  const basis = getCameraBasis();
+  const focal = (H * 0.5) / Math.tan((cam.fov * Math.PI / 180) * 0.5);
+  const cx = W * 0.5, cy = H * 0.52;
+  const proj = c => [cx + (c[0] / c[2]) * focal, cy - (c[1] / c[2]) * focal];
+
+  const camFromCenter = vSub(basis.eye, [5.35, 5.20, 2.50]);
+  function getEffectiveAlpha(baseAlpha, cutNormal) {
+    if (!state.xray || !cutNormal) return baseAlpha;
+    const facing = cutNormal[0] * camFromCenter[0] + cutNormal[1] * camFromCenter[1];
+    return facing > 0.6 ? Math.min(baseAlpha, 0.11) : baseAlpha;
+  }
+
+  const drawItems = [];
+
+  for (let i = 0; i < sceneQuads.length; i++) {
+    const q = sceneQuads[i];
+    const effAlpha = getEffectiveAlpha(q.alpha, q.cutNormal);
+    if (effAlpha < 0.03) continue;
+    const camPts = q.pts.map(p => toCamSpace(p, basis));
+    const clipped = clipNearPoly(camPts);
+    if (clipped.length < 3) continue;
+    let zSum = 0;
+    for (let k = 0; k < clipped.length; k++) zSum += clipped[k][2];
+    const depth = zSum / clipped.length - (q.bias || 0);
+    drawItems.push({ kind: 0, depth, pts2d: clipped.map(proj), fill: q.fill, alpha: effAlpha });
+  }
+
+  for (let i = 0; i < sceneEdges.length; i++) {
+    const e = sceneEdges[i];
+    const effAlpha = getEffectiveAlpha(e.alpha, e.cutNormal);
+    if (effAlpha < 0.15) continue;
+    const ca = toCamSpace(e.a, basis), cb = toCamSpace(e.b, basis);
+    const seg = clipNearSeg(ca, cb);
+    if (!seg) continue;
+    const depth = (seg[0][2] + seg[1][2]) * 0.5 - 0.035;
+    drawItems.push({ kind: 1, depth, p0: proj(seg[0]), p1: proj(seg[1]), color: e.color, width: e.width, alpha: effAlpha });
+  }
+
+  drawItems.sort((a, b) => b.depth - a.depth);
+
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  for (let i = 0; i < drawItems.length; i++) {
+    const it = drawItems[i];
+    if (it.kind === 0) {
+      ctx.globalAlpha = it.alpha;
+      ctx.fillStyle = it.fill;
+      ctx.beginPath();
+      const p = it.pts2d;
+      ctx.moveTo(p[0][0], p[0][1]);
+      for (let k = 1; k < p.length; k++) ctx.lineTo(p[k][0], p[k][1]);
+      ctx.closePath();
+      ctx.fill();
+      if (it.alpha > 0.92) {
+        ctx.strokeStyle = it.fill;
+        ctx.lineWidth = 0.55;
+        ctx.stroke();
+      }
+    } else {
+      ctx.globalAlpha = it.alpha;
+      ctx.strokeStyle = it.color;
+      ctx.lineWidth = it.width;
+      ctx.beginPath();
+      ctx.moveTo(it.p0[0], it.p0[1]);
+      ctx.lineTo(it.p1[0], it.p1[1]);
+      ctx.stroke();
+    }
+  }
+  ctx.globalAlpha = 1;
+
+  drawCompassGizmo(W - 58, 56, basis);
+
+  if (state.labels) {
+    const projectedLabels = [];
+    const topFloor = state.floors[3] ? 3 : state.floors[2] ? 2 : 1;
+    const eyeLevel = cam.pitch < 0.25, fromFront = basis.eye[1] > 5.5;
+    for (const lb of sceneLabels) {
+      // Outdoor labels of lower floors only clutter eye-level views and views from the street side (they sit behind the house)
+      if (lb.outdoor && lb.floor < topFloor && (eyeLevel || fromFront)) continue;
+      const c = toCamSpace(lb.pos, basis);
+      if (c[2] < 0.8) continue;
+      const [sx, sy] = proj(c);
+      if (sx < 60 || sx > W - 60 || sy < 70 || sy > H - 45) continue;
+      projectedLabels.push({ ...lb, sx, sy, depth: c[2] });
+    }
+    projectedLabels.sort((a, b) => a.depth - b.depth);
+    const placedBoxes = [];
+    for (const lb of projectedLabels) {
+      ctx.font = '700 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      const w1 = ctx.measureText(lb.text).width;
+      ctx.font = '500 10.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      const w2 = lb.sub ? ctx.measureText(lb.sub).width : 0;
+      const bw = Math.max(w1, w2) + 14;
+      const bh = lb.sub ? 31 : 20;
+      const bx = lb.sx - bw / 2, by = lb.sy - bh / 2;
+      const overlaps = placedBoxes.some(r => !(bx + bw + 6 < r.x || bx > r.x + r.w + 6 || by + bh + 4 < r.y || by > r.y + r.h + 4));
+      if (overlaps) continue;
+      placedBoxes.push({ x: bx, y: by, w: bw, h: bh });
+
+      ctx.fillStyle = lb.bg;
+      ctx.strokeStyle = 'rgba(35,42,49,0.38)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.roundRect(bx, by, bw, bh, 5);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = lb.fg;
+      ctx.textAlign = 'center';
+      ctx.font = '700 11.5px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+      ctx.fillText(lb.text, lb.sx, by + 13.5);
+      if (lb.sub) {
+        ctx.fillStyle = '#4a5562';
+        ctx.font = '600 10px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+        ctx.fillText(lb.sub, lb.sx, by + 25.5);
+      }
+    }
+  }
+}
+
+function drawCompassGizmo(gx, gy, basis) {
+  ctx.save();
+  ctx.fillStyle = 'rgba(252,250,246,0.9)';
+  ctx.strokeStyle = '#c9c2b4';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  ctx.arc(gx, gy, 34, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // True orientation (from the 295° qibla bearing used for the musholla): the courtyard/back wall faces ~277° (≈ West),
+  // the street front faces ~East, the garage side ~North. Plan "up" (courtyard, −Y) = 277°.
+  const dirs = [
+    { v: [0.993, -0.122, 0], lbl: 'N', col: '#285943' },
+    { v: [0.122, 0.993, 0], lbl: 'E', col: '#5a6570' },
+    { v: [-0.993, 0.122, 0], lbl: 'S', col: '#b67b2f' },
+    { v: [-0.122, -0.993, 0], lbl: 'W', col: '#c0392b' }
+  ];
+  dirs.forEach(d => {
+    const dx = vDot(d.v, basis.right), dy = -vDot(d.v, basis.up);
+    ctx.strokeStyle = d.col;
+    ctx.lineWidth = d.lbl === 'N' ? 2.4 : 1.3;
+    ctx.beginPath();
+    ctx.moveTo(gx, gy);
+    ctx.lineTo(gx + dx * 22, gy + dy * 22);
+    ctx.stroke();
+    ctx.fillStyle = d.col;
+    ctx.font = '700 9.5px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d.lbl, gx + dx * 28, gy + dy * 28 + 3);
+  });
+  ctx.restore();
+}
+
+// ============================================================================
+// INTERACTIVE MOUSE, TOUCH & KEYBOARD CONTROLS
+// ============================================================================
+let dragMode = null;
+let lastX = 0, lastY = 0;
+
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+canvas.addEventListener('pointerdown', e => {
+  canvas.setPointerCapture(e.pointerId);
+  dragMode = (e.button === 2 || e.button === 1 || e.shiftKey) ? 'pan' : 'orbit';
+  lastX = e.clientX; lastY = e.clientY;
+});
+canvas.addEventListener('pointermove', e => {
+  if (!dragMode) return;
+  const dx = e.clientX - lastX, dy = e.clientY - lastY;
+  lastX = e.clientX; lastY = e.clientY;
+  if (dragMode === 'orbit') {
+    cam.yaw += dx * 0.0075;
+    cam.pitch = Math.max(0.06, Math.min(1.46, cam.pitch + dy * 0.0065));
+  } else {
+    const basis = getCameraBasis();
+    const scale = cam.dist * 0.0016;
+    cam.tx -= (basis.right[0] * dx - basis.up[0] * dy) * scale;
+    cam.ty -= (basis.right[1] * dx - basis.up[1] * dy) * scale;
+    cam.tz -= (basis.right[2] * dx - basis.up[2] * dy) * scale;
+  }
+  requestRender();
+});
+canvas.addEventListener('pointerup', () => { dragMode = null; });
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.dist = Math.max(2.6, Math.min(34, cam.dist * (1 + e.deltaY * 0.0011)));
+  requestRender();
+}, { passive: false });
+
+window.addEventListener('keydown', e => {
+  const step = 0.45;
+  const basis = getCameraBasis();
+  const flatFwd = vNorm([basis.fwd[0], basis.fwd[1], 0]);
+  if (e.key === 'w' || e.key === 'ArrowUp') { cam.tx += flatFwd[0]*step; cam.ty += flatFwd[1]*step; requestRender(); }
+  if (e.key === 's' || e.key === 'ArrowDown') { cam.tx -= flatFwd[0]*step; cam.ty -= flatFwd[1]*step; requestRender(); }
+  if (e.key === 'd' || e.key === 'ArrowRight') { cam.tx += basis.right[0]*step; cam.ty += basis.right[1]*step; requestRender(); }
+  if (e.key === 'a' || e.key === 'ArrowLeft') { cam.tx -= basis.right[0]*step; cam.ty -= basis.right[1]*step; requestRender(); }
+});
+window.addEventListener('resize', requestRender);
+
+function syncButtons() {
+  const tog = (id, on) => { const el = document.getElementById(id); if (el) el.classList.toggle('active', on); };
+  const sel = (attr, fn) => document.querySelectorAll('[' + attr + ']').forEach(b => b.classList.toggle('active', fn(b)));
+  sel('data-mode', b => b.dataset.mode === state.mode);
+  const row = document.getElementById('afterTogglesRow');
+  if (row) row.classList.toggle('before-dim', state.mode === 'before');
+  sel('data-floor', b => !!state.floors[b.dataset.floor]);
+  sel('data-cam', b => b.dataset.cam === state.camPreset);
+  sel('data-shoji', b => b.dataset.shoji === state.shoji);
+  sel('data-mush', b => b.dataset.mush === state.mush);
+  sel('data-void', b => b.dataset.void === state.fvoid);
+  sel('data-mbay', b => (b.dataset.mbay === 'on') === state.mushBay);
+  tog('btnXray', state.xray);
+  const after = state.mode === 'after';
+  const matches = obj => after && Object.keys(obj).every(k => state[k] === obj[k]);
+  tog('btnRecommended', matches(RAMPBUILT));
+  tog('btnMust', matches(MUST2));
+  tog('btnNoRampVoid', matches(NORAMPVOID));
+  tog('btnCafeStair', matches(STAIR2));
+  const acc = state.rampBuilt ? 'ramp' : state.lift ? 'lift' : state.cafeStair ? 'stair' : 'none';
+  sel('data-access', b => after && b.dataset.access === acc);
+  tog('btnScale', state.scaleRefs);
+  tog('btnLabels', state.labels);
+}
+
+const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+const redraw = () => { syncButtons(); rebuildScene(); };
+document.querySelectorAll('#baToggle3d button').forEach(b => b.addEventListener('click', () => { state.mode = b.dataset.mode; redraw(); }));
+document.querySelectorAll('[data-floor]').forEach(b => b.addEventListener('click', () => { const f = b.dataset.floor; state.floors[f] = !state.floors[f]; redraw(); }));
+document.querySelectorAll('[data-cam]').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.cam)));
+document.querySelectorAll('[data-shoji]').forEach(b => b.addEventListener('click', () => { state.shoji = b.dataset.shoji; redraw(); }));
+document.querySelectorAll('[data-mush]').forEach(b => b.addEventListener('click', () => {
+  state.mush = b.dataset.mush;
+  state.shoji = state.mush === 'guest' ? 'closed' : 'open';
+  redraw();
+}));
+document.querySelectorAll('[data-void]').forEach(b => b.addEventListener('click', () => { state.fvoid = b.dataset.void; redraw(); }));
+document.querySelectorAll('[data-mbay]').forEach(b => b.addEventListener('click', () => { state.mushBay = b.dataset.mbay === 'on'; redraw(); }));
+// Budget tiers (all share the corrected 2029 geometry: flush bay, long balcony, piano by the front window)
+const NORAMPVOID = { ramp: 'slim', noRamp: true, must: true, fvoid: 'alcove', mushBay: true, svcBalc: true, winMove: 'flush', piano: 'front', rampBuilt: false, cafeStair: false, lift: false };
+const RAMPBUILT = Object.assign({}, NORAMPVOID, { rampBuilt: true });
+const MUST2 = Object.assign({}, NORAMPVOID, { fvoid: 'plain', mushBay: false });
+const STAIR2 = Object.assign({}, NORAMPVOID, { cafeStair: true });
+on('btnRecommended', () => { state.mode = 'after'; Object.assign(state, RAMPBUILT); redraw(); });
+on('btnMust', () => { state.mode = 'after'; Object.assign(state, MUST2); redraw(); });
+on('btnNoRampVoid', () => { state.mode = 'after'; Object.assign(state, NORAMPVOID); redraw(); });
+on('btnCafeStair', () => { state.mode = 'after'; Object.assign(state, STAIR2); redraw(); });
+document.querySelectorAll('[data-access]').forEach(b => b.addEventListener('click', () => { state.mode = 'after'; const a = b.dataset.access; state.cafeStair = a === 'stair'; state.rampBuilt = a === 'ramp'; state.lift = a === 'lift'; redraw(); }));
+on('btnAlts', () => {
+  const row = document.getElementById('afterTogglesRow');
+  const show = row.style.display === 'none';
+  row.style.display = show ? 'flex' : 'none';
+  document.getElementById('btnAlts').textContent = show ? 'Fewer options ▾' : 'More options ▸';
+});
+on('btnXray', () => { state.xray = !state.xray; syncButtons(); requestRender(); });
+on('btnScale', () => { state.scaleRefs = !state.scaleRefs; redraw(); });
+on('btnLabels', () => { state.labels = !state.labels; syncButtons(); requestRender(); });
+
+syncButtons();
+rebuildScene();
+drawFrame();
+</script>
+</body>
+</html>
