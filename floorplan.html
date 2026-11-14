@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>House renovation plan · Phase 1 (2028) vs Phase 2 (~2042)</title>
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; background: #e9ecef; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: #1d242b; }
+  #tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 4px; align-items: center; padding: 8px 14px; background: #fff; border-bottom: 1px solid #dee2e6; flex-wrap: wrap; }
+  #tabs > button { font-family: inherit; font-size: 13px; font-weight: 600; color: #1d242b; padding: 6px 12px; border: 1px solid #ced4da; border-radius: 16px; background: #f8f9fa; cursor: pointer; }
+  #tabs > button:hover { background: #e9ecef; border-color: #adb5bd; }
+  #tabs > button.on { background: #1d242b; color: #fff; border-color: #1d242b; }
+  #tabs .hint { margin-left: auto; font-size: 12px; color: #868e96; margin-right: 10px; }
+  #tabs .lang-pill { display: inline-flex; border: 1px solid #ced4da; border-radius: 14px; overflow: hidden; background: #f1f3f5; }
+  #tabs .lang-pill button { border: 0; border-radius: 0; padding: 5px 10px; font-size: 12px; font-weight: 700; background: transparent; color: #495057; cursor: pointer; }
+  #tabs .lang-pill button.on { background: #e8590c; color: #fff; }
+  #tabs .ovl-row { flex-basis: 100%; display: flex; gap: 4px; align-items: center; flex-wrap: wrap; padding-top: 6px; border-top: 1px dashed #dee2e6; margin-top: 2px; }
+  #tabs .ovl-lbl { font-size: 12px; font-weight: 700; color: #495057; margin-right: 4px; }
+  #tabs .ovl { font-family: inherit; font-size: 12px; font-weight: 600; padding: 4px 10px; border: 1px solid #ced4da; border-radius: 14px; background: #fff; cursor: pointer; color: #343a40; }
+  #tabs .ovl.on { background: #0b7285; color: #fff; border-color: #0b7285; }
+  svg.sheet.night { background: #0f172a; }
+  #tabs .ovl-sep { width: 1px; height: 20px; background: #ced4da; margin: 0 6px; }
+  body.hide-notes svg.sheet text:is(.nt, .ntc, .nts2, .nto, .ntp, .ntr, .ntb, .ntb2, .ntg, .fl, .fl2) { display: none; }
+  body.hide-live svg.sheet text.dyn { display: none; }
+  body.hide-notes svg.sheet g.nbox { display: none; }
+  #view { padding: 10px 14px; }
+  .pg { margin-bottom: 14px; }
+  svg.sheet { display: block; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.12); max-width: 100%; height: auto; }
+  body.shot #view { padding: 4px 8px; }
+  body.shot #tabs { display: none; }
+  svg text { font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .rn { font-size: 13px; font-weight: 700; fill: #1d242b; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .rn-out { fill: #2b6b3f; }
+  .rs { font-size: 10.5px; fill: #495057; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .rsr { fill: #c2255c; }
+  .fl { font-size: 8.5px; fill: #6c757d; text-anchor: middle; }
+  .fl2 { font-size: 10px; fill: #adb5bd; }
+  .nt, .ntc { font-size: 10px; fill: #495057; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntc { text-anchor: middle; }
+  .nts2 { font-size: 9.5px; fill: #6c757d; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .nto { font-size: 9.5px; fill: #c94a0a; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntp { font-size: 9.5px; fill: #5f3dc4; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntr { font-size: 9.5px; fill: #c2255c; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntb { font-size: 9.5px; fill: #8a5a0a; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntb2 { font-size: 9.5px; fill: #1864ab; font-weight: 600; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntg { font-size: 9.5px; fill: #2f5e24; font-weight: 700; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .ntw { font-size: 9.5px; fill: #fff; font-weight: 700; letter-spacing: .5px; }
+  .stl { font-size: 10px; font-weight: 700; fill: #1d242b; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .dt { font-size: 9.5px; text-anchor: middle; fill: #5a6570; paint-order: stroke; stroke: #fff; stroke-width: 3px; }
+  .tagn { font-size: 10px; font-weight: 700; fill: #fff; text-anchor: middle; }
+  .tt { font-size: 20.5px; font-weight: 700; fill: #1d242b; }
+  .st { font-size: 11.2px; fill: #6c757d; }
+  .ph { font-size: 13.8px; font-weight: 700; fill: #1d242b; }
+  .nl { font-size: 12.2px; fill: #343a40; }
+  .lg { font-size: 11.8px; fill: #343a40; }
+  .orient { font-size: 12px; font-weight: 700; fill: #495057; letter-spacing: .3px; }
+  .na { font-size: 13px; font-weight: 800; fill: #1d242b; }
+  .nts { font-size: 9.5px; fill: #868e96; }
+  .sb { font-size: 10px; fill: #495057; }
+  .secm { font-size: 13px; font-weight: 800; fill: #1d242b; }
+  .lv { font-size: 10px; fill: #343a40; font-weight: 600; }
+  @media print { #tabs { display: none; } .pg { page-break-after: always; } svg.sheet { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div id="tabs"></div>
+<div id="view"></div>
+<script>
+// ===== Floor plan generator: helpers =====
+const L = y => 0.30 + 0.0515 * y;          // slanted side lot line (model "leftLotX")
+const C = { wall: '#2f2f2f', neu: '#e8590c', rem: '#d6336c', furn: '#9a9a9a', furnFill: '#f3f3f1', joinFill: '#fff0e3', text: '#1d242b', dim: '#5a6570', glass: '#4dabf7' };
+function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+const TR_2D_ID = {
+  // Compass & scale bar
+  'true north': 'Utara',
+  'metres': 'meter',
+  'UP': 'NAIK',
+  'DN': 'TURUN',
+  // 1F plan
+  'step 20 cm': 'turun 20 cm',
+  'pump': 'pompa',
+  'UP 11 steps to 2F terrace': 'NAIK 11 anak tangga ke teras L2',
+  'landing': 'bordes',
+  '2F balcony above (dashed)': 'balkon L2 di atas (putus-putus)',
+  '2F above (dashed)': 'lantai 2 di atas (putus-putus)',
+  'car 1': 'mobil 1',
+  'car 2': 'mobil 2',
+  'counter': 'meja dapur',
+  'washer': 'mesin cuci',
+  '+ dryer': '+ pengering',
+  'barbell pad 2 × 1.5 · 1.8 m bar': 'matras gym 2 × 1,5 · bar 1,8 m',
+  'folding wall squat rack': 'rak barbel lipat',
+  'dumbbells': 'dumbel',
+  'DC fan': 'kipas DC',
+  'open to garage · ≥ 1.2 m clear path': 'terbuka ke garasi · jalur bebas ≥ 1,2 m',
+  'water wall + stone return (corner)': 'dinding air mancur + sudut batu alam',
+  'tree': 'pohon',
+  'planter-bench modules': 'bangku + bak tanaman',
+  'vertical garden later (water + power points ready)': 'taman vertikal nanti (titik air + listrik siap)',
+  'BBQ table 1.8 × 0.9': 'meja makan luar 1,8 × 0,9',
+  'BBQ grill': 'panggangan BBQ',
+  'Garage (Garasi)': 'Garasi',
+  '2-car tandem · 3.65 m wide': '2 mobil seri · lebar 3,65 m',
+  'Gym + laundry': 'Gym + area cuci',
+  'Open terrace': 'Teras terbuka',
+  '(R. Duduk · open terrace)': '(R. Duduk · teras terbuka)',
+  '(R. Duduk) · covered, 2.10 m clear': '(R. Duduk) · beratap, tinggi bersih 2,10 m',
+  'Service kitchen': 'Dapur servis',
+  '(Dapur)': '(Dapur bersih/kotor)',
+  'Helper room': 'Kamar ART',
+  '(K. ART)': '(K. ART)',
+  'WC': 'KM/WC',
+  'exhaust fan': 'kipas exhaust',
+  'Store': 'Gudang',
+  '(Gudang)': '',
+  'Carport': 'Carport',
+  '−0.20 m': '−0,20 m',
+  'Front garden': 'Taman depan',
+  'STREET': 'JALAN DEPAN',
+  'Courtyard deck': 'Dek taman belakang',
+  '+0.20 m WPC · tree stays': '+0,20 m WPC · pohon tetap',
+  'future access: see Access sheet': 'opsi akses tanpa tangga: lihat tab Akses',
+  'open patio ≈ 4 × 2.4 m': 'area duduk terbuka ≈ 4 × 2,4 m',
+  'pulley racks (overhead)': 'jemuran katrol (gantung)',
+  'bollards': 'tiang pengaman',
+  'Raised pool +0.90': 'Kolam panggung +0,90',
+  '6 × 3 m water (removed 2028)': 'air 6 × 3 m (dibongkar 2028)',
+  'laundry terrace +0.90 (under 2F)': 'teras cuci +0,90 (di bawah L2)',
+  'sliding glass divider (removed)': 'sekat kaca geser (dibongkar)',
+  'REAR BOUNDARY WALL  h ≈ 5.25 m  (2-storey, neighbour behind)': 'DINDING BATAS BELAKANG  t ≈ 5,25 m  (2 lantai, tetangga belakang)',
+  'SIDE BOUNDARY WALL  h ≈ 5.25 m': 'DINDING BATAS SAMPING  t ≈ 5,25 m',
+  'courtyard ≈ 6.45 m wall to wall (verify)': 'taman belakang ≈ 6,45 m bersih dinding-ke-dinding (cek survei)',
+  'courtyard ≈ 4.35 m': 'taman belakang ≈ 4,35 m',
+  'garage opening 3.65 m': 'bukaan garasi 3,65 m',
+  'overall ≈ 11.6 m (rear boundary wall → front wall)': 'total ≈ 11,6 m (dinding batas belakang → dinding depan)',
+
+  // 2F plan
+  'open to sky · courtyard below': 'terbuka ke langit · taman belakang di bawah',
+  'REAR BOUNDARY WALL  h ≈ 5.25 m  (2-storey)': 'DINDING BATAS BELAKANG  t ≈ 5,25 m  (2 lantai)',
+  'SIDE WALL +5.25 m': 'DINDING SAMPING +5,25 m',
+  '3 ACs': '3 outdoor AC',
+  'fold-down sill bar': 'meja bar lipat',
+  'fold-out laundry rack': 'jemuran lipat',
+  'plant trough outside railing': 'bak tanaman luar pagar',
+  'recessed balcony 0.90 m': 'balkon mundur 0,90 m',
+  'laundry hung here': 'jemuran lama di sini',
+  '~2042 void prep (service-free)': 'calon void ~2042 (bebas pipa/kabel)',
+  'eyebrow sunshade above': 'topi-topi peneduh di atas',
+  'Slot A · bedding': 'Laci A · seprai/kasur',
+  'Slot B · suitcases': 'Laci B · koper',
+  'Slot C · mats': 'Laci C · matras/sajadah',
+  '2.9 m bench · 3 slots': 'bangku 2,9 m · 3 laci',
+  'step 21 cm + rail': 'tangga 21 cm + pegangan',
+  '~2042 shelf (2028 blocking)': 'rak ~2042 (penguat 2028)',
+  'high shelf above · later': 'rak gantung atas · Tahap 2',
+  'niche': 'mihrab',
+  'guest mode: living-room sofa bed moved over': 'mode tamu: sofa bed R. Keluarga digeser ke sini',
+  '= 2.0 × 2.0 bed on the platform': '= kasur 2,0 × 2,0 m di atas panggung',
+  'imam': 'imam',
+  'M1': 'P1',
+  'M2': 'P2',
+  'W1': 'W1',
+  'W2': 'W2',
+  'ledge': 'ambang',
+  'Sofa bed 2.0×2.0m': 'Sofa bed 2,0×2,0m',
+  'centered on TV': 'sejajar tengah TV',
+  'fridge': 'kulkas',
+  'peninsula': 'meja bar',
+  'overhead cabinets (removed)': 'kabinet gantung (dibongkar)',
+  'cabinet': 'lemari',
+  'sink': 'bak cuci',
+  'peninsula · 60cm DW prep': 'meja bar · siap DW 60cm',
+  'window bench 0.55 deep · drawers': 'bangku jendela 0,55 m · laci bawah',
+  'return bench': 'bangku sudut',
+  'swing-arm / swag lamp (wired outside void)': 'lampu makan (kabel dari luar void)',
+  'table 1.55 × 0.85 · 1 pedestal': 'meja 1,55 × 0,85 · kaki tunggal',
+  'L-booth · seats 7 (8)': 'bangku sudut · 7–8 org',
+  'all-operable Low-E bay casements': 'jendela bay Low-E semua bisa dibuka',
+  '+ black SS304 screens (1F–3F)': '+ kawat nyamuk hitam SS304 (L1–L3)',
+  'open end 0.62': 'ujung bebas 0,62',
+  'coffee tbl': 'meja tamu',
+  '2 × 48" DC fans': '2 kipas DC 48"',
+  '(Ø1.22m · lights >Ø2.1m)': '(Ø1,22m · lampu di luar Ø2,1m)',
+  '48" DC fan (Ø1.22m)': 'kipas DC 48" (Ø1,22m)',
+  'split AC (relocated)': 'AC split (pindahan)',
+  'bench 0.8m': 'bangku 0,8m',
+  'shoe cabinet 2.1×0.4': 'lemari sepatu 2,1×0,4',
+  '(h=1.0m below sill)': '(t=1,0m di bawah jendela)',
+  'digital piano': 'piano digital',
+  'TV mounted': 'TV gantung',
+  'slat stair screen': 'kisi kayu tangga',
+  'TV': 'TV',
+  'wardrobe': 'lemari pakaian',
+  'Kitchen': 'Dapur',
+  '(Dapur)\nU-shape · light fronts': 'Bentuk U · pintu warna terang',
+  '(Dapur)\nU-shape · dark wood': 'Bentuk U · kayu gelap',
+  'Living': 'R. Keluarga',
+  '(R. Keluarga)': '',
+  'Master bedroom': 'Kamar Utama',
+  'Ensuite': 'KM Dalam',
+  'Front terrace': 'Teras depan',
+  '(Teras) · entry': 'pintu masuk utama',
+  'sliding doors (usually open) →': 'pintu geser (umumnya dibuka) →',
+  'Prayer room (Musholla) →': 'Musholla panggung →',
+  '+42 cm platform · slots A/B/C': 'panggung +42 cm · laci A/B/C',
+  'imam + 2M + 2W (default)': 'imam + 2P + 2W (harian)',
+  'Prayer room': 'Musholla',
+  '(Musholla)': '',
+  'stair landing (from street)': 'bordes tangga luar (dari jalan)',
+  'Dining bay': 'R. Makan Bay',
+  'Genkan': 'Genkan',
+  '−2.5 cm screed': 'turun −2,5 cm (kupas spesi)',
+  'balcony 1.0 m · ~6.5 m shade canopy (dash-dot)': 'balkon 1,0 m · kanopi peneduh ~6,5 m (garis titik)',
+  'open porch 1.08 × 0.9 (bay side casement at X 5.95) + existing balcony door': 'teras terbuka 1,08 × 0,9 (jendela samping bisa dibuka di X 5,95) + pintu lama',
+  'porch': 'teras kecil',
+  'front window: frame kept · solid lower panel · operable Low-E casements above': 'jendela depan: kusen tetap · panel bawah padat · jendela Low-E atas bisa dibuka',
+  '~2041/42 optional bay window (2028 prep: lintel + conduit)': 'opsi jendela bay ~2041/42 (persiapan 2028: balok lintel + pipa kabel)',
+  'old rear wall + window + door: removed in 2028': 'dinding belakang + jendela + pintu lama: dibongkar 2028',
+  'solid divider (removed)': 'sekat masif (dibongkar)',
+  'flat front wall → kept (solid lower panel)': 'dinding depan rata → dipertahankan (panel bawah padat)',
+  '1.00': '1,00',
+  '0.90': '0,90',
+  'balcony ≈ 6.5 m': 'balkon ≈ 6,5 m',
+  '≈ 3.1 m': '≈ 3,1 m',
+
+  // 3F plan
+  'outdoor ledge': 'dak luar',
+  'planter / display strip · slat guard': 'rak tanaman / pajangan · kisi pengaman',
+  'storage 1.5 × 0.40': 'lemari simpan 1,5 × 0,40',
+  '3 picture ledges above sofa': '3 ambalan pigura di atas sofa',
+  'AC ledge': 'dak outdoor AC',
+  '2F sunshade canopy below (dashed)': 'topi-topi peneduh L2 di bawah (putus-putus)',
+  'wood facade': 'aksen fasad kayu',
+  'WFH desk': 'meja kerja WFH',
+  'WFH nook (over porch)': 'sudut WFH (di atas teras kecil)',
+  'faces the alcove window': 'menghadap jendela belakang',
+  'pull-up bar 1.1 m @ 2.25 + mat': 'palang pull-up 1,1 m @ 2,25 + matras',
+  'VOID': 'VOID',
+  'open to dining bay below': 'terbuka ke ruang makan di bawah',
+  '1.1 m glass guard + sliding glass (orange)': 'pagar kaca 1,1 m + kaca geser kedap suara',
+  'void ≈ 2.5 × 1.5': 'void ≈ 2,5 × 1,5',
+  'built-in desk (alcove)': 'meja kerja tanam',
+  'future void ~2042 (not in 2028)': 'calon void ~2042 (utuh di 2028)',
+  'TV console': 'meja TV',
+  'desk': 'meja belajar',
+  'sliding wardrobe': 'lemari pintu geser',
+  'reading chair': 'kursi baca',
+  'Lounge / WFH': 'R. Keluarga L3 / WFH',
+  'Stair landing': 'Bordes tangga',
+  'small rear window\nbrick feature side wall': 'jendela belakang kecil\ndinding samping bata ekspos',
+  'Master bedroom 3F': 'Kamar Utama L3',
+  'Front-left': 'Kamar depan-kiri',
+  'bedroom': '',
+  'Kid #1 bedroom': 'Kamar Anak #1',
+  '3.75 × 2.40': '3,75 × 2,40',
+  'Kid #2': 'Kamar Anak #2',
+  '3.50 × 2.40': '3,50 × 2,40',
+  'solid parapet': 'tembok pengaman tangga',
+  '2028: Low-E solar film + UV blind': '2028: kaca film Low-E + tirai UV',
+  '+ magnetic black SS304 screen': '+ kawat nyamuk hitam SS304 magnetik',
+  '2028: <28dB exhaust': '2028: exhaust <28dB',
+  '2028: magnetic black SS304 screens on all 3F windows (2-hr install, zero disruption)': '2028: kawat nyamuk hitam SS304 magnetik di semua jendela L3 (pasang ~2 jam, tanpa bongkar)',
+  '~2042: closable void (glass guard + acoustic slide)': '~2042: void buka-tutup (pagar kaca + kaca geser kedap)',
+  '2028 prep: slab check + service-free strip': 'persiapan 2028: cek struktur + pelat bebas kabel/pipa',
+  '~2042: 4× transom flaps (boven)': '~2042: 4× boven pintu buka-tutup',
+  '~2042 DC fan': '~2042 kipas DC',
+
+  // Section A-A
+  'neighbour': 'rumah tetangga',
+  'tree (beyond)': 'pohon (tampak jauh)',
+  'full-length shade canopy →': 'kanopi peneduh penuh ~6,5 m →',
+  '2028: Low-E film + UV blind →': '2028: kaca film Low-E + tirai UV →',
+  'black SS304 screens (1F–3F) →': 'kawat nyamuk hitam SS304 (L1–L3) →',
+  '2028: attic foil + 50mm rockwool + roof vents': '2028: foil atap + rockwool 50mm + ventilasi atap',
+  '+ <28 dB 3F stair exhaust →': '+ exhaust tangga L3 <28 dB →',
+  'Raised pool': 'Kolam panggung',
+  '+0.20': '+0,20',
+  '+0.90 (removed)': '+0,90 (dibongkar)',
+  '(R. Duduk, open)': '(R. Duduk, terbuka)',
+  'bench in the bay': 'bangku di ruang bay',
+  'Balcony 1.0 m →': 'Balkon 1,0 m →',
+  '← ~2042 closable void (2028: service-free)': '← void buka-tutup ~2042 (2028: bebas kabel/pipa)',
+  'Recessed balcony 0.90 m →': 'Balkon mundur 0,90 m →',
+  '2F ceiling 3.05 m': 'plafon L2 bersih 3,05 m',
+  'Lounge': 'R. Keluarga L3',
+  '2028 zero demo · ~2042 fans/flaps': '2028 tanpa bongkar · ~2042 kipas/boven',
+  'Kid #1': 'Kamar Anak #1',
+  'boundary wall +5.25': 'dinding batas +5,25',
+  '±0.00 1F': '±0,00 L1',
+  '+2.20 2F': '+2,20 L2',
+  '+5.45 3F': '+5,45 L3',
+  '+8.30 ceiling': '+8,30 plafon L3',
+  '+9.65 ridge': '+9,65 bubungan',
+  '2.10 clear': '2,10 bersih',
+  '3.05': '3,05',
+  '2.85': '2,85',
+  '≈ 6.9 m': '≈ 6,9 m',
+
+  // Access mini plans
+  'half-landing': 'bordes tengah',
+  'foot zone': 'area injak bawah',
+  'porch door (2F)': 'pintu teras kecil (L2)',
+  '2F balcony (dashed)': 'balkon L2 (putus-putus)',
+  'leg C · 5.4 m': 'jalur C · 5,4 m',
+  'leg D 1.45': 'jalur D 1,45',
+  'leg A = whole balcony (re-pitched)': 'jalur A = seluruh balkon (dimiringkan)',
+  'start at garage floor': 'mulai dari lantai garasi',
+  'water wall': 'dinding air',
+  'bench modules stay': 'bangku-planter tetap',
+  'platform ≈ 1.0 × 1.45': 'platform lift ≈ 1,0 × 1,45',
+  'opens onto balcony': 'buka langsung ke balkon',
+};
+function tr2d(s) {
+  if (s === undefined || s === null || s === '') return '';
+  const str = String(s);
+  if (typeof LANG === 'undefined' || LANG !== 'id') return str;
+  if (Object.prototype.hasOwnProperty.call(TR_2D_ID, str)) return TR_2D_ID[str];
+  if (typeof window !== 'undefined' && window.__checkMissing2D) window.__checkMissing2D.push(str);
+  return str;
+}
+
+class Sheet {
+  constructor(S, ox, oy) { this.S = S; this.ox = ox; this.oy = oy; this.L = { fill: [], hatch: [], furn: [], over: [], wall: [], open: [], ann: [], dim: [], lab: [] }; }
+  X(x) { return +(this.ox + x * this.S).toFixed(1); }
+  Y(y) { return +(this.oy + y * this.S).toFixed(1); }
+  pts(arr) { return arr.map(p => this.X(p[0]) + ',' + this.Y(p[1])).join(' '); }
+  poly(layer, arr, attrs) { this.L[layer].push(`<polygon points="${this.pts(arr)}" ${attrs}/>`); }
+  rect(layer, x0, y0, x1, y1, attrs) { const a = Math.min(x0, x1), b = Math.min(y0, y1); this.L[layer].push(`<rect x="${this.X(a)}" y="${this.Y(b)}" width="${(Math.abs(x1 - x0) * this.S).toFixed(1)}" height="${(Math.abs(y1 - y0) * this.S).toFixed(1)}" ${attrs}/>`); }
+  line(layer, x0, y0, x1, y1, attrs) { this.L[layer].push(`<line x1="${this.X(x0)}" y1="${this.Y(y0)}" x2="${this.X(x1)}" y2="${this.Y(y1)}" ${attrs}/>`); }
+  pline(layer, arr, attrs) { this.L[layer].push(`<polyline points="${this.pts(arr)}" fill="none" ${attrs}/>`); }
+  circle(layer, x, y, r, attrs) { this.L[layer].push(`<circle cx="${this.X(x)}" cy="${this.Y(y)}" r="${(r * this.S).toFixed(1)}" ${attrs}/>`); }
+  text(layer, x, y, s, attrs = '') { const ts = tr2d(s); if (!ts) return; this.L[layer].push(`<text x="${this.X(x)}" y="${this.Y(y)}" ${attrs}>${esc(ts)}</text>`); }
+  raw(layer, s) { this.L[layer].push(s); }
+  out() { return Object.values(this.L).map(a => a.join('\n')).join('\n'); }
+
+  // ---- walls ----
+  segPoly(x0, y0, x1, y1, t) {
+    const dx = x1 - x0, dy = y1 - y0, l = Math.hypot(dx, dy) || 1, nx = -dy / l * t / 2, ny = dx / l * t / 2;
+    return [[x0 - nx, y0 - ny], [x1 - nx, y1 - ny], [x1 + nx, y1 + ny], [x0 + nx, y0 + ny]];
+  }
+  wallSeg(x0, y0, x1, y1, t, kind = 'ex') {
+    const p = this.segPoly(x0, y0, x1, y1, t);
+    if (kind === 'rem') this.poly('wall', p, `fill="${C.rem}" fill-opacity="0.08" stroke="${C.rem}" stroke-width="1.4" stroke-dasharray="5 3"`);
+    else if (kind === 'new') this.poly('wall', p, `fill="${C.neu}" stroke="${C.neu}" stroke-width="0.6"`);
+    else if (kind === 'low') this.poly('wall', p, `fill="#fff" stroke="${C.wall}" stroke-width="1.2"`);
+    else this.poly('wall', p, `fill="${C.wall}" stroke="${C.wall}" stroke-width="0.6"`);
+  }
+  // wall with openings: ops = [{a,b,type:'door'|'door2'|'win'|'gap'|'slide'|'fixed', hinge:'a'|'b', side:+1|-1, kind}]
+  wall(x0, y0, x1, y1, t, kind = 'ex', ops = []) {
+    const l = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / l, uy = (y1 - y0) / l, nx = -uy, ny = ux;
+    const P = d => [x0 + ux * d, y0 + uy * d];
+    let cur = 0;
+    for (const o of [...ops].sort((p, q) => p.a - q.a)) {
+      if (o.a > cur + 0.005) this.wallSeg(...P(cur), ...P(o.a), t, kind);
+      const k = o.kind || kind;
+      const col = k === 'new' ? C.neu : k === 'rem' ? C.rem : C.wall;
+      const dash = k === 'rem' ? ' stroke-dasharray="5 3"' : '';
+      const A = P(o.a), B = P(o.b);
+      if (o.type === 'win' || o.type === 'fixed' || o.type === 'slide') {
+        const pp = this.segPoly(...A, ...B, t);
+        this.poly('open', pp, `fill="#fff" stroke="${col}" stroke-width="${k === 'new' ? 1.8 : 1}"${dash}`);
+        if (o.type === 'slide') {
+          const m = (o.a + o.b) / 2, off = t * 0.18;
+          const a1 = P(o.a), m1 = P(m + 0.1), m0 = P(m - 0.1), b1 = P(o.b);
+          this.line('open', a1[0] + nx * off, a1[1] + ny * off, m1[0] + nx * off, m1[1] + ny * off, `stroke="${col}" stroke-width="1.6"${dash}`);
+          this.line('open', m0[0] - nx * off, m0[1] - ny * off, b1[0] - nx * off, b1[1] - ny * off, `stroke="${col}" stroke-width="1.6"${dash}`);
+        } else this.line('open', ...A, ...B, `stroke="${col}" stroke-width="${k === 'new' ? 1.8 : 1.1}"${dash}`);
+        if (o.sill) this.line('open', A[0] + nx * o.sill, A[1] + ny * o.sill, B[0] + nx * o.sill, B[1] + ny * o.sill, `stroke="${col}" stroke-width="0.8"`);
+      } else if (o.type === 'door' || o.type === 'door2') {
+        const leaf = (H, J, w) => {
+          const sd = o.side || 1, T = [H[0] + nx * sd * w, H[1] + ny * sd * w];
+          this.line('open', ...H, ...T, `stroke="${col}" stroke-width="2"${dash}`);
+          const cr = (J[0] - H[0]) * (T[1] - H[1]) - (J[1] - H[1]) * (T[0] - H[0]);
+          this.raw('open', `<path d="M${this.X(J[0])},${this.Y(J[1])} A${(w * this.S).toFixed(1)},${(w * this.S).toFixed(1)} 0 0 ${cr > 0 ? 1 : 0} ${this.X(T[0])},${this.Y(T[1])}" fill="none" stroke="${col}" stroke-width="0.8" stroke-dasharray="3 2"/>`);
+        };
+        if (o.type === 'door') leaf(o.hinge === 'b' ? B : A, o.hinge === 'b' ? A : B, o.b - o.a);
+        else { const M = P((o.a + o.b) / 2); leaf(A, M, (o.b - o.a) / 2); leaf(B, M, (o.b - o.a) / 2); }
+        if (o.frame) { this.line('open', ...A, ...B, `stroke="${col}" stroke-width="0.6"`); }
+      }
+      cur = o.b;
+    }
+    if (cur < l - 0.005) this.wallSeg(...P(cur), x1, y1, t, kind);
+  }
+  // ---- furniture ----
+  furn(x0, y0, x1, y1, opt = {}) {
+    const st = opt.rem ? `stroke="${C.rem}" stroke-dasharray="4 2"` : opt.neu ? `stroke="${C.neu}"` : `stroke="${C.furn}"`;
+    const fill = opt.fill || (opt.neu ? C.joinFill : C.furnFill);
+    this.rect('furn', x0, y0, x1, y1, `fill="${fill}" ${st} stroke-width="${opt.neu ? 1.2 : 0.9}"${opt.rx ? ` rx="${opt.rx * this.S}"` : ''}`);
+    if (opt.label) this.text('furn', (x0 + x1) / 2, (y0 + y1) / 2 + 0.06, opt.label, `class="fl"${opt.vert ? ` transform="rotate(-90 ${this.X((x0 + x1) / 2)} ${this.Y((y0 + y1) / 2)})"` : ''}`);
+  }
+  chair(x, y, w, d, back, opt = {}) {
+    this.furn(x, y, x + w, y + d, opt);
+    const b = 0.07, s = opt.neu ? C.neu : C.furn;
+    if (back === 'N') this.line('furn', x, y + b, x + w, y + b, `stroke="${s}"`);
+    if (back === 'S') this.line('furn', x, y + d - b, x + w, y + d - b, `stroke="${s}"`);
+    if (back === 'E') this.line('furn', x + w - b, y, x + w - b, y + d, `stroke="${s}"`);
+    if (back === 'W') this.line('furn', x + b, y, x + b, y + d, `stroke="${s}"`);
+  }
+  bed(x0, y0, x1, y1, head, opt = {}) {
+    this.furn(x0, y0, x1, y1, opt);
+    const s = C.furn;
+    if (head === 'E') { this.line('furn', x1 - 0.08, y0, x1 - 0.08, y1, `stroke="${s}"`); this.rect('furn', x1 - 0.5, y0 + 0.12, x1 - 0.14, (y0 + y1) / 2 - 0.05, `fill="#fff" stroke="${s}" stroke-width="0.7" rx="3"`); this.rect('furn', x1 - 0.5, (y0 + y1) / 2 + 0.05, x1 - 0.14, y1 - 0.12, `fill="#fff" stroke="${s}" stroke-width="0.7" rx="3"`); this.line('furn', x0 + (x1 - x0) * 0.45, y0, x0 + (x1 - x0) * 0.45, y1, `stroke="${s}" stroke-width="0.6"`); }
+    if (head === 'W') { this.line('furn', x0 + 0.08, y0, x0 + 0.08, y1, `stroke="${s}"`); this.rect('furn', x0 + 0.14, y0 + 0.15, x0 + 0.5, y1 - 0.15, `fill="#fff" stroke="${s}" stroke-width="0.7" rx="3"`); }
+  }
+  sofa(x0, y0, x1, y1, back, opt = {}) {
+    this.furn(x0, y0, x1, y1, Object.assign({ rx: 0.06 }, opt));
+    const s = C.furn, b = 0.2, a = 0.14;
+    if (back === 'E') { this.rect('furn', x1 - b, y0, x1, y1, `fill="#e4e4e0" stroke="${s}"`); this.line('furn', x0, y0 + a, x1 - b, y0 + a, `stroke="${s}"`); this.line('furn', x0, y1 - a, x1 - b, y1 - a, `stroke="${s}"`); }
+    if (back === 'S') { this.rect('furn', x0, y1 - b, x1, y1, `fill="#e4e4e0" stroke="${s}"`); this.line('furn', x0 + a, y0, x0 + a, y1 - b, `stroke="${s}"`); this.line('furn', x1 - a, y0, x1 - a, y1 - b, `stroke="${s}"`); }
+  }
+  // ---- annotation ----
+  room(x, y, name, sub, opt = {}) {
+    const cls = opt.out ? 'rn rn-out' : 'rn';
+    this.text('lab', x, y, name, `class="${cls}"${opt.size ? ` style="font-size:${opt.size}px"` : ''}`);
+    const tsub = tr2d(sub);
+    if (tsub) String(tsub).split('\n').forEach((s, i) => { if (s) this.L.lab.push(`<text x="${this.X(x)}" y="${this.Y(y + (0.27 + i * 0.24))}" class="rs${opt.subcls ? ' ' + opt.subcls : ''}">${esc(s)}</text>`); });
+  }
+  note(x, y, s, opt = {}) { this.text('lab', x, y, s, `class="${opt.cls || 'nt'}"${opt.anchor ? ` text-anchor="${opt.anchor}"` : ''}${opt.rot ? ` transform="rotate(${opt.rot} ${this.X(x)} ${this.Y(y)})"` : ''}`); }
+  tag(x, y, n, col = C.neu) {
+    this.circle('lab', x, y, 0.17, `fill="${col}" stroke="#fff" stroke-width="1.2"`);
+    this.text('lab', x, y + 0.06, n, `class="tagn"`);
+  }
+  // dimension line between points, offset perpendicular by off (m)
+  dim(x0, y0, x1, y1, off, label, opt = {}) {
+    const l = Math.hypot(x1 - x0, y1 - y0), ux = (x1 - x0) / l, uy = (y1 - y0) / l, nx = -uy * off, ny = ux * off;
+    const a = [x0 + nx, y0 + ny], b = [x1 + nx, y1 + ny];
+    const col = opt.col || C.dim;
+    this.line('dim', x0, y0, a[0] + Math.sign(off) * -uy * 0.08, a[1] + Math.sign(off) * ux * 0.08, `stroke="${col}" stroke-width="0.6"`);
+    this.line('dim', x1, y1, b[0] + Math.sign(off) * -uy * 0.08, b[1] + Math.sign(off) * ux * 0.08, `stroke="${col}" stroke-width="0.6"`);
+    this.line('dim', ...a, ...b, `stroke="${col}" stroke-width="0.9"`);
+    [a, b].forEach(p => this.line('dim', p[0] - 0.07 * (ux + uy) , p[1] - 0.07 * (uy - ux), p[0] + 0.07 * (ux + uy), p[1] + 0.07 * (uy - ux), `stroke="${col}" stroke-width="1.3"`));
+    const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const ang = Math.atan2(uy, ux) * 180 / Math.PI;
+    const rot = (ang > 90 || ang < -90) ? ang + 180 : ang;
+    const tOff = opt.inside ? 0.2 : -0.07;
+    const tx = m[0] + (-uy) * (Math.sign(off) || 1) * (opt.flip ? -0.2 : 0) , ty = m[1] + ux * (Math.sign(off) || 1) * (opt.flip ? -0.2 : 0);
+    this.raw('dim', `<text x="${this.X(tx)}" y="${this.Y(ty)}" class="dt" dy="${opt.below ? 11 : -3}" transform="rotate(${rot.toFixed(1)} ${this.X(tx)} ${this.Y(ty)})" fill="${col}">${esc(tr2d(label))}</text>`);
+  }
+  // stair treads given list of tread lines (pairs of points) and arrow path
+  arrow(path, label, opt = {}) {
+    const col = opt.col || '#333';
+    this.pline('ann', path, `stroke="${col}" stroke-width="1.3"${opt.dash ? ' stroke-dasharray="5 3"' : ''}`);
+    const n = path.length, p = path[n - 1], q = path[n - 2];
+    const dx = p[0] - q[0], dy = p[1] - q[1], l = Math.hypot(dx, dy), ux = dx / l, uy = dy / l, s = 0.16;
+    this.poly('ann', [p, [p[0] - ux * s - uy * s * 0.55, p[1] - uy * s + ux * s * 0.55], [p[0] - ux * s + uy * s * 0.55, p[1] - uy * s - ux * s * 0.55]], `fill="${col}"`);
+    this.circle('ann', path[0][0], path[0][1], 0.05, `fill="${col}"`);
+    if (label) this.text('ann', opt.lx ?? path[0][0], opt.ly ?? path[0][1], label, `class="stl"`);
+  }
+}
+
+// north arrow + scale bar (in px coordinates)
+function northArrow(cx, cy) {
+  // true north in model: +X rotated 7 deg toward -Y (courtyard faces ~277 deg). Screen: X right, Y down.
+  const ang = Math.atan2(-0.122, 0.993) * 180 / Math.PI; // screen angle of N
+  return `<g transform="translate(${cx},${cy})">
+    <circle r="30" fill="#fff" stroke="#adb5bd"/>
+    <g transform="rotate(${(ang + 90).toFixed(1)})"><polygon points="0,-26 8,8 0,2 -8,8" fill="#1d242b"/><text y="-31" class="na" text-anchor="middle">N</text></g>
+    <text y="46" class="nts" text-anchor="middle">${esc(tr2d('true north'))}</text>
+  </g>`;
+}
+function scaleBar(x, y, S) {
+  let s = `<g transform="translate(${x},${y})">`;
+  for (let i = 0; i < 5; i++) s += `<rect x="${i * S}" y="0" width="${S}" height="7" fill="${i % 2 ? '#fff' : '#1d242b'}" stroke="#1d242b" stroke-width="0.8"/>`;
+  for (let i = 0; i <= 5; i++) s += `<text x="${i * S}" y="20" class="sb" text-anchor="middle">${i}</text>`;
+  s += `<text x="${5 * S + 10}" y="8" class="sb">${esc(tr2d('metres'))}</text></g>`;
+  return s;
+}
+
+// musholla front window kept: frame kept, solid insulated lower panel (to ~+0.87 floor), laminated glass above
+function mushWin(s, xa, xb, y = 10.32) {
+  s.rect('open', xa, y - 0.02, xb, y + 0.05, 'fill="#d0ebff" stroke="#1864ab" stroke-width="0.8"');
+  s.rect('open', xa, y - 0.065, xb, y - 0.02, 'fill="#6c757d" stroke="#495057" stroke-width="0.6"');
+}
+// ===== 1F plan =====
+const RY = -0.90;
+function plan1F(s, after) {
+  // --- site & fills ---
+  s.poly('fill', [[L(-1.2), -1.2], [10.54, -1.2], [10.54, 13.6], [L(13.6), 13.6]], `fill="none" stroke="#868e96" stroke-width="0.8" stroke-dasharray="10 3 2 3"`);
+  s.rect('fill', 6.75, RY, 10.40, 10.25, `fill="#eef0f2"`);                        // garage
+  s.rect('fill', 5.40, 10.39, 10.40, 13.60, `fill="#eef0f2" stroke="#ced4da"`);     // carport
+  s.poly('fill', [[L(10.98), 10.98], [5.40, 10.98], [5.40, 13.6], [L(13.6), 13.6]], `fill="#e9f5e4"`);
+  s.rect('furn', 1.15, 11.20, 5.15, 11.75, `fill="#cfe8c4" stroke="#8fbf80"`);
+  s.poly('fill', [[L(3.45), 3.45], [6.75, 3.45], [6.75, 10.25], [L(10.25), 10.25]], `fill="#fff"`);
+  s.poly('fill', [[L(5.95) + 0.04, 5.95], [2.45, 5.95], [2.45, 8.55], [L(8.55) + 0.04, 8.55]], `fill="#f8f9fa"`);
+  // courtyard
+  const cy = [[L(RY), RY], [6.75, RY], [6.75, 3.45], [L(3.45), 3.45]];
+  if (after) {
+    s.poly('fill', cy, `fill="url(#deck)"`);
+    s.raw('over', `<polyline points="${[[3.00, 3.45], [L(3.45) + 0.02, 3.45], [L(-0.86) + 0.02, -0.86], [6.74, -0.86], [6.74, 3.45]].map(([x, y]) => s.X(x) + ',' + s.Y(y)).join(' ')}" fill="none" stroke="${C.neu}" stroke-width="1.6"/>`);
+    s.line('over', 3.00, 3.45, 6.74, 3.45, `stroke="#868e96" stroke-width="0.8"`);   // deck edge = step 20 cm down to R. Duduk (open)
+    s.note(3.75, 3.38, 'step 20 cm', { cls: 'nto', anchor: 'middle' });
+  } else {
+    s.poly('fill', cy, `fill="#f4f1ea"`);
+    // raised pool (+0.90) incl. pump terrace — removed in 2028
+    s.poly('hatch', [[L(-0.88) + 0.02, -0.88], [6.74, -0.88], [6.74, 3.45], [L(3.45) + 0.02, 3.45]], `fill="#e9eef2" stroke="${C.rem}" stroke-width="1.5" stroke-dasharray="6 3"`);
+    s.poly('hatch', [[L(-0.68) + 0.24, -0.68], [6.52, -0.68], [6.52, 2.33], [L(2.33) + 0.24, 2.33]], `fill="url(#water)" stroke="${C.rem}" stroke-width="1" stroke-dasharray="6 3"`);
+    s.line('hatch', L(2.55) + 0.02, 2.55, 6.74, 2.55, `stroke="${C.rem}" stroke-width="1" stroke-dasharray="6 3"`);
+    s.furn(0.42, -0.82, 1.02, -0.35, { rem: true, label: 'pump' });
+  }
+  // --- exterior stair (street → 2F front terrace) ---
+  for (let i = 0; i <= 11; i++) { const x = 5.40 - i * 3.07 / 11; s.line('furn', x, 10.39, x, 10.98, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', 2.33, 10.39, 5.40, 10.39, `stroke="#868e96"`); s.line('furn', L(10.98), 10.98, 5.40, 10.98, `stroke="#343a40" stroke-width="1.4"`);
+  s.poly('furn', [[L(10.39), 10.39], [2.33, 10.39], [2.33, 10.98], [L(10.98), 10.98]], `fill="#f1f3f5" stroke="#868e96"`);
+  s.arrow([[5.25, 10.68], [2.5, 10.68]], '');
+  s.note(3.9, 10.62, 'UP 11 steps to 2F terrace', { cls: 'ntc' });
+  s.note(1.35, 10.75, 'landing', { cls: 'nts2' });
+
+  // --- walls ---
+  // 2-storey (+5.25 m) grey courtyard boundary walls along BOTH rear and left/side courtyard edges (up to Y = 2.55)
+  s.poly('wall', s.segPoly(L(-1.20) - 0.28, -1.05, 6.75, -1.05, 0.30), `fill="#495057" stroke="#212529" stroke-width="0.8"`);
+  s.poly('wall', s.segPoly(L(-1.20) - 0.15, -1.20, L(2.55) - 0.15, 2.55, 0.30), `fill="#495057" stroke="#212529" stroke-width="0.8"`);
+  s.wallSeg(6.75, -0.97, 10.54, -0.97, 0.14);
+  s.wallSeg(L(2.55) - 0.07, 2.55, L(10.39) - 0.07, 10.39, 0.14);          // side lot wall (house section)
+  s.wallSeg(10.47, -1.04, 10.47, 10.39, 0.14);                           // garage side wall
+  s.wall(L(10.32), 10.32, 6.81, 10.32, 0.14, 'ex', [{ a: 5.55 - L(10.32), b: 6.70 - L(10.32), type: 'win' }]);   // front wall + service-kitchen window to the carport
+  // K.ART (Y 3.45–5.05) + 1F WC (Y 5.05–5.95): doors on X=3.00 swinging into R. Duduk (+X, 0.58 m+ clear of gym pad)
+  s.wall(3.00, 3.45, 3.00, 5.95, 0.11, 'ex', [
+    { a: 0.80, b: 1.53, type: 'door', hinge: 'a', side: -1 },
+    { a: 1.67, b: 2.39, type: 'door', hinge: 'a', side: -1 },
+  ]);
+  s.wallSeg(L(5.05), 5.05, 3.00, 5.05, 0.10);
+  s.wallSeg(L(5.95), 5.95, 3.00, 5.95, 0.10);
+  s.wallSeg(2.45, 5.95, 2.45, 7.85, 0.10);                               // stair shaft east wall
+  s.wall(3.00, 6.60, 6.75, 6.60, 0.11, 'ex', [{ a: 0.35, b: 1.30, type: 'gap' }]);
+  // Gudang in front-left corner (X = leftLotX..2.45, Y = 8.55–10.25), door on X=2.45 at Y 8.75–9.45 opening into service kitchen
+  s.wallSeg(L(8.55), 8.55, 2.45, 8.55, 0.11);
+  s.wall(2.45, 8.55, 2.45, 10.25, 0.10, 'ex', [{ a: 0.20, b: 0.90, type: 'door', hinge: 'a', side: -1 }]);
+  s.wall(6.75, 6.60, 6.75, 10.25, 0.12, 'ex', [{ a: 0.80, b: 2.40, type: 'win' }]);   // service kitchen ↔ garage window · R. Duduk (Y 3.45–6.60) is an open covered terrace: no wall/glass to the garage
+  s.wallSeg(L(3.45), 3.45, 3.00, 3.45, 0.12);   // helper-room rear wall; R. Duduk open to the courtyard (no wall/glass)
+  // garage ↔ courtyard divider
+  if (!after) {
+    s.wall(6.75, RY, 6.75, 3.45, 0.10, 'rem', [{ a: 0.02, b: 4.33, type: 'slide' }]);
+  }
+  // --- 2F overhang lines (dashed, above) ---
+  if (after) {
+    s.poly('over', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], `fill="none" stroke="#adb5bd" stroke-width="0.8" stroke-dasharray="6 4"`);
+    [1.60, 3.80, 5.55, 6.85].forEach(px => s.rect('over', px, 1.59, px + 0.08, 1.67, `fill="#212529"`));
+  }
+  s.line('over', L(2.55), 2.55, 7.10, 2.55, `stroke="#adb5bd" stroke-width="0.8" stroke-dasharray="6 4"`);
+  s.note(after ? 4.7 : 4.6, after ? 2.45 : 2.48, after ? '2F balcony above (dashed)' : '2F above (dashed)', { cls: 'nts2', anchor: 'middle' });
+
+  // --- furniture ---
+  s.furn(7.65, 0.45, 9.50, 4.85, { rx: 0.25, fill: '#f8f9fa' }); s.note(8.575, 2.75, 'car 1', { cls: 'fl2', anchor: 'middle' });
+  s.furn(7.65, 5.20, 9.50, 9.95, { rx: 0.25, fill: '#f8f9fa' }); s.note(8.575, 7.65, 'car 2', { cls: 'fl2', anchor: 'middle' });
+  s.bed(0.75, 3.55, 2.58, 4.42, 'W');
+  // service-kitchen L counter: garage wall (X 6.10–6.70, Y 6.70–9.65) + front wall (X 2.55–6.70, Y 9.65–10.25)
+  s.poly('furn', [[6.10, 6.70], [6.70, 6.70], [6.70, 10.25], [2.55, 10.25], [2.55, 9.65], [6.10, 9.65]], `fill="${C.furnFill}" stroke="${C.furn}"`);
+  s.note(6.40, 8.15, 'counter', { cls: 'fl', rot: -90, anchor: 'middle' }); s.note(4.35, 9.98, 'counter', { cls: 'fl', anchor: 'middle' });
+  // Stacked L-shaped stair 1F→2F (mirrors the 2F→3F stair above it):
+  //   3 steps going −X (X 2.60→1.52 at Y 7.85–8.50) → corner landing (X L..1.52, Y 7.85–8.50) → 8 steps going −Y (X L+0.50..2.43, Y 7.85→5.95)
+  s.rect('furn', 1.52, 7.85, 2.60, 8.50, `fill="#f8f9fa" stroke="#868e96"`);
+  for (let k = 0; k <= 3; k++) { const x = 2.60 - k * 0.36; s.line('furn', x, 7.85, x, 8.50, `stroke="#868e96" stroke-width="0.8"`); }
+  s.poly('furn', [[L(7.85) + 0.06, 7.85], [1.52, 7.85], [1.52, 8.50], [L(8.50) + 0.06, 8.50]], `fill="#f8f9fa" stroke="#868e96"`);
+  for (let k = 0; k <= 8; k++) { const y = 7.85 - k * 0.2375; s.line('furn', L(y) + 0.50, y, 2.43, y, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', L(5.95) + 0.50, 5.95, L(7.85) + 0.50, 7.85, `stroke="#868e96" stroke-width="0.8"`);
+  s.arrow([[2.48, 8.18], [1.92, 8.18], [1.92, 6.12]], '');
+  s.note(2.22, 8.42, 'UP', { cls: 'stl' });
+  // WC fixture (indicative)
+  s.furn(0.72, 5.28, 1.12, 5.73, { rx: 0.12 });
+  if (after) {
+    s.furn(3.05, 3.55, 3.70, 4.20, { neu: true });
+    s.note(3.38, 3.83, 'washer', { cls: 'nto', anchor: 'middle' });
+    s.note(3.38, 4.03, '+ dryer', { cls: 'nto', anchor: 'middle' });
+    s.rect('furn', 4.30, 5.05, 6.30, 6.52, `fill="#495057" fill-opacity="0.12" stroke="#495057"`); s.note(5.25, 5.72, 'barbell pad 2 × 1.5 · 1.8 m bar', { cls: 'nts2', anchor: 'middle' });
+    s.rect('furn', 4.60, 6.40, 6.00, 6.53, `fill="${C.neu}"`); s.note(5.16, 6.33, 'folding wall squat rack', { cls: 'nto', anchor: 'middle' });
+    s.furn(6.05, 6.22, 6.65, 6.57, { neu: true }); s.note(6.38, 6.12, 'dumbbells', { cls: 'nto', anchor: 'middle' });
+    s.circle('over', 5.15, 5.20, 0.48, `fill="none" stroke="${C.neu}" stroke-width="0.9" stroke-dasharray="4 3"`); s.note(5.15, 5.02, 'DC fan', { cls: 'nto', anchor: 'middle' });
+    s.arrow([[4.0, 4.62], [7.4, 4.62]], '', { col: '#1864ab', dash: true }); s.note(5.75, 4.50, 'open to garage · ≥ 1.2 m clear path', { cls: 'ntb2', anchor: 'middle' });
+
+    [[0.80, 1.55], [1.65, 2.40]].forEach(([a, b]) => { s.rect('over', a, 1.7, b, 2.4, `fill="none" stroke="${C.neu}" stroke-dasharray="4 3"`); for (let k = 1; k < 5; k++) s.line('over', a, 1.7 + k * 0.14, b, 1.7 + k * 0.14, `stroke="${C.neu}" stroke-width="0.5" stroke-dasharray="2 2"`); });
+    s.poly('furn', [[L(-0.88) + 0.02, -0.88], [2.10, -0.88], [2.10, -0.48], [L(-0.48) + 0.42, -0.48], [L(-0.08) + 0.42, -0.08], [L(-0.08) + 0.02, -0.08]], `fill="#d0ebff" stroke="${C.neu}" stroke-width="1.2"`); s.line('furn', L(-0.86) + 0.05, -0.85, 2.10, -0.85, `stroke="#1971c2" stroke-width="2"`); s.line('furn', L(-0.86) + 0.05, -0.85, L(-0.08) + 0.05, -0.08, `stroke="#868e96" stroke-width="3"`); s.note(1.42, -0.64, 'water wall + stone return (corner)', { cls: 'ntb2', anchor: 'middle' });
+    // tree planter + canopy
+    s.rect('furn', 0.35, 0.05, 1.45, 1.05, `fill="#d8f0d4" stroke="${C.neu}" stroke-width="1.3"`);
+    s.circle('over', 0.92, 0.55, 0.85, `fill="#69b56b" fill-opacity="0.18" stroke="#3d8b4f" stroke-dasharray="3 3"`);
+    s.circle('furn', 0.90, 0.55, 0.08, `fill="#6e4e35"`); s.note(0.95, 0.85, 'tree', { cls: 'nts2', anchor: 'middle' });
+    // vertical garden on the rear wall (wall-mounted, floor clear)
+    s.rect('over', 2.2, -0.90, 4.2, -0.80, `fill="#cfe8c4" stroke="#2f7d58" stroke-dasharray="4 2"`);
+    // planter-bench modules on the rear wall (under the vertical garden)
+    [[2.12, 3.05], [3.20, 4.20]].forEach(([a, b]) => { s.rect('furn', a, -0.88, b, -0.60, `fill="#cfe8c4" stroke="#69b98d"`); s.rect('furn', a, -0.60, b, -0.15, `fill="${C.joinFill}" stroke="${C.neu}" stroke-width="1.2"`); });
+    s.note(3.16, -0.30, 'planter-bench modules', { cls: 'nto', anchor: 'middle' }); s.note(3.2, -1.26, 'vertical garden later (water + power points ready)', { cls: 'nts2', anchor: 'middle' });
+    // patio: BBQ table 1.8 × 0.9, bench = north-side seating
+    s.rect('furn', 2.3, -0.05, 4.1, 0.85, `fill="#fff" stroke="#6c757d" stroke-width="1.1"`); s.note(3.2, 0.45, 'BBQ table 1.8 × 0.9', { cls: 'fl', anchor: 'middle' });
+    [2.45, 3.00, 3.55].forEach(cx => s.chair(cx, 0.91, 0.42, 0.42, 'S')); s.chair(4.14, 0.19, 0.42, 0.42, 'E');
+    s.furn(6.06, 2.78, 6.64, 3.24, { fill: '#e9ecef' }); s.note(6.35, 3.05, 'BBQ grill', { cls: 'ntc' });
+    // planter + bollards at the garage edge
+    [2.10, 3.00].forEach(by => s.circle('furn', 6.96, by + 0.06, 0.07, `fill="${C.neu}"`));
+  }
+  // --- labels ---
+  s.room(8.58, -0.42, 'Garage (Garasi)', '2-car tandem · 3.65 m wide');
+  s.room(after ? 5.2 : 4.85, after ? 3.75 : 4.35, after ? 'Gym + laundry' : 'Open terrace', after ? '(R. Duduk · open terrace)' : '(R. Duduk) · covered, 2.10 m clear');
+  s.room(4.45, 7.95, 'Service kitchen', '(Dapur)');
+  s.room(1.80, 4.68, 'Helper room', '(K. ART)', { size: 11.5 });
+  s.room(1.95, after ? 5.45 : 5.58, 'WC', '');
+  if (after) s.note(1.95, 5.76, 'exhaust fan', { cls: 'nto', anchor: 'middle' });
+  s.room(1.50, 9.35, 'Store', '(Gudang)');
+  s.room(7.9, 12.1, 'Carport', '−0.20 m', { out: true });
+  s.room(3.0, 12.65, 'Front garden', '', { out: true });
+  s.room(3.6, 13.45, 'STREET', '', { out: true, size: 12 });
+  if (after) {
+    s.room(4.7, 2.92, 'Courtyard deck', '+0.20 m WPC · tree stays', { out: true });
+    s.note(5.4, 0.0, 'future access: see Access sheet', { cls: 'ntb', anchor: 'middle' });
+    s.note(5.3, 1.35, 'open patio ≈ 4 × 2.4 m', { cls: 'nts2', anchor: 'middle' });
+    s.note(1.75, 2.55, 'pulley racks (overhead)', { cls: 'nto', anchor: 'middle' });
+    s.note(7.32, 3.25, 'bollards', { cls: 'nts2', rot: -90 });
+  } else {
+    s.room(3.4, 0.75, 'Raised pool +0.90', '6 × 3 m water (removed 2028)', { out: true, subcls: 'rsr' });
+    s.note(3.6, 3.08, 'laundry terrace +0.90 (under 2F)', { cls: 'nts2', anchor: 'middle' });
+    s.note(6.6, 0.4, 'sliding glass divider (removed)', { cls: 'ntr', rot: -90, anchor: 'middle' });
+  }
+  s.note(3.4, -1.0, 'REAR BOUNDARY WALL  h ≈ 5.25 m  (2-storey, neighbour behind)', { cls: 'ntw', anchor: 'middle' });
+  s.note(L(0.85) - 0.10, 0.85, 'SIDE BOUNDARY WALL  h ≈ 5.25 m', { cls: 'ntw', rot: -87, anchor: 'middle' });
+  // --- dims ---
+  s.dim(L(RY), RY, 6.75, RY, -0.62, 'courtyard ≈ 6.45 m wall to wall (verify)');
+  s.dim(-0.08, RY, -0.08, 3.45, 0.45, 'courtyard ≈ 4.35 m');
+  s.dim(6.75, 10.25, 10.40, 10.25, 0.0001, 'garage opening 3.65 m', { below: true });
+  s.dim(10.54, -1.2, 10.54, 10.39, -0.45, 'overall ≈ 11.6 m (rear boundary wall → front wall)');
+}
+// ===== 2F plan =====
+function plan2F(s, after) {
+  // slab / room fills
+  s.poly('fill', [[L(2.55), 2.55], [3.90, 2.55], [3.90, 3.45], [10.40, 3.45], [10.40, 10.25], [3.40, 10.25], [3.40, 7.95], [L(7.95), 7.95]], `fill="#fff"`);
+  s.rect('fill', 7.10, RY, 10.40, 3.45, `fill="#fff"`);
+  s.poly('fill', [[L(7.95), 7.95], [3.40, 7.95], [3.40, 10.25], [L(10.25), 10.25]], `fill="#f1f3f5"`);               // front terrace
+  s.poly('fill', [[L(10.32), 10.32], [2.33, 10.32], [2.33, 10.98], [L(10.98), 10.98]], `fill="#f1f3f5" stroke="#adb5bd"`); // stair landing (below terrace level)
+  for (let i = 0; i <= 4; i++) { const x = 2.33 + i * 0.279; s.line('furn', x, 10.39, x, 10.98, `stroke="#adb5bd" stroke-width="0.7"`); }
+  // 1F footprint below (courtyard outline) + 2-storey (+5.25 m) grey courtyard boundary walls along BOTH rear and left side!
+  s.poly('fill', [[L(RY), RY], [6.75, RY], [6.75, after ? 1.55 : 2.55], [L(after ? 1.55 : 2.55), after ? 1.55 : 2.55]], `fill="#f8f6f1"`);
+  s.note(3.5, 0.35, 'open to sky · courtyard below', { cls: 'nts2', anchor: 'middle' });
+  s.poly('wall', s.segPoly(L(-1.20) - 0.28, -1.05, 6.75, -1.05, 0.28), `fill="#5c636a" stroke="#212529" stroke-width="0.9"`);
+  s.poly('wall', s.segPoly(L(-1.20) - 0.15, -1.19, L(2.55) - 0.15, 2.55, 0.28), `fill="#5c636a" stroke="#212529" stroke-width="0.9"`);
+  s.note(3.45, -1.00, 'REAR BOUNDARY WALL  h ≈ 5.25 m  (2-storey)', { cls: 'ntw', anchor: 'middle' });
+  s.note(L(0.32) - 0.10, 0.32, 'SIDE WALL +5.25 m', { cls: 'ntw', rot: -87, anchor: 'middle' });
+  if (after) {
+    s.rect('fill', 3.90, 2.55, 5.95, 3.45, `fill="#fff7ef"`);
+    // long balcony 1.0 m
+    s.poly('fill', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], `fill="url(#steel)" stroke="${C.neu}" stroke-width="1.4"`);
+    s.line('wall', L(1.55) + 0.04, 1.55, 6.97, 1.55, `stroke="${C.neu}" stroke-width="3"`);           // railing
+    s.line('wall', 6.97, 1.55, 6.97, 2.55, `stroke="${C.neu}" stroke-width="3"`);
+    // ACs on a frame (AC end), café bar + stools, swing-out laundry rack, plant trough, canopy
+    s.furn(L(2.2) + 0.05, 2.19, L(2.2) + 0.95, 2.53, { neu: true, label: '3 ACs' });
+    s.rect('furn', 1.66, 2.185, 3.26, 2.485, `fill="${C.joinFill}" stroke="${C.neu}" stroke-dasharray="4 2"`); s.note(2.46, 2.39, 'fold-down sill bar', { cls: 'fl', anchor: 'middle' });
+    [2.12, 2.80].forEach(x => s.rect('furn', x - 0.16, 1.76, x + 0.16, 2.08, `fill="none" stroke="${C.neu}" stroke-dasharray="3 2"`));
+    s.rect('furn', 0.50, 1.66, 1.40, 2.12, `fill="none" stroke="${C.neu}" stroke-dasharray="3 2"`); for (let k = 1; k < 4; k++) s.line('furn', 0.50, 1.66 + k * 0.115, 1.40, 1.66 + k * 0.115, `stroke="${C.neu}" stroke-width="0.5"`); s.note(1.12, 1.60, 'fold-out laundry rack', { cls: 'nts2', anchor: 'middle' });
+    s.furn(4.00, 1.40, 5.30, 1.55, { neu: true, fill: '#dff2d8' }); s.note(5.45, 1.16, 'plant trough outside railing', { cls: 'nts2', anchor: 'middle' });
+    s.rect('over', L(1.55) + 0.04, 1.48, 6.98, 2.55, `fill="#edf2ff" fill-opacity="0.20" stroke="#5c7cfa" stroke-width="1.1" stroke-dasharray="12 3 2 3"`);
+  } else {
+    s.rect('fill', 3.90, 2.55, 7.03, 3.45, `fill="url(#steel)"`);
+    s.line('wall', 3.90, 2.55, 7.03, 2.55, `stroke="${C.rem}" stroke-width="2.4" stroke-dasharray="6 3"`);   // railing → becomes glazing
+    s.furn(3.97, 2.62, 4.29, 3.42, { rem: true });
+    s.note(4.13, 3.02, '3 ACs', { cls: 'ntr', rot: -90, anchor: 'middle' });
+    s.note(5.6, 2.85, 'recessed balcony 0.90 m', { cls: 'nts2', anchor: 'middle' });
+    s.note(5.6, 3.12, 'laundry hung here', { cls: 'nts2', anchor: 'middle' });
+  }
+  // --- walls ---
+  s.wallSeg(L(2.55) - 0.07, 2.55, L(7.95) - 0.07, 7.95, 0.14);
+  const xStw = L(7.95) - 0.07;
+  s.wall(xStw, 7.95, 3.40, 7.95, 0.11, 'ex', [{ a: 1.45 - xStw, b: 2.05 - xStw, type: 'win' }]); // stairwell-to-terrace wall w/ existing window X 1.45–2.05
+  s.wallSeg(10.47, -1.04, 10.47, 10.39, 0.14);
+  s.wallSeg(7.10, -0.97, 10.54, -0.97, 0.14);
+  // kitchen block rear wall
+  if (after) s.wall(L(2.55), 2.55, 3.96, 2.55, 0.13, 'ex', [{ a: 1.66 - L(2.55), b: 3.26 - L(2.55), type: 'win', kind: 'new' }]);
+  else s.wall(L(2.55), 2.55, 3.96, 2.55, 0.13, 'ex', [{ a: 1.60 - L(2.55), b: 2.40 - L(2.55), type: 'win' }]);
+  if (!after) {
+    s.wallSeg(3.90, 2.55, 3.90, 3.45, 0.12, 'rem');
+    s.wall(3.90, 3.45, 7.10, 3.45, 0.13, 'rem', [{ a: 0.40, b: 2.25, type: 'win' }, { a: 2.35, b: 3.10, type: 'door', hinge: 'a', side: 1 }]);
+  } else {
+    // flush dining bay: glazing + 92 cm door + solid pier by the master wall
+    s.rect('fill', 5.95, 2.55, 7.04, 3.45, `fill="url(#steel)"`);
+    s.wall(3.90, 2.55, 5.95, 2.55, 0.12, 'new', [{ a: 0.0, b: 2.05, type: 'win', kind: 'new' }]);
+    s.wall(5.95, 2.55, 5.95, 3.45, 0.06, 'new', [{ a: 0.05, b: 0.85, type: 'win', kind: 'new' }]);
+    s.wall(5.95, 3.45, 7.10, 3.45, 0.13, 'ex', [{ a: 0.05, b: 0.30, type: 'win', kind: 'new' }, { a: 0.30, b: 1.05, type: 'door', hinge: 'a', side: 1 }]);
+    s.rect('over', 2.95, 2.55, 5.42, 4.05, `fill="none" stroke="#5f3dc4" stroke-width="1.2" stroke-dasharray="7 4"`); s.note(5.48, 4.0, '~2042 void prep (service-free)', { cls: 'ntp' });
+    s.line('over', 3.90, 3.45, 5.95, 3.45, `stroke="#adb5bd" stroke-width="0.8" stroke-dasharray="2 3"`);   // old wall line
+  }
+  // master block
+  const mw1 = 2.90;
+  s.wall(7.10, RY, 7.10, 5.85, 0.12, 'ex', [{ a: 0.35 - RY, b: 0.85 - RY, type: 'win' }, { a: 1.95 - RY, b: mw1 - RY, type: 'win' }]);
+
+  s.wall(7.10, 1.20, 10.40, 1.20, 0.11, 'ex', [{ a: 0.55, b: 1.30, type: 'door', hinge: 'a', side: -1 }]);
+  s.wall(7.10, 5.85, 10.40, 5.85, 0.11, 'ex', [{ a: 0.25, b: 1.07, type: 'door', hinge: 'b', side: -1 }]);
+  s.wall(8.65, 5.85, 8.65, 7.35, 0.10, 'ex', [{ a: 0.38, b: 1.13, type: 'door', hinge: 'a', side: -1 }]);
+  s.wallSeg(8.65, 7.35, 10.40, 7.35, 0.11);
+  // front wall (window X 5.05–6.45) + west double entry doors (photo-verified: Y 8.55–9.95, south leaf ~30 cm from front wall)
+  s.wall(3.40, 10.32, 6.81, 10.32, 0.14, 'ex', [{ a: 1.65, b: 3.05, type: 'win' }]);
+  // ~0.55 m grey front sunshade eyebrow canopy above 2F windows (from facade photo)
+  s.rect('over', 4.75, 10.39, 9.25, 10.88, `fill="#f1f3f5" fill-opacity="0.40" stroke="#868e96" stroke-width="0.9" stroke-dasharray="6 3"`);
+  s.rect('wall', 9.15, 10.39, 10.45, 10.43, `fill="#8c583a"`);
+  s.note(5.90, 10.68, 'eyebrow sunshade above', { cls: 'nts2', anchor: 'middle' });
+  s.wall(3.40, 7.95, 3.40, 10.25, 0.12, 'ex', [{ a: 0.60, b: 2.00, type: 'door2', side: -1 }]);
+  if (after) { for (let y = 5.95; y < 7.35; y += 0.13) s.rect('wall', 2.50, y, 2.60, y + 0.04, `fill="${C.neu}"`); s.line('wall', 2.55, 5.95, 2.55, 7.35, `stroke="${C.neu}" stroke-width="0.6"`); }
+  else s.wallSeg(2.55, 5.95, 2.55, 7.35, 0.12);   // TV wall
+  // musholla
+  if (!after) {
+    s.wallSeg(7.15, 7.35, 7.15, 10.25, 0.11, 'rem');
+    s.wallSeg(6.80, 10.32, 7.05, 10.32, 0.14);
+    s.wall(7.05, 10.32, 10.12, 10.32, 0.14, 'rem', [{ a: 1.0, b: 2.55, type: 'win' }]);
+    s.wallSeg(10.12, 10.32, 10.54, 10.32, 0.14);
+  } else {
+    s.wallSeg(6.80, 10.32, 7.05, 10.32, 0.14); s.wallSeg(10.12, 10.32, 10.54, 10.32, 0.14);
+    s.wall(7.05, 10.32, 10.12, 10.32, 0.14, 'ex', [{ a: 1.0, b: 2.55, type: 'win' }]); mushWin(s, 8.05, 9.60);
+    s.rect('over', 6.80, 10.25, 10.36, 11.32, `fill="none" stroke="#5f3dc4" stroke-width="1.2" stroke-dasharray="7 4"`);
+    // +42 cm SOLID bench-height platform over the whole room
+    s.rect('fill', 6.85, 7.35, 10.38, 10.25, `fill="url(#plank)"`);
+    s.rect('over', 6.85, 7.35, 10.38, 10.25, `fill="none" stroke="${C.neu}" stroke-width="1.3"`);
+    // uninterrupted 2.90 m living-side bench edge + 3 drop-down storage slots: Slot A (bedding), Slot B (suitcases), Slot C (yoga/mats)
+    s.line('over', 6.87, 7.38, 6.87, 10.22, `stroke="#8c6239" stroke-width="3"`);
+    s.rect('over', 6.87, 7.40, 8.85, 8.32, `fill="none" stroke="#8c6239" stroke-dasharray="5 3"`); s.note(7.40, 7.86, 'Slot A · bedding', { cls: 'fl' });
+    s.rect('over', 6.87, 8.38, 8.15, 9.30, `fill="none" stroke="#8c6239" stroke-dasharray="5 3"`); s.note(7.42, 8.86, 'Slot B · suitcases', { cls: 'fl' });
+    s.rect('over', 6.87, 9.36, 7.65, 10.22, `fill="none" stroke="#8c6239" stroke-dasharray="5 3"`); s.note(7.26, 9.85, 'Slot C · mats', { cls: 'fl' });
+    s.note(6.73, 8.88, '2.9 m bench · 3 slots', { cls: 'nto', rot: -90, anchor: 'middle' });
+    // sliding doors AT the platform edge (X 6.85); open panels stack cleanly
+    s.line('over', 6.92, 7.35, 6.92, 10.25, `stroke="#8c6239" stroke-width="1.2" stroke-dasharray="6 3"`);
+    s.line('over', 6.85, 7.35, 8.65, 7.35, `stroke="#8c6239" stroke-width="0.8"`);
+    s.rect('wall', 6.88, 7.38, 6.98, 8.08, `fill="#b5835a"`); s.rect('wall', 7.95, 7.30, 8.65, 7.40, `fill="#b5835a"`);
+    // Single FIXED step 21 cm (2 risers to +0.42) + grab rail at the hall-door entry (no step on living side!)
+    s.rect('furn', 7.45, 7.00, 8.35, 7.35, `fill="#e6dccb" stroke="#8c6239" stroke-width="1.3"`); s.line('furn', 7.45, 7.02, 8.35, 7.02, `stroke="${C.neu}" stroke-width="2.5"`);
+    s.note(7.90, 6.90, 'step 21 cm + rail', { cls: 'nto', anchor: 'middle' });
+    // bookshelf 0.30 × 1.58 on the east wall
+    s.rect('furn', 10.08, 8.62, 10.38, 10.20, `fill="#f8f6ff" stroke="#5f3dc4" stroke-width="1.1" stroke-dasharray="4 3"`); s.note(10.27, 9.41, '~2042 shelf (2028 blocking)', { cls: 'ntp', rot: -90, anchor: 'middle' });
+    s.rect('over', 8.65, 7.36, 10.38, 7.60, `fill="none" stroke="#5f3dc4" stroke-width="1.1" stroke-dasharray="5 3"`);
+    s.rect('over', 10.13, 7.60, 10.38, 8.62, `fill="none" stroke="#5f3dc4" stroke-width="1.1" stroke-dasharray="5 3"`);
+    s.rect('over', 9.60, 7.37, 10.10, 7.59, `fill="#fff3bf" fill-opacity="0.8" stroke="#b5835a" stroke-width="0.8"`);
+    s.note(9.13, 7.52, 'high shelf above · later', { cls: 'fl', anchor: 'middle' }); s.note(9.85, 7.52, 'niche', { cls: 'fl', anchor: 'middle' });
+    s.rect('over', 7.30, 10.44, 9.86, 10.84, `fill="#fff" fill-opacity="0.9" stroke="#8c6239" stroke-dasharray="4 3"`);
+    s.note(8.58, 10.61, 'guest mode: living-room sofa bed moved over', { cls: 'nts2', anchor: 'middle' }); s.note(8.58, 10.79, '= 2.0 × 2.0 bed on the platform', { cls: 'nts2', anchor: 'middle' });
+    // default prayer layout: imam + 2 men + 2 women (G-right, shifted toward the living edge / front)
+    const ang = 18 * Math.PI / 180, c18 = Math.cos(ang), s18 = Math.sin(ang);
+    const MS = [[9.580947285297853, 8.253511607134191, "imam"], [8.034566049044003, 8.255763753224691, "M1"], [8.719326740776513, 8.478255989174654, "M2"], [7.663745655794065, 9.397031572778877, "W1"], [8.348506347526575, 9.61952380872884, "W2"]];
+    MS.forEach(([mx, my, t]) => {
+      const fill = t === 'imam' ? '#9b1c2c' : t[0] === 'M' ? '#cfeedd' : '#e5dbff', st = t === 'imam' ? '#6b0f1c' : t[0] === 'M' ? '#2f7d58' : '#6741d9';
+      s.poly('furn', [[-0.325, -0.55], [0.325, -0.55], [0.325, 0.55], [-0.325, 0.55]].map(([dx, dy]) => [mx + dx * c18 - dy * s18, my + dx * s18 + dy * c18]), `fill="${fill}" fill-opacity="0.85" stroke="${st}" stroke-width="0.9"`);
+      s.text('lab', mx, my + 0.05, t, `class="fl" style="font-weight:700;fill:${t === 'imam' ? '#fff' : st}" text-anchor="middle"`);
+    });
+  }
+  // terrace railings
+  s.line('wall', L(7.95) - 0.02, 7.95, L(10.25) - 0.02, 10.25, `stroke="#343a40" stroke-width="2.2"`);
+  s.line('wall', 2.33, 10.25, 3.40, 10.25, `stroke="#343a40" stroke-width="2.2"`);
+  // --- stairs 2F → 3F ---
+  for (let i = 0; i <= 4; i++) { const x = 2.60 - i * 0.42; s.line('furn', x, 7.35, x, 7.90, `stroke="#868e96" stroke-width="0.8"`); }
+  for (let k = 0; k <= 10; k++) { const y = 7.35 - k * 0.205; s.line('furn', L(y) + 0.50, y, 2.43, y, `stroke="#868e96" stroke-width="0.8"`); }
+  s.line('furn', 2.43, 5.30, 2.43, 7.35, `stroke="#868e96"`);
+  s.raw('furn', `<line x1="${s.X(0.85)}" y1="${s.Y(6.45)}" x2="${s.X(2.45)}" y2="${s.Y(6.05)}" stroke="#495057" stroke-width="1.2"/>`);   // cut line
+  s.arrow([[2.50, 7.62], [1.72, 7.62], [1.72, 5.45]], '');
+  s.note(1.95, 6.95, 'UP', { cls: 'stl' });
+  s.furn(L(5.95) + 0.04, 5.95, L(5.95) + 0.48, 7.35, { label: 'ledge', vert: true });
+  // --- furniture ---
+  const drawSofaBed = showSub => {
+    s.rect('furn', 3.85, 5.55, 5.85, 7.55, `fill="#e4eee0" stroke="#496b38" stroke-width="1.3" rx="${(0.06 * s.S).toFixed(1)}"`);
+    s.line('furn', 4.85, 5.55, 4.85, 7.55, `stroke="#7c9a6b" stroke-width="0.9" stroke-dasharray="4 3"`);
+    [5.65, 6.30, 6.95].forEach(cy => s.rect('furn', 5.58, cy, 5.83, cy + 0.56, `fill="#cfe0c8" stroke="#496b38" stroke-width="0.9" rx="2"`));
+    s.note(4.70, showSub ? 6.46 : 6.56, 'Sofa bed 2.0×2.0m', { cls: 'ntg', anchor: 'middle' });
+    if (showSub) s.note(4.70, 6.70, 'centered on TV', { cls: 'nts2', anchor: 'middle' });
+  };
+  if (!after) {
+    // existing U-kitchen (same boxes as after, dark wood) + overhead cabinets over the peninsula (removed)
+    s.furn(0.54, 2.58, 3.16, 3.18, {}); s.poly('furn', [[L(3.18) + 0.04, 3.18], [L(3.18) + 0.64, 3.18], [L(5.0) + 0.64, 5.0], [L(5.0) + 0.04, 5.0]], `fill="${C.furnFill}" stroke="${C.furn}"`);
+    s.furn(L(5.5) + 0.04, 5.02, L(5.5) + 0.74, 5.92, { label: 'fridge', vert: true });
+    s.furn(2.56, 3.18, 3.16, 4.70, { label: 'peninsula', vert: true });
+    s.rect('over', 2.58, 3.20, 3.14, 4.68, `fill="none" stroke="${C.rem}" stroke-width="1.3" stroke-dasharray="5 3"`); s.note(3.32, 3.95, 'overhead cabinets (removed)', { cls: 'ntr', rot: -90, anchor: 'middle' });
+    drawSofaBed(false);
+    s.furn(7.21, 7.90, 7.66, 10.00, { rem: true, label: 'cabinet', vert: true });
+    s.furn(6.98, 7.36, 7.32, 7.68, { rem: true });
+  } else {
+    s.furn(0.54, 2.58, 3.16, 3.18, { neu: true }); s.rect('furn', 1.46, 2.65, 2.24, 3.08, `fill="#fff" stroke="${C.neu}" rx="4"`); s.note(1.85, 2.92, 'sink', { cls: 'fl', anchor: 'middle' });
+    s.poly('furn', [[L(3.18) + 0.04, 3.18], [L(3.18) + 0.64, 3.18], [L(5.0) + 0.64, 5.0], [L(5.0) + 0.04, 5.0]], `fill="${C.joinFill}" stroke="${C.neu}"`);
+    [[0.79, 4.42], [1.01, 4.42], [0.79, 4.78], [1.01, 4.78]].forEach(([x, y]) => s.circle('furn', x, y, 0.08, `fill="none" stroke="${C.neu}"`));
+    s.furn(L(5.5) + 0.04, 5.02, L(5.5) + 0.74, 5.92, { label: 'fridge', vert: true });
+    s.furn(2.56, 3.18, 3.16, 4.70, { neu: true, label: 'peninsula · 60cm DW prep', vert: true });
+    s.rect('over', 2.60, 3.98, 3.12, 4.58, `fill="none" stroke="#5f3dc4" stroke-width="0.95" stroke-dasharray="3 2"`);
+    // long window bench + oval table + 3 chairs
+    s.furn(3.22, 2.61, 5.30, 3.16, { neu: true }); s.note(4.26, 2.84, 'window bench 0.55 deep · drawers', { cls: 'fl', anchor: 'middle' });
+    for (let dx = 3.78; dx < 5.0; dx += 0.5) s.line('furn', dx + 0.04, 3.14, dx + 0.46, 3.14, `stroke="${C.neu}" stroke-width="0.6"`);
+    s.furn(3.18, 3.16, 3.73, 4.10, { neu: true }); for (let y = 3.25; y < 4.0; y += 0.3) s.line('furn', 3.71, y, 3.71, y + 0.25, `stroke="${C.neu}" stroke-width="0.6"`);
+    s.note(3.42, 3.65, 'return bench', { cls: 'fl', rot: -90, anchor: 'middle' });
+    s.rect('furn', 3.63, 3.06, 5.18, 3.91, `fill="#fff" stroke="#6c757d" stroke-width="1.1" rx="${0.15 * s.S}"`); s.circle('over', 4.405, 3.485, 0.19, `fill="none" stroke="${C.neu}" stroke-width="0.9" stroke-dasharray="3 2"`);
+    s.line('over', 4.595, 3.485, 5.46, 3.485, `stroke="${C.neu}" stroke-width="0.9" stroke-dasharray="2 2"`);
+    s.circle('over', 5.46, 3.485, 0.05, `fill="${C.neu}"`);
+    s.note(4.405, 3.25, 'swing-arm / swag lamp (wired outside void)', { cls: 'nto', anchor: 'middle' });
+    s.note(4.4, 3.49, 'table 1.55 × 0.85 · 1 pedestal', { cls: 'fl', anchor: 'middle' }); s.note(4.4, 3.72, 'L-booth · seats 7 (8)', { cls: 'nto', anchor: 'middle' });
+    s.note(4.92, 2.00, 'all-operable Low-E bay casements', { cls: 'nto', anchor: 'middle' });
+    s.note(4.92, 2.22, '+ black SS304 screens (1F–2F)', { cls: 'nto', anchor: 'middle' });
+    [3.95, 4.60].forEach(cx => s.chair(cx, 3.97, 0.45, 0.45, 'S')); s.chair(5.35, 3.22, 0.44, 0.44, 'E');
+    s.note(5.6, 2.95, 'open end 0.62', { cls: 'nto', rot: -90, anchor: 'middle' });
+    drawSofaBed(true);
+    // Coffee table IN FRONT of sofa (between sofa and TV)
+    s.furn(3.15, 6.15, 3.60, 7.05, { label: 'coffee tbl', vert: true });
+    // 2 matched 48" (Ø 1.22 m, r = 0.61 m) DC ceiling fans on the X = 4.85 spine
+    [[4.85, 4.85], [4.85, 7.65]].forEach(([fx, fy]) => {
+      s.circle('over', fx, fy, 0.61, `fill="none" stroke="${C.neu}" stroke-width="1.05" stroke-dasharray="5 3"`);
+      s.circle('over', fx, fy, 0.06, `fill="#fff4e6" stroke="${C.neu}" stroke-width="1.1"`);
+    });
+    s.note(4.85, 5.10, '2 × 48" DC fans', { cls: 'nto', anchor: 'middle' });
+    s.note(4.85, 5.29, '(Ø1.22m · lights >Ø2.1m)', { cls: 'nto', anchor: 'middle' });
+    s.note(4.85, 7.93, '48" DC fan (Ø1.22m)', { cls: 'nto', anchor: 'middle' });
+    s.furn(6.82, 4.62, 7.04, 5.38, { neu: true });
+    s.line('over', 6.80, 5.00, 6.58, 5.00, `stroke="${C.neu}" stroke-width="1.1"`);
+    s.poly('over', [[6.54, 5.00], [6.63, 4.95], [6.63, 5.05]], `fill="${C.neu}"`);
+    s.note(6.46, 5.00, 'split AC (relocated)', { cls: 'nto', rot: -90, anchor: 'middle' });
+    // Indoor slate Genkan (X 3.42–5.05, Y 8.45–10.24) + compact 0.80×0.36 m sitting bench (X 4.22–5.02, Y 9.88–10.24)
+    s.rect('fill', 3.42, 8.45, 5.05, 10.24, `fill="url(#slate)"`);
+    s.furn(4.22, 9.88, 5.02, 10.24, { neu: true }); s.note(4.62, 10.10, 'bench 0.8m', { cls: 'nto', anchor: 'middle' });
+    // Waist-high 2.10×0.38 m louvered shoe cabinet on covered 2F front terrace below stairwell window sill (X 0.90–3.00, Y 8.00–8.38)
+    s.furn(0.90, 8.00, 3.00, 8.38, { neu: true });
+    s.note(1.95, 8.24, 'shoe cabinet 2.1×0.4', { cls: 'nto', anchor: 'middle' });
+    s.note(1.95, 8.56, '(h=1.0m below sill)', { cls: 'nto', anchor: 'middle' });
+    // Digital piano under 2F front window (X 5.12–6.48, Y 9.86–10.24) + bench (X 5.52–6.08, Y 9.45–9.80)
+    s.furn(5.12, 9.86, 6.48, 10.24, { fill: '#e9ecef' }); s.note(5.80, 10.10, 'digital piano', { cls: 'ntc' });
+    s.furn(5.52, 9.45, 6.08, 9.80, {});
+  }
+  if (after) {
+    s.rect('furn', 2.60, 6.05, 2.67, 7.25, `fill="#343a40"`);
+    s.note(3.12, 5.94, 'TV mounted', { cls: 'nts2', anchor: 'middle' });
+    s.note(2.82, 6.65, 'slat stair screen', { cls: 'nto', rot: -90, anchor: 'middle' });
+  }
+  else s.furn(2.61, 5.98, 2.92, 7.32, { label: 'TV', vert: true });
+  s.bed(8.34, 1.90, 10.34, 3.70, 'E');
+  s.furn(7.16, 3.62, 7.76, 5.17, { label: 'wardrobe', vert: true }); s.furn(7.16, 1.95, 7.60, 3.30, {}); s.furn(7.16, 1.28, 7.76, 1.88, {});
+  // --- labels ---
+  s.room(1.75, 3.85, 'Kitchen', after ? '(Dapur)\nU-shape · light fronts' : '(Dapur)\nU-shape · dark wood');
+  s.room(after ? 6.38 : 4.85, after ? 5.98 : 4.70, 'Living', '(R. Keluarga)');
+  s.room(8.85, 4.6, 'Master bedroom', '');
+  s.room(8.75, 0.35, 'Ensuite', '');
+  s.room(9.58, after ? 6.42 : 6.55, 'WC', '');
+  if (after) s.note(9.58, 6.75, 'exhaust fan', { cls: 'nto', anchor: 'middle' });
+  s.room(1.90, after ? 9.32 : 9.05, 'Front terrace', '(Teras) · entry', { out: true });
+  if (after) {
+    s.note(6.56, 8.48, 'sliding doors (usually open) →', { cls: 'nts2', anchor: 'end' });
+    s.note(6.56, 8.70, 'Prayer room (Musholla) →', { cls: 'stl', anchor: 'end' });
+    s.note(6.56, 8.90, '+42 cm platform · slots A/B/C', { cls: 'nto', anchor: 'end' });
+    s.note(6.56, 9.10, 'imam + 2M + 2W (default)', { cls: 'nto', anchor: 'end' });
+  } else s.room(8.6, 8.8, 'Prayer room', '(Musholla)');
+  s.note(1.35, 11.15, 'stair landing (from street)', { cls: 'nts2', anchor: 'middle' });
+  if (after) {
+    s.room(3.65, 4.62, 'Dining bay', '', { size: 12 });
+    s.room(4.02, 9.18, 'Genkan', '−2.5 cm screed', { size: 11 });
+    s.note(2.48, 1.34, 'balcony 1.0 m · ~6.5 m shade canopy (dash-dot)', { cls: 'nto', anchor: 'middle' });
+    s.note(5.3, 0.7, 'open porch 1.08 × 0.9 (bay side casement at X 5.95) + existing balcony door', { cls: 'nto', anchor: 'middle' });
+    s.note(6.5, 3.05, 'porch', { cls: 'nts2', anchor: 'middle' });
+    s.note(8.58, 10.98, 'front window: frame kept · solid lower panel · operable Low-E casements above', { cls: 'nto', anchor: 'middle' });
+    s.note(8.58, 11.22, '~2041/42 optional bay window (2028 prep: lintel + conduit)', { cls: 'ntp', anchor: 'middle' });
+  } else {
+    s.note(5.45, 1.95, 'old rear wall + window + door: removed in 2028', { cls: 'ntr', anchor: 'middle' });
+    s.note(6.98, 8.8, 'solid divider (removed)', { cls: 'ntr', rot: -90, anchor: 'middle' });
+    s.note(8.58, 11.06, 'flat front wall → kept (solid lower panel)', { cls: 'ntr', anchor: 'middle' });
+  }
+  // --- dims ---
+  if (after) {
+    s.dim(7.10, 1.55, 7.10, 2.55, -0.25, '1.00');
+    s.dim(7.10, 2.55, 7.10, 3.45, -0.25, '0.90');
+    s.dim(L(1.55) + 0.04, 1.55, 6.97, 1.55, -0.45, 'balcony ≈ 6.5 m');
+  } else {
+    s.dim(3.90, 2.55, 7.03, 2.55, -0.3, '≈ 3.1 m');
+  }
+}
+// ===== 3F plan =====
+function plan3F(s, after) {
+  // 2028: 3F UNTOUCHED (family on 3F) → AFTER = existing layout + future-void outline only
+  const after0 = after; after = false;
+  s.poly('fill', [[L(3.45), 3.45], [2.95, 3.45], [2.95, 2.70], [6.90, 2.70], [6.90, RY], [10.40, RY], [10.40, 10.25], [L(10.25), 10.25]], `fill="#fff"`);
+  // below: 2F facade / balcony lines, courtyard
+  s.poly('fill', [[L(RY), RY], [6.90, RY], [6.90, 2.55], [L(2.55), 2.55]], `fill="#f8f6f1"`);
+  s.wallSeg(L(-1.2) - 0.25, -1.05, 6.75, -1.05, 0.28, 'low'); s.wallSeg(L(-1.2) - 0.15, -1.19, L(2.55) - 0.15, 2.55, 0.28, 'low');
+  s.line('over', L(2.55), 2.55, 7.10, 2.55, `stroke="#495057" stroke-dasharray="8 4"`);
+  if (after0) s.poly('over', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], `fill="none" stroke="#495057" stroke-dasharray="8 4"`);
+  s.note(3.4, 0.4, 'open to sky · courtyard below', { cls: 'nts2', anchor: 'middle' });
+  s.poly('fill', [[L(2.75), 2.75], [2.95, 2.75], [2.95, 3.38], [L(3.38), 3.38]], `fill="#e9ecef"`);
+  s.note(1.6, 3.12, 'outdoor ledge', { cls: 'nts2', anchor: 'middle' });
+  // stairwell
+  s.poly('fill', [[L(5.30) + 0.48, 5.30], [2.45, 5.30], [2.45, 7.75], [L(7.75) + 0.48, 7.75]], `fill="#f8f9fa"`);
+  for (let k = 0; k <= 10; k++) { const y = 5.30 + k * 0.205; s.line('furn', L(y) + 0.50, y, 2.43, y, `stroke="#868e96" stroke-width="0.8"`); }
+  s.arrow([[1.78, 5.42], [1.78, 7.45]], '');
+  s.note(2.0, 6.0, 'DN', { cls: 'stl' });
+  if (after) {
+    s.poly('furn', [[L(5.30) + 0.04, 5.30], [L(5.30) + 0.48, 5.30], [L(7.75) + 0.48, 7.75], [L(7.75) + 0.04, 7.75]], `fill="#dff2d8" stroke="${C.neu}"`);
+    for (let y = 5.34; y < 7.72; y += 0.12) s.rect('wall', L(y) + 0.46, y, L(y) + 0.50, y + 0.04, `fill="${C.neu}"`);
+    s.note(0.95, 6.55, 'planter / display strip · slat guard', { cls: 'nto', rot: -90, anchor: 'middle' });
+    s.furn(L(4.3) + 0.04, 3.55, L(4.3) + 0.44, 5.05, { neu: true, label: 'storage 1.5 × 0.40', vert: true });
+    s.line('furn', 3.55, 7.79, 5.10, 7.79, `stroke="${C.neu}" stroke-width="2.5"`); s.note(4.33, 7.66, '3 picture ledges above sofa', { cls: 'nts2', anchor: 'middle' });
+  } else s.poly('furn', [[L(5.30) + 0.04, 5.30], [L(5.30) + 0.48, 5.30], [L(7.75) + 0.48, 7.75], [L(7.75) + 0.04, 7.75]], `fill="#e9ecef" stroke="${C.furn}"`);
+  s.poly('furn', [[L(3.50) + 0.0, 3.50], [L(3.50) + 0.06, 3.50], [L(7.75) + 0.06, 7.75], [L(7.75), 7.75]], `fill="#b5654f"`);
+  // --- walls ---
+  s.wallSeg(L(3.38) - 0.07, 3.38, L(10.39) - 0.07, 10.39, 0.14);
+  s.wall(L(3.38), 3.38, 2.95, 3.38, 0.14, 'ex', [{ a: 1.55 - L(3.38), b: 1.95 - L(3.38), type: 'win' }]);
+  s.wallSeg(2.95, 2.64, 2.95, 3.45, 0.12);
+  s.wall(2.95, 2.70, 6.90, 2.70, 0.12, 'ex', [{ a: 0.40, b: 2.50, type: 'win' }]);
+  s.wall(6.90, RY, 6.90, 5.60, 0.12, 'ex', [{ a: 0.60 - RY, b: 1.15 - RY, type: 'win' }, { a: 1.80 - RY, b: 2.70 - RY, type: 'win' }]);
+  s.wallSeg(6.90, -0.97, 10.54, -0.97, 0.14);
+  s.wallSeg(10.47, -1.04, 10.47, 10.39, 0.14);
+  // 3F front wall windows from facade photo: Front-Left BR (1.45–2.70), Kid #1 BR (5.05–6.35), Kid #2 BR (7.55–8.95)
+  const xF3 = L(10.32);
+  s.wall(xF3, 10.32, 10.54, 10.32, 0.14, 'ex', [
+    { a: 1.45 - xF3, b: 2.70 - xF3, type: 'win' },
+    { a: 5.05 - xF3, b: 6.35 - xF3, type: 'win' },
+    { a: 7.55 - xF3, b: 8.95 - xF3, type: 'win' },
+  ]);
+  [2.075, 5.70, 8.25].forEach(xm => s.line('open', xm, 10.25, xm, 10.39, `stroke="${C.wall}" stroke-width="1.1"`));
+  s.rect('wall', 9.15, 10.39, 10.45, 10.44, `fill="#8c583a"`);
+  s.rect('over', 0.85, 10.39, 2.75, 10.88, `fill="#f1f3f5" stroke="#868e96" stroke-width="0.9" stroke-dasharray="5 3"`);
+  s.note(1.80, 10.68, 'AC ledge', { cls: 'nts2', anchor: 'middle' });
+  s.rect('over', 4.75, 10.39, 9.25, 10.88, `fill="none" stroke="#adb5bd" stroke-width="0.8" stroke-dasharray="6 4"`);
+  s.note(7.00, 10.68, '2F sunshade canopy below (dashed)', { cls: 'nts2', anchor: 'middle' });
+  s.note(9.80, 10.68, 'wood facade', { cls: 'nts2', anchor: 'middle' });
+  s.wall(6.90, 1.60, 10.40, 1.60, 0.10, 'ex', [{ a: 0.65, b: 1.40, type: 'door', hinge: 'a', side: -1 }]);
+  s.wall(6.90, 5.60, 10.40, 5.60, 0.11, 'ex', [{ a: 0.35, b: 1.17, type: 'door', hinge: 'b', side: -1 }]);
+  s.wall(8.50, 5.60, 8.50, 7.85, 0.10, 'ex', [{ a: 0.72, b: 1.47, type: 'door', hinge: 'a', side: -1 }]);
+  const xFL = L(7.85);
+  s.wall(xFL, 7.85, 10.40, 7.85, 0.11, 'ex', [{ a: 2.37 - xFL, b: 3.07 - xFL, type: 'door', hinge: 'a', side: 1 }, { a: 5.98 - xFL, b: 6.80 - xFL, type: 'door', hinge: 'b', side: 1 }, { a: 7.06 - xFL, b: 7.88 - xFL, type: 'door', hinge: 'a', side: 1 }]);
+  s.wallSeg(3.15, 7.85, 3.15, 10.25, 0.10);
+  s.wallSeg(6.90, 7.85, 6.90, 10.25, 0.11);
+  s.wallSeg(2.51, 5.30, 2.51, 7.75, 0.12, 'low');   // solid parapet (kept)   // solid parapet (≈1.0 m high)
+  // --- alcove / void ---
+  if (after) {
+    s.rect('fill', 2.95, 2.55, 5.42, 4.05, `fill="url(#void)" stroke="${C.neu}" stroke-width="1.2"`);
+    s.wall(2.95, 4.05, 5.42, 4.05, 0.08, 'new', [{ a: 0.0, b: 2.47, type: 'slide', kind: 'new' }]);
+    s.wall(5.42, 2.76, 5.42, 4.05, 0.06, 'new', [{ a: 0.0, b: 1.29, type: 'fixed', kind: 'new' }]);
+    s.wall(2.95, 3.45, 2.95, 4.05, 0.06, 'new', [{ a: 0.0, b: 0.60, type: 'fixed', kind: 'new' }]);
+    s.furn(5.50, 2.78, 6.80, 3.28, { neu: true, label: 'WFH desk' }); s.chair(5.92, 3.34, 0.46, 0.44, 'S');
+    s.note(6.2, 3.98, 'WFH nook (over porch)', { cls: 'nto', anchor: 'middle' }); s.note(6.2, 4.2, 'faces the alcove window', { cls: 'nts2', anchor: 'middle' });
+    s.rect('furn', 6.05, 4.75, 6.84, 5.55, `fill="#d3f0e0" stroke="#69b98d" rx="3"`);
+    s.line('furn', 5.75, 5.05, 6.84, 5.05, `stroke="${C.neu}" stroke-width="3"`); s.circle('furn', 6.65, 5.35, 0.06, `fill="${C.neu}"`);
+    s.note(6.3, 5.8, 'pull-up bar 1.1 m @ 2.25 + mat', { cls: 'nto', anchor: 'middle' });
+    s.room(4.2, 3.35, 'VOID', 'open to dining bay below', { size: 11.5 });
+    s.note(4.2, 4.62, '1.1 m glass guard + sliding glass (orange)', { cls: 'nto', anchor: 'middle' });
+    s.dim(2.95, 2.55, 5.42, 2.55, -0.5, 'void ≈ 2.5 × 1.5');
+  } else {
+    if (!after0) s.rect('fill', 3.92, 2.75, 6.86, 3.45, `fill="none" stroke="${C.rem}" stroke-width="1.2" stroke-dasharray="6 3"`);
+    s.furn(3.02, 2.78, 5.72, 3.38, { label: 'built-in desk (alcove)' });
+    if (!after0) s.note(5.4, 3.78, 'future void ~2042 (not in 2028)', { cls: 'ntr', anchor: 'middle' });
+    s.furn(3.55, 7.40, 5.55, 7.76, { label: 'TV console' });
+  }
+  // --- furniture ---
+  s.bed(8.34, 2.30, 10.34, 4.10, 'E'); s.furn(6.98, 2.85, 7.58, 3.55, {});
+  s.bed(4.35, 8.98, 6.35, 10.18, 'E'); s.furn(3.22, 7.94, 3.82, 8.88, { label: 'wardrobe', vert: true }); s.furn(3.25, 9.64, 4.25, 10.18, { label: 'desk' });
+  s.bed(8.34, 9.05, 10.34, 10.25, 'E'); s.furn(8.05, 7.94, 9.25, 8.49, { label: 'sliding wardrobe' }); s.furn(7.02, 9.64, 8.15, 10.18, { label: 'desk' });
+  s.poly('furn', [[L(8.05) + 0.04, 8.05], [L(8.05) + 0.64, 8.05], [L(9.45) + 0.64, 9.45], [L(9.45) + 0.04, 9.45]], `fill="${C.furnFill}" stroke="${C.furn}"`);
+  if (after) {
+    s.chair(5.30, 7.08, 0.60, 0.64, 'S', {}); s.note(5.6, 6.98, 'reading chair', { cls: 'fl', anchor: 'middle' }); s.circle('furn', 5.25, 7.68, 0.08, `fill="#fff3bf" stroke="#e8590c"`);
+    s.sofa(3.45, 7.00, 5.20, 7.74, 'S'); s.furn(3.95, 6.15, 4.75, 6.58, {});
+  }
+  // --- labels ---
+  s.room(4.65, after ? 5.45 : 5.02, 'Lounge / WFH', '');
+  s.room(after ? 1.95 : 1.75, 3.9, 'Stair landing', 'small rear window\nbrick feature side wall');
+  s.room(8.9, 4.5, 'Master bedroom 3F', '');
+  s.room(8.7, 0.4, 'Ensuite', '');
+  s.room(9.48, 6.6, 'WC', '');
+  s.room(2.2, 9.3, 'Front-left', 'bedroom');
+  s.room(5.05, 8.45, 'Kid #1 bedroom', '3.75 × 2.40');
+  s.room(7.65, 9.0, 'Kid #2', '3.50 × 2.40');
+  s.note(2.62, 6.55, 'solid parapet', { cls: 'nts2', rot: 90 });
+  if (after0) {
+    s.line('over', 3.35, 2.62, 5.45, 2.62, `stroke="${C.neu}" stroke-width="2.4"`);
+    s.line('over', 4.40, 2.30, 4.40, 2.60, `stroke="${C.neu}" stroke-width="0.9"`);
+    s.note(4.45, 1.98, 'optional 2028: Low-E film + UV blind', { cls: 'ntb', anchor: 'middle' });
+    s.note(4.45, 2.20, '+ magnetic SS304 screen (no mess)', { cls: 'ntb', anchor: 'middle' });
+    s.circle('over', 1.65, 5.02, 0.13, `fill="#f3f0ff" stroke="#5f3dc4" stroke-width="1.2" stroke-dasharray="3 2"`);
+    s.note(1.78, 4.78, '~2042: <28dB exhaust', { cls: 'ntp', anchor: 'middle' });
+    s.note(5.40, 11.12, 'optional 2028: magnetic SS304 screens on all 3F windows (~2 hrs, no mess)', { cls: 'ntb', anchor: 'middle' });
+    s.rect('over', 2.95, 2.55, 5.42, 4.05, `fill="#f3f0ff" fill-opacity="0.28" stroke="#5f3dc4" stroke-width="1.6" stroke-dasharray="8 4"`);
+    s.note(4.55, 4.26, '~2042: closable void (glass guard + acoustic slide)', { cls: 'ntp', anchor: 'middle' });
+    s.note(4.55, 4.46, '2028 prep from 2F below: slab check + no pipes/wires', { cls: 'nto', anchor: 'middle' });
+    [[7.25, 8.07, 5.60], [2.37, 3.07, 7.85], [5.98, 6.80, 7.85], [7.06, 7.88, 7.85]].forEach(([xa, xb, yd]) => {
+      s.rect('over', xa, yd - 0.09, xb, yd + 0.09, `fill="#f3f0ff" fill-opacity="0.85" stroke="#5f3dc4" stroke-width="1.2" stroke-dasharray="3 2"`);
+    });
+    s.note(7.02, 7.64, '~2042: 4× transom flaps (boven)', { cls: 'ntp', anchor: 'middle' });
+    [[6.24, 4.35, 0.45], [5.35, 9.58, 0.42], [9.34, 9.65, 0.42]].forEach(([fx, fy, fr]) => {
+      s.circle('over', fx, fy, fr, `fill="none" stroke="#5f3dc4" stroke-width="0.95" stroke-dasharray="4 3"`);
+      s.circle('over', fx, fy, 0.05, `fill="#f3f0ff" stroke="#5f3dc4" stroke-width="0.9"`);
+    });
+    s.note(6.24, 4.96, '~2042 DC fan', { cls: 'ntp', anchor: 'middle' });
+    const b3L = LANG === 'id' ? [
+      '2028: L3 dibiarkan apa adanya — keluarga tetap tinggal',
+      'Opsional, tanpa debu: kawat SS304 · kaca film Low-E + tirai UV',
+      'Dari L2 saja: cek pelat · MCB cadangan di panel',
+      'Rencana ~2042 (saat rumah kosong, garis ungu):',
+      'Void · boven · kipas DC · peredam atap · exhaust tangga'
+    ] : [
+      '2028: 3F left as is — family keeps living there',
+      'Optional, no mess: SS304 screens · Low-E film + UV blind',
+      'From 2F only: slab check · spare breaker at the panel',
+      '~2042 Phase 2 (empty house, purple dashed):',
+      'Void · boven · DC fans · roof insulation · stair exhaust'
+    ];
+    s.raw('over', `<g class="nbox"><rect x="${s.X(2.72)}" y="${s.Y(5.30)}" width="${(4.28 * s.S).toFixed(0)}" height="96" rx="6" fill="#fff" stroke="${C.neu}" stroke-width="1.4"/>`
+      + `<rect x="${s.X(2.72)}" y="${s.Y(5.30)}" width="${(4.28 * s.S).toFixed(0)}" height="52" rx="6" fill="#fff4e6"/>`
+      + `<text x="${s.X(4.86)}" y="${s.Y(5.30) + 15}" text-anchor="middle" style="font-size:10.9px;font-weight:700;fill:#c94a0a">${esc(b3L[0])}</text>`
+      + `<text x="${s.X(4.86)}" y="${s.Y(5.30) + 30}" text-anchor="middle" style="font-size:9.6px;fill:#c94a0a">${esc(b3L[1])}</text>`
+      + `<text x="${s.X(4.86)}" y="${s.Y(5.30) + 44}" text-anchor="middle" style="font-size:9.6px;fill:#c94a0a">${esc(b3L[2])}</text>`
+      + `<line x1="${s.X(2.80)}" y1="${s.Y(5.30) + 53}" x2="${s.X(6.92)}" y2="${s.Y(5.30) + 53}" stroke="#5f3dc4" stroke-width="1.0" stroke-dasharray="4 3"/>`
+      + `<text x="${s.X(4.86)}" y="${s.Y(5.30) + 69}" text-anchor="middle" style="font-size:10.1px;font-weight:700;fill:#5f3dc4">${esc(b3L[3])}</text>`
+      + `<text x="${s.X(4.86)}" y="${s.Y(5.30) + 84}" text-anchor="middle" style="font-size:9.5px;fill:#5f3dc4">${esc(b3L[4])}</text></g>`);
+  }
+}
+
+// ===== Long section A–A (through X ≈ 5.2 m; rear courtyard on the left → street on the right) =====
+function section(after, gx, oy) {
+  const S = 42, ox = gx + 3.7 * S;
+  const X = y => +(ox + y * S).toFixed(1), Z = z => +(oy - z * S).toFixed(1);
+  const o = [];
+  const R = (y0, y1, z0, z1, a) => o.push(`<rect x="${X(Math.min(y0, y1))}" y="${Z(Math.max(z0, z1))}" width="${(Math.abs(y1 - y0) * S).toFixed(1)}" height="${(Math.abs(z1 - z0) * S).toFixed(1)}" ${a}/>`);
+  const Ln = (y0, z0, y1, z1, a) => o.push(`<line x1="${X(y0)}" y1="${Z(z0)}" x2="${X(y1)}" y2="${Z(z1)}" ${a}/>`);
+  const T = (y, z, s, a = '') => { const ts = tr2d(s); if (ts) o.push(`<text x="${X(y)}" y="${Z(z)}" ${a}>${esc(ts)}</text>`); };
+  const cut = `fill="#2f2f2f"`, newc = `fill="${C.neu}"`, rem = `fill="none" stroke="${C.rem}" stroke-width="1.4" stroke-dasharray="5 3"`, beyond = `fill="#f1f3f5" stroke="#adb5bd" stroke-width="0.8"`;
+  // ground
+  R(-3.6, 13.8, -0.6, -0.28, `fill="url(#earth)"`);
+  // neighbour house (beyond the boundary wall)
+  R(-3.6, -1.6, 0, 6.9, `fill="#f1f3f5" stroke="#ced4da"`); o.push(`<polygon points="${X(-3.6)},${Z(8.3)} ${X(-1.5)},${Z(6.9)} ${X(-3.6)},${Z(6.9)}" fill="#ead9d0" stroke="#ced4da"/>`);
+  T(-2.6, 3.4, 'neighbour', 'class="nts2" text-anchor="middle"');
+  // boundary wall
+  R(-1.20, -0.90, 0, 5.25, cut);
+  // courtyard
+  if (after) { R(-0.86, 3.45, 0, 0.20, `fill="#c9935b"`); R(0.32, 1.28, 0.20, 0.58, beyond); Ln(0.8, 0.58, 0.8, 1.9, `stroke="#b8a089" stroke-width="3"`); o.push(`<ellipse cx="${X(0.82)}" cy="${Z(2.2)}" rx="${0.72 * S}" ry="${0.45 * S}" fill="#69b56b" fill-opacity="0.25" stroke="#8fbf80"/>`); T(0.82, 2.8, 'tree (beyond)', 'class="nts2" text-anchor="middle"'); }
+  else { R(-0.88, 2.55, 0, 0.90, rem); R(-0.68, 2.33, 0.30, 0.80, `fill="#a5d8ff" fill-opacity="0.6"`); R(2.55, 3.45, 0, 0.90, rem); }
+  R(-0.90, 13.8, -0.28, 0, `fill="#ced4da"`);
+  // 1F: walls cut at Y 3.45 (glass), 6.60, 9.30, 10.32
+  // R. Duduk is an open covered terrace: no wall/glass at Y 3.45
+  R(6.55, 6.65, 0, 2.10, cut); R(9.65, 10.25, 0, 0.88, beyond); R(10.25, 10.39, 0, 2.20, cut);
+  // 2F slab
+  R(2.55, 10.39, 2.10, 2.20, cut);
+  if (after) R(1.55, 2.55, 2.08, 2.20, newc);
+  // 2F rear: before = railing at 2.55 + wall with window at 3.45; after = bay glass at 2.55
+  if (after) {
+    R(2.49, 2.61, 2.20, 3.10, newc); R(2.52, 2.58, 3.10, 4.45, `fill="#a5d8ff" stroke="${C.neu}" stroke-width="1.2"`); R(2.49, 2.61, 4.45, 5.25, newc);
+    Ln(1.55, 2.20, 1.55, 3.30, `stroke="${C.neu}" stroke-width="2.5"`); R(1.60, 1.85, 2.20, 2.55, `fill="#dff2d8" stroke="${C.neu}"`);
+    // Full-length ~1.07 m projecting solar shade canopy + slim front valance above 2F dining bay window head (z ≈ 4.40–4.58)
+    o.push(`<polygon points="${X(2.50)},${Z(4.58)} ${X(2.50)},${Z(4.52)} ${X(1.48)},${Z(4.42)} ${X(1.48)},${Z(4.48)}" fill="${C.neu}"/>`);
+    R(1.46, 1.51, 4.33, 4.48, newc);
+    Ln(2.49, 4.78, 1.62, 4.47, `stroke="${C.neu}" stroke-width="1.0"`);
+    T(1.40, 4.56, 'full-length shade canopy →', 'class="nto" style="text-anchor:end"');
+    R(2.62, 3.08, 2.20, 2.64, `fill="${C.joinFill}" stroke="${C.neu}"`); R(2.62, 2.74, 2.64, 3.04, `fill="${C.joinFill}" stroke="${C.neu}"`);
+  } else {
+    Ln(2.55, 2.20, 2.55, 3.12, `stroke="${C.rem}" stroke-width="2" stroke-dasharray="4 2"`);
+    o.push(`<rect x="${X(3.39)}" y="${Z(5.25)}" width="${0.12 * S}" height="${3.05 * S}" ${rem}/>`);
+    R(3.41, 3.49, 2.65, 4.60, `fill="#a5d8ff" fill-opacity="0.5"`);
+  }
+  // 2F ceiling + 3F slab
+  R(2.70, 10.39, 5.32, 5.45, cut);   // 3F slab kept in 2028 (no void)
+  R(2.55, 2.70, 5.25, 5.45, cut);   // slab edge: 2F bay wall + 3F alcove wall both at Y 2.55
+  if (after) { o.push(`<rect x="${X(2.70)}" y="${Z(5.62)}" width="${(1.35 * S).toFixed(1)}" height="${(0.47 * S).toFixed(1)}" fill="none" stroke="#5f3dc4" stroke-width="1.5" stroke-dasharray="6 3"/>`); }
+  // 2F front wall with window, piano
+  R(10.25, 10.39, 2.20, 2.95, cut); R(10.28, 10.36, 2.95, 4.45, `fill="#a5d8ff"`); R(10.25, 10.39, 4.45, 5.32, cut);
+  if (after) R(9.86, 10.24, 2.20, 2.98, beyond); 
+  // 3F rear alcove wall with window, soffit
+  R(2.55, 2.67, 5.45, 6.30, cut); R(2.58, 2.64, 6.30, 7.65, after ? `fill="#a5d8ff" stroke="${C.neu}" stroke-width="1.4"` : `fill="#a5d8ff"`); R(2.55, 2.67, 7.65, 8.30, cut);   // 3F alcove wall face at Y 2.55 = 2F bay glass line
+  if (after) {
+    Ln(2.69, 6.32, 2.69, 7.63, `stroke="${C.neu}" stroke-width="1.2" stroke-dasharray="3 2"`);
+    T(2.42, 7.18, 'optional 2028: Low-E film + UV blind →', 'class="ntb" style="text-anchor:end"');
+    T(2.42, 6.84, 'SS304 screens (1F–2F · 3F optional) →', 'class="nto" style="text-anchor:end"');
+  }
+  R(2.70, 3.45, 7.95, 8.30, `fill="#e9ecef" stroke="#adb5bd"`);
+  // 3F partitions + front
+  R(7.80, 7.90, 5.45, 8.30, cut);
+  R(10.25, 10.39, 5.45, 6.25, cut); R(10.28, 10.36, 6.25, 7.65, `fill="#a5d8ff"`); R(10.25, 10.39, 7.65, 8.35, cut);
+  R(10.32, 10.92, 5.35, 5.45, cut);
+  // roof
+  o.push(`<polygon points="${X(2.55)},${Z(8.30)} ${X(3.2)},${Z(8.35)} ${X(6.85)},${Z(9.65)} ${X(10.6)},${Z(8.30)} ${X(10.6)},${Z(8.15)} ${X(6.85)},${Z(9.5)} ${X(3.2)},${Z(8.20)} ${X(2.55)},${Z(8.15)}" fill="#b56e4f"/>`);
+  Ln(2.70, 8.30, 10.32, 8.30, `stroke="#2f2f2f" stroke-width="1.5"`);
+  if (after) {
+    // Dashed orange attic insulation line along 3F ceiling + roof/stair exhaust vent
+    Ln(2.72, 8.41, 10.28, 8.41, `stroke="${C.neu}" stroke-width="2.4" stroke-dasharray="6 3"`);
+    R(6.62, 7.08, 9.63, 9.79, newc);
+    Ln(6.85, 9.81, 6.85, 10.08, `stroke="${C.neu}" stroke-width="1.4"`);
+    o.push(`<polygon points="${X(6.85)},${Z(10.15)} ${X(6.75)},${Z(9.98)} ${X(6.95)},${Z(9.98)}" fill="${C.neu}"/>`);
+    Ln(4.65, 9.08, 5.20, 8.43, `stroke="${C.neu}" stroke-width="1.0"`);
+    T(4.65, 9.46, '~2042: roof foil + 50mm rockwool + roof vents', 'class="ntp" style="text-anchor:end"');
+    T(4.65, 9.15, '+ <28 dB 3F stair exhaust →', 'class="ntp" style="text-anchor:end"');
+  }
+  // beyond furniture (light)
+  R(5.55, 7.55, 2.20, 2.63, beyond);
+  R(8.98, 10.18, 5.45, 5.97, beyond);
+  // room names
+  const rn = (y, z, s, sub) => { T(y, z, s, 'class="rn" text-anchor="middle"'); if (sub) T(y, z - 0.28, sub, 'class="rs" text-anchor="middle"'); };
+  rn(1.3, 1.25, after ? 'Courtyard deck' : 'Raised pool', after ? '+0.20' : '+0.90 (removed)');
+  rn(4.9, 1.1, after ? 'Gym + laundry' : 'Open terrace', '(R. Duduk, open)');
+  rn(8.3, 1.1, 'Service kitchen', '(Dapur)');
+  if (after) { T(2.75, 3.85, 'Dining bay', 'class="rn" style="text-anchor:start"'); T(2.75, 3.6, 'bench in the bay', 'class="rs" style="text-anchor:start"'); T(1.45, 3.4, 'Balcony 1.0 m →', 'class="rs" style="text-anchor:end"'); T(4.15, 5.78, '← ~2042 closable void (2028: service-free)', 'class="ntp"'); }
+  else T(2.45, 3.4, 'Recessed balcony 0.90 m →', 'class="rs" style="text-anchor:end"');
+  rn(6.6, 4.0, 'Living', '2F ceiling 3.05 m');
+  rn(5.00, 7.05, 'Lounge', after ? 'untouched in 2028 · ~2042 fans/vents' : '');
+  rn(9.1, 6.95, 'Kid #1', '');
+  T(-1.05, 5.5, 'boundary wall +5.25', 'class="nts2" text-anchor="middle"');
+  // level marks
+  [[0, '±0.00 1F'], [2.20, '+2.20 2F'], [5.45, '+5.45 3F'], [8.30, '+8.30 ceiling'], [9.65, '+9.65 ridge']].forEach(([z, t]) => {
+    Ln(11.0, z, 13.4, z, `stroke="#868e96" stroke-width="0.7" stroke-dasharray="4 3"`);
+    o.push(`<polygon points="${X(11.15)},${Z(z)} ${X(11.0)},${Z(z) - 9} ${X(11.3)},${Z(z) - 9}" fill="#1d242b"/>`);
+    T(11.4, z + 0.08, t, 'class="lv"');
+  });
+  // dims
+  const vd = (y, z0, z1, t) => { Ln(y, z0, y, z1, `stroke="${C.dim}" stroke-width="0.8"`); [z0, z1].forEach(z => Ln(y - 0.08, z - 0.08, y + 0.08, z + 0.08, `stroke="${C.dim}" stroke-width="1.3"`)); o.push(`<text x="${X(y) - 4}" y="${(Z(z0) + Z(z1)) / 2}" class="dt" text-anchor="middle" transform="rotate(-90 ${X(y) - 4} ${(Z(z0) + Z(z1)) / 2})">${esc(tr2d(t))}</text>`); };
+  const hd = (y0, y1, z, t) => { Ln(y0, z, y1, z, `stroke="${C.dim}" stroke-width="0.8"`); [y0, y1].forEach(y => Ln(y - 0.08, z - 0.08, y + 0.08, z + 0.08, `stroke="${C.dim}" stroke-width="1.3"`)); T((y0 + y1) / 2, z + 0.1, t, 'class="dt" text-anchor="middle"'); };
+  vd(6.35, 0, 2.10, '2.10 clear'); vd(5.3, 2.20, 5.25, '3.05'); vd(7.3, 5.45, 8.30, '2.85');
+  hd(-0.90, 3.45, -0.95, 'courtyard ≈ 4.35 m'); hd(3.45, 10.32, -0.95, '≈ 6.9 m');
+  if (after) { hd(1.55, 2.55, 1.85, '1.00'); hd(2.55, 3.45, 1.85, '0.90'); }
+  // 2F→… header
+  return o.join('\n');
+}
+// Future U (switchback) stair in the east corner (shared by 1F plan + access sheet)
+function uStair(s, ac, dashed) {
+  const d = dashed ? ' stroke-dasharray="5 3"' : '', fl = dashed ? 'none' : '#ffe8cc';
+  for (let k = 0; k <= 6; k++) { const y = 1.55 - k * 0.267; s.line('furn', 5.87, y, 6.72, y, `stroke="${ac}"${d}`); s.line('furn', 5.00, y, 5.85, y, `stroke="${ac}"${d}`); }
+  s.rect('furn', 5.87, -0.05, 6.72, 1.55, `fill="none" stroke="${ac}" stroke-width="1.3"${d}`);
+  s.rect('furn', 5.00, -0.05, 5.85, 1.55, `fill="none" stroke="${ac}" stroke-width="1.3"${d}`);
+  s.rect('furn', 5.00, -0.90, 6.72, -0.05, `fill="${fl}" stroke="${ac}" stroke-width="1.3"${d}`);
+  s.arrow([[6.3, 1.45], [6.3, -0.48], [5.42, -0.48], [5.42, 1.45]], '', { col: ac, dash: dashed });
+  s.rect('over', 5.00, 1.55, 5.85, 2.75, `fill="#e7f5ff" fill-opacity="0.5" stroke="#1864ab" stroke-dasharray="4 3"`);
+  s.note(5.86, -0.6, 'half-landing', { cls: 'nto', anchor: 'middle' });
+  s.note(5.42, 2.2, 'foot zone', { cls: 'ntb2', anchor: 'middle' });
+}
+// ===== Future access options (mini plans of the courtyard + 2F balcony) =====
+function accessMini(kind, gx, gy) {
+  const s = new Sheet(54, gx + 0.6 * 54, gy + 1.6 * 54);
+  s.poly('fill', [[L(RY), RY], [6.75, RY], [6.75, 3.45], [L(3.45), 3.45]], `fill="url(#deck)"`);
+  s.rect('fill', 6.75, RY, 7.9, 3.6, `fill="#eef0f2"`);
+  s.wallSeg(L(-1.2) - 0.02, -1.05, 6.75, -1.05, 0.30);
+  s.wallSeg(L(-1.04) - 0.07, -1.04, L(3.6) - 0.07, 3.6, 0.14);
+  s.wallSeg(L(3.45), 3.45, 3.00, 3.45, 0.12);
+  s.wall(3.00, 3.45, 6.75, 3.45, 0.12, 'ex', [{ a: 0.05, b: 3.70, type: 'slide' }]);
+  s.wallSeg(6.75, 3.45, 6.75, 3.6, 0.12);
+  // 2F balcony + bay (dashed = upper level)
+  const ub = `fill="none" stroke="#495057" stroke-width="1" stroke-dasharray="8 4"`;
+  s.poly('over', [[L(1.55) + 0.04, 1.55], [6.97, 1.55], [6.97, 2.55], [L(2.55), 2.55]], ub);
+  s.line('over', 3.90, 2.55, 5.95, 2.55, `stroke="${C.neu}" stroke-width="2"`);
+  s.rect('over', 6.25, 3.40, 7.00, 3.50, `fill="#fff" stroke="${C.neu}"`);
+  s.note(6.6, 3.3, 'porch door (2F)', { cls: 'nto', anchor: 'middle' });
+  s.note(L(2.0) + 0.1, 2.12, '2F balcony (dashed)', { cls: 'nts2' });
+  if (kind !== 'ramp') { s.rect('furn', 0.35, 0.05, 1.45, 1.05, `fill="#d8f0d4" stroke="#3d8b4f"`); s.note(0.9, 0.6, 'tree', { cls: 'nts2', anchor: 'middle' }); }
+  const ac = '#b0561b', fa = `fill="#f6d7b8" stroke="${ac}" stroke-width="1.3"`;
+  if (kind === 'ramp') {
+    s.poly('furn', [[1.32, -0.85], [6.70, -0.85], [6.70, 0.10], [1.32, 0.10]], fa);
+    s.poly('furn', [[L(-0.85) + 0.04, -0.85], [1.32, -0.85], [1.32, 1.55], [L(1.55) + 0.04, 1.55]], fa);
+    s.poly('furn', [[L(1.55) + 0.04, 1.55], [5.40, 1.55], [5.40, 2.55], [L(2.55), 2.55]], fa);
+    s.rect('furn', 5.40, 1.05, 6.97, 2.55, `fill="#ffe8cc" stroke="${ac}" stroke-width="1.3"`);
+    s.arrow([[7.2, -0.38], [0.85, -0.38], [0.85, 2.05], [5.2, 2.05]], '', { col: ac });
+    s.note(4.0, -0.52, 'leg C · 5.4 m', { cls: 'nto', anchor: 'middle' });
+    s.note(1.06, 0.6, 'leg D 1.45', { cls: 'nto', rot: 90 });
+    s.note(3.2, 2.35, 'leg A = whole balcony (re-pitched)', { cls: 'nto', anchor: 'middle' });
+    s.note(6.2, 1.35, 'landing', { cls: 'nto', anchor: 'middle' });
+    s.note(7.3, 0.3, 'start at garage floor', { cls: 'nts2', rot: -90, anchor: 'middle' });
+    s.rect('furn', 0.35, 0.05, 1.45, 1.05, `fill="#d8f0d4" stroke="#3d8b4f"`); s.note(0.9, 0.6, 'tree', { cls: 'nts2', anchor: 'middle' });
+  } else if (kind === 'stair') {
+    uStair(s, ac, false);
+    s.rect('furn', L(-0.88) + 0.02, -0.88, 2.10, -0.48, `fill="#d0ebff" stroke="#1971c2"`); s.note(1.2, -0.25, 'water wall', { cls: 'nts2', anchor: 'middle' });
+    [[2.12, 3.05], [3.20, 4.20]].forEach(([a, b]) => s.rect('furn', a, -0.88, b, -0.15, `fill="${C.joinFill}" stroke="${C.neu}"`)); s.note(3.16, 0.05, 'bench modules stay', { cls: 'nts2', anchor: 'middle' });
+  } else {
+    s.rect('furn', 5.70, 0.05, 6.72, 1.53, `fill="#d0ebff" stroke="#1864ab" stroke-width="1.4"`);
+    s.line('furn', 5.70, 0.05, 6.72, 1.53, `stroke="#1864ab" stroke-width="0.8"`); s.line('furn', 6.72, 0.05, 5.70, 1.53, `stroke="#1864ab" stroke-width="0.8"`);
+    s.note(6.21, -0.12, 'platform ≈ 1.0 × 1.45', { cls: 'ntb2', anchor: 'middle' });
+    s.note(6.21, 1.85, 'opens onto balcony', { cls: 'nts2', anchor: 'middle' });
+  }
+  return s.out();
+}
+
+const ACCESS = [
+  { k: 'ramp', t: 'A. L-ramp (rear wall → side strip → whole balcony)', lines: ['≈ 10.9 m of ramp for a 2.0 m climb → ≈ 18 % (steep;', 'assisted wheelchair only). 0.95 m clear.', 'Balcony becomes the top leg; ACs move.', 'Footings cast in 2028 (dashed on 1F).', 'U-ramp variant ≈ 15 % (bigger footprint).'] },
+  { k: 'stair', t: 'B. U (switchback) steel stair in the east corner', lines: ['2 flights × 6 risers (16.7 cm), treads 26.7 cm, 0.85 m wide;', 'half-landing 1.7 × 0.85 m at the rear wall; foot zone', '≈0.85 × 1.2 m kept clear. Child gate at the top.', 'Both rear-wall bench modules stay.', ''] },
+  { k: 'lift', t: 'C. Outdoor platform lift in the garage-side corner', lines: ['≈ 2.0 m rise, glass tower with small roof,', 'stops at the balcony beside the bay door.', 'Car → lift → door → 2F, truly step-free.', 'Alternative: stair-lift on the', 'indoor 1F→2F stair if it is straight.'] },
+];
+// ===== Sheet assembly =====
+
+// ===== Sheet assembly & EN | ID bilingual UI =====
+const W = 1560, H = 1030;
+let LANG = (new URLSearchParams(location.search).get('lang') === 'id') ? 'id' : 'en';
+const DEFS = `<defs><radialGradient id="nglow"><stop offset="0" stop-color="#ffd43b" stop-opacity="0.75"/><stop offset="1" stop-color="#ffd43b" stop-opacity="0"/></radialGradient>
+ <pattern id="deck" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#f3e3cf"/><line x1="0" y1="0" x2="10" y2="0" stroke="#d9b48a" stroke-width="1"/></pattern>
+ <pattern id="water" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#d0ebff"/><path d="M0 4 q2 -2 4 0 t4 0" fill="none" stroke="#74c0fc" stroke-width="0.8"/></pattern>
+ <pattern id="steel" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#f1f3f5"/><line x1="0" y1="6" x2="6" y2="0" stroke="#ced4da" stroke-width="0.7"/></pattern>
+ <pattern id="plank" width="12" height="12" patternUnits="userSpaceOnUse"><rect width="12" height="12" fill="#fbf1e2"/><line x1="0" y1="0" x2="12" y2="0" stroke="#ecd5b4" stroke-width="1"/></pattern>
+ <pattern id="slate" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#eceff1"/><rect width="9" height="9" fill="none" stroke="#cfd4d8" stroke-width="0.6"/></pattern>
+ <pattern id="void" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#fff4e6"/><path d="M0 0 L10 10 M10 0 L0 10" stroke="#f08c00" stroke-width="0.6"/></pattern>
+ <pattern id="earth" width="8" height="8" patternUnits="userSpaceOnUse"><rect width="8" height="8" fill="#efe7da"/><circle cx="2" cy="2" r="0.8" fill="#c9b79c"/><circle cx="6" cy="6" r="0.8" fill="#c9b79c"/></pattern>
+</defs>`;
+
+const NOTES_I18N = {
+  en: [
+    'Courtyard wall-to-wall size (model ≈ 6.45 × 4.35 m; owner estimate 6.5–6.7 × 4.3–4.5 m).',
+    '2-storey (+5.25 m) grey courtyard boundary wall along rear & left side (to Y=2.55); verify pier.',
+    '2F master window: exact position vs the old railing line / new bay corner.',
+    'Indoor 1F→2F L-stair: verify exact tread count and landing under the 2F→3F stair.',
+    'Slab / beam over the removed balcony wall (2F rear wall at old line).',
+    'Roof / 3F soffit over the new flush bay (bay wall flush with the 3F wall above).',
+    'Front setback + permit (PBG) for the optional ~2041 musholla bay.',
+    '1F helper-room rear wall assumed; R. Duduk is open to the courtyard and the garage.',
+    '3F Front-left bedroom interior door & cupboard position to verify on site (front windows from facade photo).',
+  ],
+  id: [
+    'Ukur bersih halaman belakang dari tembok ke tembok (model ≈ 6,45 × 4,35 m; perkiraan 6,5–6,7 × 4,3–4,5 m).',
+    'Tembok batas abu-abu 2 lantai (+5,25 m) di sisi belakang & kiri taman (sampai Y=2,55); cek posisi kolom.',
+    'Jendela Kamar Utama L2: cek jarak pasti dari garis pagar balkon lama / sudut ruang makan baru.',
+    'Tangga dalam L1→L2 bentuk L: cek jumlah anak tangga & tinggi ruang di bawah tangga L2→L3.',
+    'Cek posisi balok beton di atas dinding balkon L2 yang akan dibongkar.',
+    'Cek pertemuan atap/lantai L3 di atas ruang makan bay (sejajar dinding L3 di atasnya).',
+    'Cek batas GSB depan & aturan PBG kalau suatu saat ingin menambah jendela bay Musholla (~2041/42).',
+    'Posisi dinding belakang K.ART L1 masih perkiraan; R. Duduk terbuka langsung ke taman & garasi.',
+    'Cek posisi pintu & lemari kamar depan-kiri L3 saat survei (posisi jendela depan sudah sesuai foto).',
+  ]
+};
+
+const LEGEND_I18N = {
+  en: [
+    ['wall', 'Existing wall (cut)'],
+    ['new', 'Phase 1 · 2028 new work (orange)'],
+    ['p2', 'Phase 2 · ~2041/42 deferred (purple dashed)'],
+    ['rem', 'Removed in 2028 (on BEFORE sheets)'],
+    ['win', 'Window / operable glazing'],
+    ['door', 'Door with swing'],
+    ['furn', 'Furniture (indicative)'],
+    ['dash', 'Above / below / canopy (dashed)'],
+    ['arrow', 'Stair – arrow points UP / DN'],
+  ],
+  id: [
+    ['wall', 'Dinding eksisting (terpotong)'],
+    ['new', 'Tahap 1 · Pekerjaan baru 2028 (oranye)'],
+    ['p2', 'Tahap 2 · Ditunda ~2041/42 (ungu putus-putus)'],
+    ['rem', 'Dibongkar tahun 2028 (pada lembar SEBELUM)'],
+    ['win', 'Jendela / bukaan kaca hidup'],
+    ['door', 'Pintu & arah ayun'],
+    ['furn', 'Furnitur (indikatif)'],
+    ['dash', 'Garis atas / bawah / kanopi (putus-putus)'],
+    ['arrow', 'Tangga – panah NAIK (UP) / TURUN (DN)'],
+  ]
+};
+
+function legendSvg(x, y) {
+  const items = LEGEND_I18N[LANG];
+  let o = `<g transform="translate(${x},${y})"><text class="ph">${LANG === 'id' ? 'Legenda' : 'Legend'}</text>`;
+  items.forEach(([k, t], i) => {
+    const yy = 18 + i * 18.5, sw = `<g transform="translate(0,${yy})">`;
+    let g = '';
+    if (k === 'wall') g = `<rect width="34" height="7" y="-1" fill="${C.wall}"/>`;
+    if (k === 'new') g = `<rect width="34" height="7" y="-1" fill="${C.neu}"/>`;
+    if (k === 'p2') g = `<rect width="34" height="7" y="-1" fill="#f3f0ff" stroke="#5f3dc4" stroke-width="1.5" stroke-dasharray="5 3"/>`;
+    if (k === 'rem') g = `<rect width="34" height="7" y="-1" fill="none" stroke="${C.rem}" stroke-width="1.4" stroke-dasharray="5 3"/>`;
+    if (k === 'win') g = `<rect width="34" height="7" y="-1" fill="#fff" stroke="${C.wall}"/><line x1="0" x2="34" y1="2.5" y2="2.5" stroke="${C.wall}"/>`;
+    if (k === 'door') g = `<line x1="2" y1="6" x2="2" y2="-12" stroke="${C.wall}" stroke-width="2"/><path d="M20 6 A18 18 0 0 0 2 -12" fill="none" stroke="${C.wall}" stroke-dasharray="3 2"/>`;
+    if (k === 'furn') g = `<rect width="34" height="10" y="-2.5" fill="${C.furnFill}" stroke="${C.furn}"/>`;
+    if (k === 'dash') g = `<line x1="0" x2="34" y1="2.5" y2="2.5" stroke="#495057" stroke-dasharray="8 4"/>`;
+    if (k === 'arrow') g = `<line x1="0" x2="28" y1="2.5" y2="2.5" stroke="#333" stroke-width="1.3"/><polygon points="34,2.5 26,-1.5 26,6.5" fill="#333"/>`;
+    o += `${sw}${g}<text x="46" y="6.5" class="lg">${esc(t)}</text></g>`;
+  });
+  return o + '</g>';
+}
+function notesSvg(x, y, w) {
+  const notes = NOTES_I18N[LANG];
+  const hdr = LANG === 'id' ? 'Catatan · wajib diverifikasi saat survei lokasi' : 'Notes · to verify on site (survey)';
+  let o = `<g transform="translate(${x},${y})"><rect x="-10" y="-20" width="${w}" height="${28 + notes.length * 18.5}" fill="#fff9db" stroke="#f0c36d" rx="6"/><text class="ph">${hdr}</text>`;
+  notes.forEach((n, i) => o += `<text y="${21 + i * 18.5}" class="nl">${i + 1}. ${esc(n)}</text>`);
+  return o + '</g>';
+}
+function listSvg(x, y, title, items, col) {
+  let o = `<g transform="translate(${x},${y})"><text class="ph" fill="${col}">${esc(title)}</text>`;
+  items.forEach((t, i) => {
+    const isDeferred = t.startsWith('DEFERRED') || t.startsWith('DITUNDA');
+    const isHdr = isDeferred || t.startsWith('DONE IN 2028') || t.startsWith('DIKERJAKAN') || t.startsWith('2028 PREP') || t.startsWith('PERSIAPAN 2028') || t.startsWith('OPTIONAL IN 2028') || t.startsWith('OPSIONAL DI 2028');
+    const c = isDeferred ? '#5f3dc4' : col;
+    if (t.startsWith('   ')) {
+      o += `<text x="11" y="${21 + i * 18.2}" class="nl">${esc(t.trim())}</text>`;
+    } else {
+      o += `<text y="${21 + i * 18.2}" class="nl"${isHdr ? ` font-weight="700" fill="${c}"` : ''}><tspan fill="${c}" font-weight="700">• </tspan>${esc(t)}</text>`;
+    }
+  });
+  return o + '</g>';
+}
+
+const VIEWS = {
+  f1b: {
+    fl: 1, after: false,
+    t: '1F plan — BEFORE (as built)',
+    t_id: 'Denah Lantai 1 — SEBELUM (eksisting)',
+    items: [
+      'Raised pool +0.90 m fills the courtyard (toddler hazard).',
+      '2-storey (+5.25 m) grey boundary wall encloses rear & left courtyard edges (to Y=2.55).',
+      'Laundry terrace +0.90 m under the 2F overhang; pool pump in a pit at the left corner.',
+      'Sliding glass divider between pool and garage, full length.',
+      'R. Duduk = open covered terrace (no walls/windows), blocked by the pool wall.',
+      'Service zone: square Gudang in front-left corner, stacked L-stair to 2F beside it,',
+      '   K.ART + 1F WC along the west wall, L counter along garage and front walls.',
+    ],
+    items_id: [
+      'Kolam renang panggung tinggi +0,90 m memenuhi halaman belakang (kurang aman untuk balita).',
+      'Tembok batas 2 lantai (+5,25 m) menutup sisi belakang & kiri halaman belakang.',
+      'Teras jemur +0,90 m di bawah balkon L2; ruang pompa kolam di sudut kiri.',
+      'Pintu kaca geser memisahkan area kolam dan garasi.',
+      'R. Duduk = teras beratap terbuka, tapi pandangannya terhalang tembok kolam.',
+      'Area servis: Gudang di sudut depan-kiri, tangga dalam bentuk L ke L2 di sebelahnya,',
+      '   K.ART + WC L1 di sisi barat, serta meja dapur kotor bentuk L di sisi garasi & depan.',
+    ]
+  },
+  f1a: {
+    fl: 1, after: true,
+    t: '1F plan — AFTER (★ 2028 plan)',
+    t_id: 'Denah Lantai 1 — RENCANA 2028 (★ Tahap 1)',
+    items: [
+      'Pool demolished → +0.20 m WPC deck (enclosed by +5.25 m rear & left boundary walls).',
+      'Tree in a ≈1.1 × 1.0 m planter in the rear side corner.',
+      'Rear wall: 2 planter-bench modules (0.75 m deep); vertical garden later (points ready).',
+      'Service zone: square Gudang in front-left corner, stacked L-stair to 2F beside it,',
+      '   L counter along the garage wall and the front wall (unchanged).',
+      'Patio: BBQ table 1.8 × 0.9 (bench north + 3 chairs south + 1 east); BBQ grill.',
+      'Garage divider removed; 2 bollards for kid/car safety (path to the garage kept clear).',
+      'R. Duduk (open covered terrace) = gym + laundry + moisture-rated DC ceiling fan.',
+      'Washer + stacked dryer on the K.ART wall (K.ART & WC doors swing clear).',
+      'Gym: 2 × 1.5 m pad + folding wall squat rack (1.8 m bar) + mirror dumbbell cabinet.',
+      'Laundry: 2 pulley drying racks overhead at the covered strip, ≈1.6 m run.',
+      'Water wall in rear corner (≈1.8 m wide) + hidden reservoir (zero open water).',
+      'Ventilation & screens: 1F WC exhaust fan + black SS304 screens on 1F windows.',
+      '2028 PREP FOR ~2042: access footings + conduits under WPC deck + 1F stair-lift spur.',
+    ],
+    items_id: [
+      'Dinding kolam dipotong → ganti jadi dek WPC +0,20 m yang rata & aman untuk anak.',
+      'Bak pohon peneduh ≈1,1 × 1,0 m di sudut belakang-barat.',
+      'Tembok belakang: 2 bangku-planter (lebar 0,75 m) + titik keran/lampu untuk tanaman rambat.',
+      'Area servis tetap: Gudang depan-kiri, tangga dalam ke L2, dan meja dapur kotor bentuk L.',
+      'Taman: meja makan luar 1,8 × 0,9 m (duduk di bangku taman + 4 kursi) & panggangan BBQ.',
+      'Pintu kaca garasi dilepas; pasang 2 tiang pengaman (bollard) supaya akses stroller/barang lega.',
+      'R. Duduk (teras beratap) dipakai untuk area gym + mesin cuci/dryer + kipas plafon DC.',
+      'Mesin cuci + dryer tumpuk di dinding K.ART (pintu K.ART & WC tetap leluasa dibuka).',
+      'Gym: matras 2 × 1,5 m + rak barbel lipat di dinding + lemari dumbel berpintu cermin.',
+      'Jemuran: 2 jemuran tarik (katrol) di plafon bawah balkon L2.',
+      'Dinding air mancur batu alam ≈1,8 m di sudut belakang (bak air tertutup koral, bebas jentik).',
+      'Pasang exhaust fan di WC L1 + kawat nyamuk baja hitam SS304 di jendela L1.',
+      'SEKALIAN DISIAPKAN DI 2028: fondasi & pipa kabel di bawah dek WPC + titik listrik stair-lift.',
+    ]
+  },
+  f2b: {
+    fl: 2, after: false,
+    t: '2F plan — BEFORE (as built)',
+    t_id: 'Denah Lantai 2 — SEBELUM (eksisting)',
+    items: [
+      '0.90 m recessed balcony between kitchen block and master block.',
+      '2-storey (+5.25 m) grey courtyard boundary wall rises along rear & left courtyard edges.',
+      '3 AC units stacked on the kitchen-block side wall; laundry hung here.',
+      'Rear living wall (window + balcony door + split AC) at the old line.',
+      'Dark-wood U-kitchen (same boxes) with overhead cabinets over the peninsula.',
+      'Sofa bed 2.0 × 2.0 m in living.',
+      'Musholla closed off by a solid divider; flat front wall.',
+    ],
+    items_id: [
+      'Balkon mundur 0,90 m di antara blok dapur dan blok kamar utama.',
+      'Tembok batas 2 lantai (+5,25 m) di sisi belakang & kiri halaman belakang.',
+      '3 outdoor AC bertumpuk di dinding samping dapur; area balkon dipakai menjemur.',
+      'Dinding belakang R. Keluarga (jendela + pintu balkon + AC split) masih mundur di garis lama.',
+      'Dapur bentuk U warna kayu gelap dengan kabinet gantung di atas meja bar yang menghalangi pandangan.',
+      'Sofa bed 2,0 × 2,0 m di R. Keluarga.',
+      'Musholla tertutup tembok cokelat; dinding depan rata.',
+    ]
+  },
+  f2a: {
+    fl: 2, after: true,
+    t: '2F plan — AFTER (★ 2028 plan)',
+    t_id: 'Denah Lantai 2 — RENCANA 2028 (★ Tahap 1 + Persiapan 2042)',
+    items: [
+      'Flush dining bay: all-operable Low-E casements (front + side), warm pendant, L-booth (7–8);',
+      '   open ≈1.1 × 0.9 m porch w/ existing balcony door + hinged black SS304 screen door.',
+      'U-kitchen: sink at window, IH hob + hood + fridge, overhead cabs removed, sintered stone',
+      '   top, café pass-through window (existing carcasses kept, new light fronts).',
+      'Ramp-rated 1.0 m steel balcony + ~6.5 m heat-blocking canopy (white underside);',
+      '   3 outdoor ACs on frame, fold-down bar + 2 stools, fold-out rack, plant trough.',
+      'Split AC relocated off demolished balcony wall to Master wall (X=7.04).',
+      'Musholla: +42 cm SOLID platform; 3 bench slots A/B/C (2.9 m); fixed 21 cm hall step +',
+      '   rail; full-height sliding doors; lit mihrab + removable panel; operable upper window.',
+      'Sofa bed 2.0×2.0m + coffee table; slat TV stair screen; digital piano under front window.',
+      'Genkan (~2–2.5 cm screed step-down, no slab cut): 0.8 m bench + 2.1 m terrace cabinet.',
+      'Black SS304 screens (1F–2F windows, porch door, pass-through; 3F optional); 2×48" DC fans (X=4.85,',
+      '   downlights >Ø2.1m anti-strobe); 2F WC exhaust fan.',
+      '2028 PREP FOR ~2042: capped 60 cm DW bay + plumbing/socket; service-free void slab',
+      '   strip; Musholla wall blocking for bookshelves; front bay lintel/conduit.',
+    ],
+    items_id: [
+      'Ruang makan dimajukan sejajar dapur: semua jendela kaca Low-E (depan & samping) bisa dibuka,',
+      '   lampu gantung warm white, teras kecil ≈1,1×0,9 m (pintu lama + pintu kawat SS304), bangku sudut.',
+      'Dapur U: kabinet gantung di atas meja bar dilepas, ganti pintu HPL terang + meja sintered stone,',
+      '   kompor induksi + cooker hood buang keluar, dan jendela bar geser ke balkon.',
+      'Balkon besi galvanis 1,0 m (kuat untuk jalur ramp) + kanopi penahan panas ~6,5 m (bawah putih);',
+      '   3 outdoor AC di ujung barat, meja bar lipat + 2 kursi, jemuran lipat kecil, pot tanaman.',
+      'Unit indoor AC split dipindah dari dinding balkon lama ke dinding Kamar Utama (X=7,04).',
+      'Panggung Musholla +42 cm: 3 laci besar di sisi ruang keluarga (2,9 m); 1 tangga naik di koridor;',
+      '   pintu geser penuh Hafele; mihrab lampu warm white (panel mudah dilepas); jendela atas bisa dibuka.',
+      'Sofa bed 2,0×2,0 m + meja tamu; tembok TV diganti kisi-kisi kayu meranti; area piano di depan.',
+      'Genkan turun ~2–2,5 cm (kupas keramik & spesi tanpa bobok beton): bangku 0,8 m + lemari sepatu teras.',
+      'Kawat nyamuk baja hitam SS304 di jendela L1–L2 (L3 opsional); 2 kipas plafon DC 48" di titik lampu',
+      '   gantung lama (lampu downlight aman di luar Ø2,1 m); exhaust fan di WC L2.',
+      'SEKALIAN DISIAPKAN DI 2028: ruang + pipa dishwasher 60 cm di meja bar; pelat calon void L3',
+      '   bebas kabel/pipa; penguat dinding untuk rak buku Musholla; cek balok jendela depan.',
+    ]
+  },
+  f3b: {
+    fl: 3, after: false,
+    t: '3F plan — BEFORE (as built)',
+    t_id: 'Denah Lantai 3 — SEBELUM (eksisting)',
+    items: [
+      'WFH alcove projects over the 2F balcony (built-in dark desk).',
+      '3 front bedroom windows match the front facade photo (+ exterior AC ledge).',
+      'Solid white stair parapet; brick feature wall on the side wall.',
+      'Red dashed = alcove floor over the bay: future void (~2042), not cut in 2028.',
+    ],
+    items_id: [
+      'Sudut kerja (WFH) berada tepat di atas balkon L2 (meja kerja tanam kayu gelap).',
+      '3 jendela kamar tidur depan sesuai foto tampak depan (+ dak outdoor AC).',
+      'Tembok pengaman tangga warna putih; dinding bata ekspos di sisi samping tangga.',
+      'Garis merah putus-putus = posisi lantai di atas ruang makan (calon void ~2042, tidak dibongkar di 2028).',
+    ]
+  },
+  f3a: {
+    fl: 3, after: true,
+    t: '3F plan — untouched in 2028 (optional extras) vs ~2042 Phase 2',
+    t_id: 'Denah Lantai 3 — Tidak diubah di 2028 (opsi kecil) vs Tahap 2 (~2042)',
+    items: [
+      '2028 PREP (from 2F below — no work on 3F, family keeps living there):',
+      '   1. Keep the 2F ceiling under the ≈2.5 × 1.5 m future void free of new pipes/wires.',
+      '   2. Engineer checks that slab from the 2F side during the 2F works.',
+      '   3. Spare 3F breaker fitted at the main panel only (no 3F wiring).',
+      'OPTIONAL IN 2028 (a few hours, no demolition, no dust):',
+      '   1. Magnetic black SS304 insect screens on all 3F windows (~2 hrs).',
+      '   2. 3F rear alcove window: Low-E solar film + interior UV roller blind.',
+      'DEFERRED TO ~2042 PHASE 2 (Purple dashed — empty house):',
+      '   1. Cut ≈2.5 × 1.5 m closable void (1.1 m glass guard + acoustic sliding glass).',
+      '   2. Openable over-door vents (boven buka-tutup) above all 4 BR doors.',
+      '   3. 3F DC ceiling fans (Lounge + Kids BRs) + oak refresh of corridor panels.',
+      '   4. Roof foil + 50 mm rockwool + roof vents · quiet (<28 dB) stair exhaust.',
+    ],
+    items_id: [
+      'PERSIAPAN 2028 (dari L2 saja — L3 tidak dikerjakan, keluarga tetap tinggal):',
+      '   1. Plafon L2 di bawah calon void ≈2,5 × 1,5 m dijaga bebas pipa/kabel baru.',
+      '   2. Insinyur mengecek pelat itu dari sisi L2 saat pekerjaan L2.',
+      '   3. MCB cadangan L3 dipasang di panel utama saja (tanpa kabel di L3).',
+      'OPSIONAL DI 2028 (beberapa jam, tanpa bongkar, tanpa debu):',
+      '   1. Kawat nyamuk baja hitam SS304 magnetik di semua jendela L3 (~2 jam).',
+      '   2. Jendela belakang L3: kaca film penolak panas Low-E + roller blind UV.',
+      'DITUNDA KE ~2042 (Ungu putus-putus — saat rumah kosong):',
+      '   1. Buka void ≈2,5 × 1,5 m (pagar kaca 1,1 m + kaca geser kedap suara).',
+      '   2. Boven buka-tutup di atas 4 pintu kamar L3.',
+      '   3. Kipas plafon DC L3 (R. Keluarga + Kamar Anak) + panel koridor motif oak.',
+      '   4. Peredam panas atap (foil + rockwool 50 mm) + ventilasi atap · exhaust tangga senyap.',
+    ]
+  },
+};
+
+const ACCESS_ID = [
+  { k: 'ramp', t: 'A. Jalur landai (ramp) bentuk L (belakang → samping → balkon)', lines: ['≈ 10,9 m panjang ramp untuk naik 2,0 m → kemiringan ≈ 18 %', '(curam; kursi roda dengan pendamping). Lebar bersih 0,95 m.', 'Balkon menjadi segmen atas; unit AC digeser.', 'Fondasi dicor tahun 2028 (garis putus-putus di L1).', 'Varian ramp bentuk U ≈ 15 % (memakan ruang lebih besar).'] },
+  { k: 'stair', t: 'B. Tangga baja bentuk U di sudut timur taman', lines: ['2 bordes × 6 tanjakan (16,7 cm), pijakan 26,7 cm, lebar 0,85 m;', 'bordes tengah 1,7 × 0,85 m di dinding belakang; area kaki', '≈0,85 × 1,2 m bebas. Pintu pengaman anak di atas.', 'Kedua modul bangku-planter dinding belakang tetap utuh.', ''] },
+  { k: 'lift', t: 'C. Lift platform luar ruang di sudut sisi garasi', lines: ['Naik ≈ 2,0 m, menara kaca dengan atap kecil,', 'berhenti di balkon tepat di samping pintu ruang makan bay.', 'Mobil → lift → pintu → L2, benar-benar bebas tanjakan.', 'Alternatif: kursi tangga (stair-lift) pada tangga dalam', 'L1→L2 (jalur listrik disiapkan tahun 2028).'] },
+];
+
+// ===== 6 interactive overlays (2D) =====
+const OVL = { airflow: false, night: false, level: 0, entry: true, notes: true, live: true };   // level: 0 all open · 1 bedroom doors shut · 2 + Musholla shut · 3 all shut
+(function () {
+  const q = new URLSearchParams(location.search);
+  ['airflow', 'night'].forEach(k => { if (q.get(k) === '1') OVL[k] = true; });
+  if (q.get('openclosed') === 'closed') OVL.level = 3;
+  if (['0', '1', '2', '3'].includes(q.get('openlvl'))) OVL.level = +q.get('openlvl');
+  if (q.get('notes') === '0') OVL.notes = false;
+  if (q.get('live') === '0') OVL.live = false;
+  if (q.get('entry') === '0') OVL.entry = false;
+})();
+const OVL_I18N = {
+  en: { lbl: 'Show:', lab: 'Labels:', airflow: '🌬️ Airflow', mep: '⚡💧 MEP & Pipes', demo: '🧱 Demo Overlay', night: '🌙 Night 3000K', open: '🚪 Open (Breezy)', closed: '🚪 Closed (AC / Guest)', notes: '📝 Notes', live: '📊 Live labels', lvl: 'House:', levels: ['🌬️ All open', '🛏️ Bedroom doors shut', '🕌 + Musholla shut', '❄️ All shut'], entryOn: '🔑 Entrance open', entryOff: '🔑 Entrance shut' },
+  id: { lbl: 'Tampilkan:', lab: 'Label:', airflow: '🌬️ Aliran Udara', mep: '⚡💧 Pipa & Listrik', demo: '🧱 Bongkaran Minggu 1', night: '🌙 Malam 3000K', open: '🚪 Buka (Angin)', closed: '🚪 Tutup (AC / Tamu)', notes: '📝 Catatan', live: '📊 Label langsung', lvl: 'Rumah:', levels: ['🌬️ Semua terbuka', '🛏️ Pintu kamar ditutup', '🕌 + Musholla ditutup', '❄️ Semua ditutup'], entryOn: '🔑 Pintu masuk dibuka', entryOff: '🔑 Pintu masuk ditutup' }
+};
+Object.assign(TR_2D_ID, {
+  'cross-breeze': 'angin silang', 'fan wash Ø1.8': 'jangkauan kipas Ø1,8', 'stack effect ↑ to <28 dB 3F exhaust': 'udara panas naik ↑ ke exhaust L3 <28 dB',
+  '1F breeze: garage → gym → courtyard': 'angin L1: garasi → gym → taman', 'warm air ↑ void → 4 boven flaps': 'udara panas ↑ void → 4 boven',
+  'NO PIPES / WIRES (~2042 void)': 'BEBAS PIPA / KABEL (void ~2042)', 'lamp box X 5.48': 'kotak lampu X 5,48',
+  'water: sink · RO · DW bay · hose tap': 'air: bak cuci · RO · DW · keran balkon', 'well filter + booster ↑ roof tank': 'filter sumur + booster ↑ toren',
+  'washer drain': 'buangan mesin cuci', '16A EV charger': 'charger EV 16A', 'lift conduit ~2042': 'pipa kabel lift ~2042', 'stair-lift spur': 'titik stair-lift',
+  'Cat6 riser 1F↔2F↔3F': 'kabel Cat6 L1↔L2↔L3', 'AC pipes → west AC bank': 'pipa AC → rak AC barat', 'hood duct Ø150 → outside': 'duct hood Ø150 → luar',
+  'fan feeds (existing boxes)': 'kabel kipas (titik lama)',
+  'DEMO wk1: +0.90 pool walls': 'BONGKAR mg1: dinding kolam +0,90', 'DEMO wk1: glass divider': 'BONGKAR mg1: sekat kaca', 'DEMO wk1: old balcony wall': 'BONGKAR mg1: dinding balkon lama',
+  'DEMO wk1: brick TV wall': 'BONGKAR mg1: tembok TV', 'DEMO wk1: Musholla divider': 'BONGKAR mg1: sekat Musholla', 'DEMO wk1: overhead cabinets': 'BONGKAR mg1: kabinet gantung',
+  '3000K downlights outside Ø2.1 ring': 'downlight 3000K di luar lingkar Ø2,1', 'dining lamp glow': 'cahaya lampu makan', 'bench toe-kick LED + mihrab': 'LED bangku + mihrab',
+  'water wall uplight': 'lampu sorot dinding air', 'baby gate': 'pagar bayi', 'lockable 3F stair door (cat stays on 3F)': 'pintu tangga L3 berkunci (kucing di L3)',
+  'bollards garage ↔ gym': 'tiang pengaman garasi ↔ gym', 'R8 rounded nosing': 'tepi bulat R8', 'shuttered sockets': 'stopkontak pengaman anak',
+  'CLOSED: doors shut · windows flush · bar folded': 'TUTUP: pintu ditutup · jendela rapat · meja bar dilipat',
+  'Closed / AC: no cross-breeze · fans stir air only': 'Tutup / AC: tanpa angin silang · kipas hanya mengaduk udara',
+  'BEFORE: TV wall & Musholla wall block the breeze': 'SEBELUM: tembok TV & Musholla menghalangi angin',
+  'BEFORE: +0.90 pool wall blocks the breeze': 'SEBELUM: dinding kolam +0,90 menghalangi angin',
+  'master: door → courtyard window': 'kamar utama: pintu → jendela taman',
+  'front windows → doors → lounge → rear (~2042 boven: doors can stay shut)': 'jendela depan → pintu → R. keluarga → belakang (~2042 boven: pintu boleh ditutup)',
+  'front windows → open doors → lounge → rear windows': 'jendela depan → pintu terbuka → R. keluarga → jendela belakang',
+  'master door shut: window only (weak)': 'pintu kamar utama ditutup: hanya jendela (lemah)',
+  'doors shut: ~2042 boven flaps keep the cross-breeze (2028: window only)': 'pintu ditutup: boven ~2042 menjaga angin silang (2028: hanya jendela)',
+  'doors shut: each bedroom airs only through its own window (weak)': 'pintu ditutup: tiap kamar hanya lewat jendelanya sendiri (lemah)',
+  'ALL SHUT: doors & windows closed · bar folded': 'SEMUA DITUTUP: pintu & jendela tertutup · meja bar dilipat',
+  'Musholla doors shut (guest / prayer)': 'Pintu Musholla ditutup (tamu / salat)',
+  'carport & garage windows → service kitchen → gym': 'jendela carport & garasi → dapur servis → gym',
+  'optional 2028: Low-E film + UV blind': 'opsional 2028: kaca film Low-E + tirai UV',
+  '+ magnetic SS304 screen (no mess)': '+ kawat SS304 magnetik (tanpa debu)',
+  '~2042: <28dB exhaust': '~2042: exhaust <28dB',
+  'optional 2028: magnetic SS304 screens on all 3F windows (~2 hrs, no mess)': 'opsional 2028: kawat SS304 magnetik di semua jendela L3 (~2 jam, tanpa debu)',
+  '2028 prep from 2F below: slab check + no pipes/wires': 'persiapan 2028 dari L2: cek pelat + bebas pipa/kabel',
+  'optional 2028: Low-E film + UV blind →': 'opsional 2028: kaca film Low-E + tirai UV →',
+  'SS304 screens (1F–2F · 3F optional) →': 'kawat SS304 (L1–L2 · L3 opsional) →',
+  '~2042: roof foil + 50mm rockwool + roof vents': '~2042: foil atap + rockwool 50mm + ventilasi atap',
+  'untouched in 2028 · ~2042 fans/vents': 'tidak diubah 2028 · ~2042 kipas/boven',
+  '+ black SS304 screens (1F–2F)': '+ kawat nyamuk hitam SS304 (L1–L2)',
+  'warm air ↑ up the stair → 3F landing window': 'udara panas ↑ lewat tangga → jendela bordes L3',
+  'warm air out the landing window (~2042: + exhaust)': 'udara panas keluar jendela bordes (~2042: + exhaust)',
+  'balcony door': 'pintu balkon',
+  'entrance doors': 'pintu masuk',
+  'warm air out the landing & alcove windows (~2042: + exhaust)': 'udara panas keluar jendela bordes & belakang (~2042: + exhaust)',
+  'louvre door shut: air still flows': 'pintu jalusi ditutup: angin tetap lewat',
+  'void glass closed': 'kaca void ditutup'
+});
+function drawOverlays2D(s, fl, after) {
+  const AIR = '#0ca678', WARM = '#f76707', WAT = '#1c7ed6', PWR = '#f59f00', LAN = '#e8590c', ACG = '#2f9e44', RED = '#e03131', OR = '#f76707';
+  const ar = (path, col, dash) => s.arrow(path, '', { col, dash });
+  const lab = (x, y, t, col) => s.raw('lab', `<text class="dyn" x="${s.X(x)}" y="${s.Y(y)}" style="font-size:10px;font-weight:700;fill:${col};paint-order:stroke;stroke:#fff;stroke-width:3px" text-anchor="middle">${esc(tr2d(t))}</text>`);
+  const lvl = OVL.level, closed = lvl >= 3, doorsShut = lvl >= 1, mushShut = lvl >= 2;
+  // single-sided airing: short dashed in-and-out loop at one window
+  const one = (wx, wy, nx, ny) => { const d = 0.8, sp = 0.28; ar([[wx - ny * sp + nx * 0.3, wy + nx * sp + ny * 0.3], [wx - ny * sp - nx * d, wy + nx * sp - ny * d], [wx + ny * sp - nx * d, wy - nx * sp - ny * d], [wx + ny * sp + nx * 0.3, wy - nx * sp + ny * 0.3]], AIR, true); };
+  if (OVL.airflow) {
+    const xm = (x, y) => { s.line('ann', x - 0.15, y - 0.15, x + 0.15, y + 0.15, `stroke="${RED}" stroke-width="3"`); s.line('ann', x - 0.15, y + 0.15, x + 0.15, y - 0.15, `stroke="${RED}" stroke-width="3"`); };
+    if (fl === 2) {
+      if (after && !closed) {
+        ar([[5.75, 10.6], [5.5, 8.6], [5.0, 6.3], [4.65, 4.3], [4.55, 2.2]], AIR);
+        if (!mushShut) ar([[8.8, 10.6], [8.0, 8.9], [6.6, 7.75], [5.5, 5.6], [5.2, 2.2]], AIR); else one(8.8, 10.32, 0, 1);
+        ar([[1.75, 8.2], [2.0, 7.6], [2.6, 6.6], [3.3, 5.3], [2.4, 3.3], [2.4, 2.2]], AIR);
+        ar([[6.2, 8.6], [6.45, 6.4], [6.62, 4.4], [6.62, 3.45], [6.55, 2.6], [6.4, 1.6]], AIR);   // balcony door → porch
+        if (OVL.entry) { ar([[1.8, 9.25], [3.4, 9.25], [4.5, 8.5], [5.2, 6.1], [5.55, 4.0], [5.7, 2.2]], AIR); lab(2.4, 9.05, 'entrance doors', AIR); }
+        lab(6.7, 6.9, 'cross-breeze', AIR); lab(6.62, 3.95, 'balcony door', AIR);
+      } else if (after && closed) {
+        lab(5.3, 6.9, 'Closed / AC: no cross-breeze · fans stir air only', RED);
+      } else {
+        ar([[5.75, 10.6], [5.5, 8.6], [5.0, 6.3], [5.2, 3.6]], AIR); ar([[6.0, 8.6], [6.4, 6.4], [6.62, 4.2], [6.62, 3.45], [6.55, 2.7]], AIR);
+        if (OVL.entry && !closed) { ar([[1.8, 9.25], [3.4, 9.25], [4.4, 8.4], [5.0, 6.1], [5.3, 4.2], [5.4, 3.6]], AIR); lab(2.4, 9.05, 'entrance doors', AIR); }
+        ar([[8.8, 10.6], [8.3, 9.2], [7.35, 8.6]], AIR); xm(7.15, 8.55);
+        ar([[1.75, 8.2], [2.0, 7.6], [2.4, 6.75]], AIR); xm(2.55, 6.7);
+        lab(4.9, 7.0, 'BEFORE: TV wall & Musholla wall block the breeze', RED);
+      }
+      if (after) { [[4.85, 4.85], [4.85, 7.65]].forEach(([fx, fy]) => s.circle('ann', fx, fy, 0.90, `fill="${AIR}" fill-opacity="0.08" stroke="${AIR}" stroke-width="1.2" stroke-dasharray="4 3"`)); lab(4.85, 4.2, 'fan wash Ø1.8', AIR); }
+      if (!closed && !doorsShut) { ar([[5.9, 6.5], [7.75, 6.15], [8.0, 5.45], [7.95, 2.45], [6.6, 2.42]], AIR); ar([[8.4, 2.1], [8.02, 1.2], [7.45, 0.6], [6.6, 0.6]], AIR, true); lab(8.8, 4.4, 'master: door → courtyard window', AIR); }
+      else if (!closed) { ar([[5.9, 6.5], [7.76, 6.15], [7.76, 5.85], [8.0, 5.45], [7.95, 2.45], [6.6, 2.42]], AIR, true); lab(8.8, 4.4, 'louvre door shut: air still flows', AIR); }
+      s.circle('ann', 1.80, 6.6, 0.26, `fill="${WARM}" fill-opacity="0.15" stroke="${WARM}" stroke-width="1.4"`);
+      lab(1.35, 5.75, 'warm air ↑ up the stair → 3F landing window', WARM);
+    } else if (fl === 1) {
+      if (after && !closed) {
+        ar([[7.2, 10.6], [7.2, 6.1], [6.2, 4.8], [4.6, 3.8], [3.9, 1.8], [3.5, 0.2]], AIR);
+        lab(5.4, 4.95, '1F breeze: garage → gym → courtyard', AIR);
+        ar([[6.1, 10.7], [6.0, 9.4], [4.6, 7.9], [3.85, 6.6], [4.1, 4.8], [3.7, 2.2]], AIR); ar([[7.3, 8.2], [6.4, 8.2], [5.2, 7.7], [4.0, 6.7]], AIR);
+        lab(4.6, 8.65, 'carport & garage windows → service kitchen → gym', AIR);
+      } else if (!after) {
+        ar([[7.2, 10.6], [7.2, 6.1], [6.2, 4.8], [4.7, 3.7]], AIR); xm(4.6, 3.45);
+        lab(5.0, 4.95, 'BEFORE: +0.90 pool wall blocks the breeze', RED);
+      }
+      if (after) s.circle('ann', 5.15, 5.20, 0.85, `fill="${AIR}" fill-opacity="0.08" stroke="${AIR}" stroke-width="1.2" stroke-dasharray="4 3"`);
+    } else if (fl === 3) {
+      if (!closed && !doorsShut) {
+        ar([[2.1, 10.6], [2.3, 9.2], [2.72, 7.85], [2.3, 6.3], [1.75, 4.3], [1.75, 3.0]], AIR);
+        ar([[5.7, 10.6], [6.2, 9.1], [6.39, 7.85], [5.6, 6.4], [4.8, 4.2], [4.6, 2.3]], AIR);
+        ar([[8.15, 10.6], [7.8, 9.1], [7.47, 7.85], [6.4, 6.3], [4.2, 4.0], [3.9, 2.3]], AIR);
+        ar([[6.5, 6.4], [7.66, 6.05], [7.9, 5.3], [7.7, 2.3], [6.5, 2.25]], AIR);
+        ar([[8.3, 2.3], [7.92, 1.6], [7.4, 0.88], [6.5, 0.88]], AIR, true);
+        lab(4.9, 7.58, 'front windows → open doors → lounge → rear windows', AIR);
+      } else if (!closed && after) {
+        // ~2042 sheet: doors shut, air still crosses through the boven flaps
+        ar([[2.1, 10.6], [2.3, 9.2], [2.72, 7.85], [2.3, 6.3], [1.75, 4.3], [1.75, 3.0]], AIR, true);
+        ar([[5.7, 10.6], [6.2, 9.1], [6.39, 7.85], [5.6, 6.4], [4.8, 4.2], [4.6, 2.3]], AIR, true);
+        ar([[8.15, 10.6], [7.8, 9.1], [7.47, 7.85], [6.4, 6.3], [4.2, 4.0], [3.9, 2.3]], AIR, true);
+        ar([[6.5, 6.4], [7.66, 6.05], [7.9, 5.3], [7.7, 2.3], [6.5, 2.25]], AIR, true);
+        lab(4.9, 7.58, 'doors shut: ~2042 boven flaps keep the cross-breeze (2028: window only)', AIR);
+      } else if (!closed) {
+        [[2.075, 10.32], [5.70, 10.32], [8.25, 10.32]].forEach(([wx, wy]) => one(wx, wy, 0, 1)); one(6.90, 2.25, -1, 0);
+        lab(4.9, 7.58, 'doors shut: each bedroom airs only through its own window (weak)', '#8a5a0a');
+      }
+      s.circle('ann', 1.70, 4.60, 0.32, `fill="${WARM}" fill-opacity="0.18" stroke="${WARM}" stroke-width="1.5"`);
+      ar([[1.78, 7.2], [1.78, 5.6], [1.75, 3.35]], WARM);
+      if (!closed) ar([[2.0, 6.4], [2.3, 5.4], [3.6, 3.9], [4.4, 2.9], [4.4, 2.45]], WARM);   // → rear alcove window
+      lab(1.75, 4.15, 'warm air out the landing & alcove windows (~2042: + exhaust)', WARM);
+      if (after && !closed) { ar([[4.85, 3.3], [4.9, 4.4], [6.39, 7.6]], WARM, true); ar([[4.55, 3.3], [4.6, 4.4], [2.71, 7.6]], WARM, true); lab(4.9, 6.1, 'warm air ↑ void → 4 boven flaps', '#5f3dc4'); }
+    }
+  }
+  if (OVL.night && after) {
+    const gl = (x, y, r) => s.raw('ann', `<circle cx="${s.X(x)}" cy="${s.Y(y)}" r="${(r * s.S).toFixed(1)}" fill="url(#nglow)"/>`);
+    if (fl === 2) {
+      [[3.40, 4.85], [6.30, 4.85], [3.40, 7.65], [6.30, 7.65]].forEach(([x, y]) => { gl(x, y, 0.75); s.circle('ann', x, y, 0.06, `fill="#ffd43b" stroke="#e67700"`); });
+      [[4.85, 4.85], [4.85, 7.65]].forEach(([x, y]) => s.circle('ann', x, y, 1.05, `fill="none" stroke="#e67700" stroke-width="1.3" stroke-dasharray="6 3"`));
+      lab(6.3, 4.35, '3000K downlights outside Ø2.1 ring', '#a65e00');
+      gl(4.41, 3.48, 0.95); lab(4.41, 4.40, 'dining lamp glow', '#a65e00');
+      s.rect('ann', 6.45, 7.40, 6.82, 10.20, `fill="#ffe8a3" fill-opacity="0.7"`); s.rect('ann', 9.60, 7.37, 10.10, 7.59, `fill="#ffd43b"`);
+      lab(7.9, 10.1, 'bench toe-kick LED + mihrab', '#a65e00');
+    } else if (fl === 1) {
+      gl(L(RY) + 0.95, -0.50, 0.9); gl(3.16, -0.40, 0.9); lab(1.6, 0.2, 'water wall uplight', '#a65e00');
+    }
+  }
+  const bar = (x0, y0, x1, y1) => s.line('ann', x0, y0, x1, y1, `stroke="#8c6239" stroke-width="4" stroke-linecap="round"`);
+  if (doorsShut && fl === 2) { s.line('ann', 7.35, 5.85, 8.17, 5.85, `stroke="#8c6239" stroke-width="4" stroke-dasharray="3 2"`); bar(7.65, 1.20, 8.40, 1.20); bar(8.65, 6.23, 8.65, 6.98); }   // master = louvre door (dashed bar)
+  if (doorsShut && fl === 3) { [[2.37, 3.07], [5.98, 6.80], [7.06, 7.88]].forEach(([a0, a1]) => bar(a0, 7.85, a1, 7.85)); bar(7.25, 5.60, 8.07, 5.60); bar(7.55, 1.60, 8.30, 1.60); bar(8.50, 6.32, 8.50, 7.07); }
+  if (fl === 2 && after && mushShut) {
+    bar(6.85, 7.35, 6.85, 10.25); bar(7.15, 7.35, 8.65, 7.35);
+    lab(5.3, 9.55, closed ? 'ALL SHUT: doors & windows closed · bar folded' : 'Musholla doors shut (guest / prayer)', '#5c3d19');
+  }
+  if (fl === 3 && after && closed) {
+    s.line('ann', 2.95, 4.08, 5.42, 4.08, `stroke="#1864ab" stroke-width="3.5"`); lab(4.2, 4.85, 'void glass closed', '#1864ab');
+  }
+}
+function sectionOverlays(gx, oy) {
+  const S = 42, ox = gx + 3.7 * S;
+  const X = y => +(ox + y * S).toFixed(1), Z = z => +(oy - z * S).toFixed(1);
+  let o = '';
+  const path = (pts, col, w, dash) => {
+    o += `<polyline points="${pts.map(([y, z]) => X(y) + ',' + Z(z)).join(' ')}" fill="none" stroke="${col}" stroke-width="${w}"${dash ? ' stroke-dasharray="6 3"' : ''}/>`;
+    const [y1, z1] = pts[pts.length - 1], [y0, z0] = pts[pts.length - 2];
+    const a = Math.atan2(Z(z1) - Z(z0), X(y1) - X(y0)), h = 8;
+    o += `<polygon points="${X(y1)},${Z(z1)} ${(X(y1) - h * Math.cos(a - 0.45)).toFixed(1)},${(Z(z1) - h * Math.sin(a - 0.45)).toFixed(1)} ${(X(y1) - h * Math.cos(a + 0.45)).toFixed(1)},${(Z(z1) - h * Math.sin(a + 0.45)).toFixed(1)}" fill="${col}"/>`;
+  };
+  const T = (y, z, t, col) => { o += `<text class="dyn" x="${X(y)}" y="${Z(z)}" style="font-size:9.5px;font-weight:700;fill:${col};paint-order:stroke;stroke:#fff;stroke-width:3px" text-anchor="middle">${esc(tr2d(t))}</text>`; };
+  if (OVL.airflow && OVL.level < 3) {
+    path([[10.6, 3.7], [7.0, 3.6], [4.0, 3.6], [2.0, 3.65]], '#0ca678', 2.2);
+    path([[9.5, 1.1], [6.0, 1.1], [3.0, 0.9], [0.5, 0.7]], '#0ca678', 2.2);
+    path([[4.0, 3.2], [4.0, 5.3], [4.6, 6.8], [7.0, 7.6]], '#f76707', 2.0, true);
+    T(6.5, 4.0, 'cross-breeze', '#0b7285'); T(5.8, 7.9, 'warm air ↑ void → 4 boven flaps', '#c94a0a');
+  }
+  if (OVL.night) {
+    [4.85, 7.65].forEach(y => { o += `<polygon points="${X(y)},${Z(5.2)} ${X(y - 0.6)},${Z(2.2)} ${X(y + 0.6)},${Z(2.2)}" fill="#ffd43b" fill-opacity="0.22"/>`; });
+  }
+  return o;
+}
+
+function footerSvg() {
+  const txt = LANG === 'id'
+    ? 'Sketsa konsep dari foto · tidak berskala penuh · seluruh ukuran wajib diverifikasi melalui survei'
+    : 'Concept sketch from photos · not to scale · all dimensions to be verified by survey';
+  return `<text x="${W - 30}" y="${H - 20}" text-anchor="end" style="font-size:12px;font-style:italic;fill:#868e96">${txt}</text>`;
+}
+function planSheet(key) {
+  const v = VIEWS[key];
+  const S = 60, s = new Sheet(S, 30 + 0.95 * S, 58 + 2.05 * S);
+  if (v.fl === 1) plan1F(s, v.after); else if (v.fl === 2) plan2F(s, v.after); else plan3F(s, v.after);
+  drawOverlays2D(s, v.fl, v.after);
+  const col = v.after ? C.neu : C.rem;
+  const items = LANG === 'id' ? v.items_id : v.items;
+  const title = LANG === 'id' ? v.t_id : v.t;
+  const sub = LANG === 'id'
+    ? 'Rencana renovasi rumah · batang skala dalam meter · ukuran perkiraan model 3D (±5–10 cm) · A = garis potongan'
+    : 'House renovation plan · scale bar in metres · dimensions approximate (from 3D model, ±5–10 cm) · A = section line';
+  const listHdr = v.after
+    ? (LANG === 'id' ? 'Rincian perubahan pada lantai ini' : 'What changes on this floor (2028 orange · ~2042 purple)')
+    : (LANG === 'id' ? 'Bagian yang dibongkar tahun 2028 (merah putus-putus)' : 'What changes in 2028 (red dashed = removed)');
+  const rearTxt = LANG === 'id' ? '↑ BELAKANG · taman dalam (hadap ≈281° WNW)' : '↑ REAR · courtyard (faces ≈281° WNW)';
+  const frontTxt = LANG === 'id' ? '↓ DEPAN · jalan (hadap ≈101° ESE)' : '↓ FRONT · street (faces ≈101° ESE)';
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sheet">${DEFS}<rect width="${W}" height="${H}" fill="#fff"/>`;
+  o += `<rect x="12" y="12" width="${W - 24}" height="${H - 24}" fill="none" stroke="#ced4da"/>`;
+  o += `<g>${s.out()}</g>`;
+  o += `<text x="40" y="44" class="orient">${rearTxt}</text><text x="40" y="${H - 26}" class="orient">${frontTxt}</text>`;
+  o += northArrow(705, 70) + scaleBar(450, H - 52, S);
+  o += `<line x1="${s.X(5.2)}" y1="${s.Y(-1.7)}" x2="${s.X(5.2)}" y2="${s.Y(-1.35)}" stroke="#1d242b" stroke-width="2"/><text x="${s.X(5.2) + 6}" y="${s.Y(-1.45)}" class="secm">A</text>`;
+  const px = 830;
+  o += `<line x1="${px - 25}" y1="30" x2="${px - 25}" y2="${H - 30}" stroke="#dee2e6"/>`;
+  o += `<text x="${px}" y="58" class="tt">${esc(title)}</text><text x="${px}" y="81" class="st">${esc(sub)}</text>`;
+  o += listSvg(px, 118, listHdr, items, col);
+  const ly = 118 + 26 + items.length * 18.2 + 14;
+  o += legendSvg(px, ly);
+  const notes = NOTES_I18N[LANG];
+  o += notesSvg(px + 10, Math.max(ly + 196, H - 38 - notes.length * 18.5 - 18), 700);
+  return o + footerSvg() + '</svg>';
+}
+function sectionSheet() {
+  const tt = LANG === 'id'
+    ? 'Potongan memanjang A–A (≈5,2 m dari batas samping) — taman belakang ← → jalan'
+    : 'Long section A–A (at ≈5.2 m from the side lot line) — rear courtyard ← → street';
+  const st = LANG === 'id'
+    ? 'Kiri: SEBELUM (eksisting) · Kanan: RENCANA 2028 (oranye) & persiapan void ~2042 (ungu putus-putus). Garis potongan A ditandai pada denah.'
+    : 'Left: BEFORE (as built) · Right: AFTER (★ 2028 plan in orange; ~2042 closable void in purple dashed). Section line A is marked on the plans.';
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sheet">${DEFS}<rect width="${W}" height="${H}" fill="#fff"/><rect x="12" y="12" width="${W - 24}" height="${H - 24}" fill="none" stroke="#ced4da"/>`;
+  o += `<text x="40" y="50" class="tt">${esc(tt)}</text>`;
+  o += `<text x="40" y="74" class="st">${esc(st)}</text>`;
+  o += `<text x="40" y="128" class="ph" fill="${C.rem}">${LANG === 'id' ? 'SEBELUM (eksisting)' : 'BEFORE (as built)'}</text><text x="800" y="128" class="ph" fill="${C.neu}">${LANG === 'id' ? 'RENCANA 2028 (★ Tahap 1 + Persiapan ~2042)' : 'AFTER (★ 2028 plan + ~2042 prep)'}</text>`;
+  o += `<g>${section(false, 30, 560)}</g><g>${section(true, 790, 560)}</g>`;
+  o += sectionOverlays(790, 560);
+  o += `<line x1="780" y1="110" x2="780" y2="600" stroke="#dee2e6"/>`;
+  o += scaleBar(40, 640, 42) + legendSvg(40, 695) + notesSvg(560, 700, 900);
+  return o + footerSvg() + '</svg>';
+}
+function accessSheet() {
+  const tt = LANG === 'id'
+    ? 'Opsi akses bebas tangga (~2041/42) — TIDAK dibangun di 2028 (hanya fondasi & jalur listrik)'
+    : 'Future access options (~2041/42) — NOT built in 2028 (2028 casts footings & power conduits only)';
+  const st = LANG === 'id'
+    ? 'Tiap sketsa: atas = dinding batas belakang, kanan = garasi. Balkon L2 garis putus-putus. Naik 2,2 m dengan tinggi bersih L1 2,1 m → lift/stair-lift paling nyaman.'
+    : 'Each sketch: top = rear boundary wall, right = garage. Upper-level balcony dashed. Honest finding: with a 2.2 m climb and 2.1 m 1F headroom, no ramp can be gentle on this plot.';
+  const cards = LANG === 'id' ? ACCESS_ID : ACCESS;
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" class="sheet">${DEFS}<rect width="${W}" height="${H}" fill="#fff"/><rect x="12" y="12" width="${W - 24}" height="${H - 24}" fill="none" stroke="#ced4da"/>`;
+  o += `<text x="40" y="50" class="tt">${esc(tt)}</text>`;
+  o += `<text x="40" y="74" class="st">${esc(st)}</text>`;
+  cards.forEach((a, i) => {
+    const gx = 30 + i * 505, gy = 110;
+    o += `<rect x="${gx}" y="${gy}" width="490" height="480" fill="none" stroke="#dee2e6" rx="6"/>`;
+    o += `<text x="${gx + 14}" y="${gy + 28}" class="ph">${esc(a.t)}</text>`;
+    o += `<g>${accessMini(a.k, gx + 10, gy + 50)}</g>`;
+    a.lines.forEach((l, j) => o += `<text x="${gx + 14}" y="${gy + 370 + j * 21}" class="nl">${esc(l)}</text>`);
+  });
+  o += scaleBar(40, 625, 54) + legendSvg(40, 688) + notesSvg(560, 690, 900);
+  return o + footerSvg() + '</svg>';
+}
+
+const TABS_I18N = {
+  en: [
+    ['f1b', '1F before'], ['f1a', '1F after (2028)'],
+    ['f2b', '2F before'], ['f2a', '2F after (2028)'],
+    ['f3b', '3F before'], ['f3a', '3F (2028 vs 2042)'],
+    ['sec', 'Section A–A'], ['acc', 'Access options'], ['all', 'All (print)']
+  ],
+  id: [
+    ['f1b', 'L1 sebelum'], ['f1a', 'L1 rencana (2028)'],
+    ['f2b', 'L2 sebelum'], ['f2a', 'L2 rencana (2028)'],
+    ['f3b', 'L3 sebelum'], ['f3a', 'L3 (2028 vs 2042)'],
+    ['sec', 'Potongan A–A'], ['acc', 'Opsi akses bebas tangga'], ['all', 'Semua (cetak)']
+  ]
+};
+
+function buildTabs() {
+  const tabs = TABS_I18N[LANG];
+  const hint = LANG === 'id'
+    ? 'Rencana Renovasi · Tahap 1 (2028) vs Tahap 2 (~2042)'
+    : 'House renovation plan · Phase 1 (2028) vs Phase 2 (~2042)';
+  const OV = OVL_I18N[LANG];
+  document.getElementById('tabs').innerHTML =
+    tabs.map(([k, t]) => `<button data-k="${k}" onclick="location.hash='${k}'">${t}</button>`).join('')
+    + `<span class="hint">${hint}</span>`
+    + `<span class="lang-pill" title="Switch language / Ganti bahasa">`
+    + `<button class="${LANG === 'en' ? 'on' : ''}" onclick="setLang('en')">EN</button>`
+    + `<button class="${LANG === 'id' ? 'on' : ''}" onclick="setLang('id')">ID</button>`
+    + `</span>`
+    + `<div class="ovl-row"><span class="ovl-lbl">${OV.lbl}</span>`
+    + ['airflow', 'night'].map(k => {
+        const txt = OV[k];
+        const on = OVL[k];
+        return `<button class="ovl${on ? ' on' : ''}" onclick="toggleOvl('${k}')">${txt}</button>`;
+      }).join('')
+    + `<span class="ovl-sep"></span><span class="ovl-lbl">${OV.lvl}</span>`
+    + [0, 1, 2, 3].map(n => `<button class="ovl${OVL.level === n ? ' on' : ''}" onclick="setLevel(${n})">${OV.levels[n]}</button>`).join('')
+    + `<button class="ovl${OVL.entry && OVL.level < 3 ? ' on' : ''}" onclick="toggleOvl('entry')">${OVL.entry && OVL.level < 3 ? OV.entryOn : OV.entryOff}</button>`
+    + `<span class="ovl-sep"></span><span class="ovl-lbl">${OV.lab}</span>`
+    + `<button class="ovl${OVL.notes ? ' on' : ''}" onclick="toggleOvl('notes')">${OV.notes}</button>`
+    + `<button class="ovl${OVL.live ? ' on' : ''}" onclick="toggleOvl('live')">${OV.live}</button>`
+    + `</div>`;
+  document.body.classList.toggle('hide-notes', !OVL.notes);
+  document.body.classList.toggle('hide-live', !OVL.live);
+}
+function setLevel(n) { OVL.level = n; buildTabs(); render(); }
+function toggleOvl(k) {
+  OVL[k] = !OVL[k];
+  buildTabs();
+  render();
+}
+function setLang(l) {
+  LANG = l;
+  buildTabs();
+  render();
+}
+function render() {
+  const key = (location.hash || '#f2a').slice(1);
+  document.querySelectorAll('#tabs > button[data-k]').forEach(b => b.classList.toggle('on', b.dataset.k === key));
+  const one = k => k === 'sec' ? sectionSheet() : k === 'acc' ? accessSheet() : planSheet(k);
+  const tabs = TABS_I18N[LANG];
+  document.getElementById('view').innerHTML = key === 'all' ? tabs.slice(0, 8).map(t => `<div class="pg">${one(t[0])}</div>`).join('') : one(VIEWS[key] || key === 'sec' || key === 'acc' ? key : 'f2a');
+  document.body.classList.toggle('shot', new URLSearchParams(location.search).get('shot') === '1');
+}
+buildTabs();
+window.addEventListener('hashchange', render);
+render();
+
+</script>
+</body>
+</html>
